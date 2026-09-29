@@ -1,25 +1,37 @@
 name: Infrastructure validate
 
-# Runs on pull requests that change the infrastructure code.
-# Lints and compiles the Bicep templates, checks for unresolved placeholders,
-# and (when Azure sign-in is configured) previews the changes with what-if.
+# Validates the Bicep templates in .infrastructure/.
+# Runs only when started manually from the Actions tab (workflow_dispatch).
+#   - Always: lints and compiles the templates and the parameter file, and reports placeholders.
+#   - Optional: previews the changes against Azure with what-if (nothing is deployed).
+#
+# The what-if job runs in the GitHub environment of the same name, so it signs in with the
+# environment:<name> federated credential. See .infrastructure/README.md for the setup.
 
 on:
-  pull_request:
-    paths:
-      - '.infrastructure/**'
-      - '.github/workflows/infra-*.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        required: true
+        options: [ dev ]
+        default: dev
+      run_what_if:
+        description: Also preview the changes against Azure (what-if)
+        type: boolean
+        default: true
 
 permissions:
   id-token: write
   contents: read
 
 concurrency:
-  group: infra-validate-${{ github.ref }}
+  group: infra-validate-${{ inputs.environment }}
   cancel-in-progress: true
 
 env:
-  ENVIRONMENT: dev
+  ENVIRONMENT: ${{ inputs.environment }}
   AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
   APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL }}
 
@@ -39,7 +51,7 @@ jobs:
       - name: Build parameter file
         run: az bicep build-params --file .infrastructure/main.${ENVIRONMENT}.bicepparam --stdout > /dev/null
         env:
-          AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'westeurope' }}
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'swedencentral' }}
           APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL || 'platform@example.com' }}
 
       - name: Report unresolved placeholders
@@ -50,12 +62,28 @@ jobs:
 
   what-if:
     needs: validate
+    if: ${{ inputs.run_what_if }}
     runs-on: ubuntu-latest
-    # Fork pull requests and repositories without Azure sign-in configured skip this job.
-    if: ${{ vars.AZURE_CLIENT_ID != '' && vars.AZURE_TENANT_ID != '' && vars.AZURE_SUBSCRIPTION_ID != '' && vars.AZURE_LOCATION != '' && github.event.pull_request.head.repo.full_name == github.repository }}
+    # Uses the environment so the OIDC subject is environment:<name>.
+    environment: ${{ inputs.environment }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
+
+      - name: Verify repository variables
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+        run: |
+          missing=0
+          for name in AZURE_SUBSCRIPTION_ID AZURE_TENANT_ID AZURE_CLIENT_ID AZURE_LOCATION APIM_PUBLISHER_EMAIL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository variable $name is not set."
+              missing=1
+            fi
+          done
+          exit $missing
 
       - name: Sign in to Azure (OIDC)
         uses: azure/login@v2

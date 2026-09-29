@@ -119,88 +119,151 @@ jobs:
             echo "- Resource group \`$RESOURCE_GROUP\` does not exist." >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      - name: Define helpers
+        run: |
+          cat > /tmp/helpers.sh <<'HELPERS'
+          # Error handling for the delete steps.
+          #   try "description" command...   Runs the command.
+          #       success            -> recorded in the job summary
+          #       "not found" error  -> the resource is already gone: a notice, not a failure
+          #       any other error    -> an error annotation; the step fails at finish
+          #   list "description" command...  Runs a list command and puts the output in LIST_OUT.
+          #       An error is reported and counted as a failure (LIST_OUT stays empty).
+          NOT_FOUND='NotFound|not found|does not exist|could not be found|ResourceGroupNotFound|DeletedAccountNotFound|ResourceNotFound|CanceledByUser|not in a state|cannot be cancel|already completed'
+          FAILURES=0
+          LIST_OUT=""
+          note() { echo "- $*" >> "$GITHUB_STEP_SUMMARY"; }
+          try() {
+            local desc="$1"; shift
+            local out
+            if out=$("$@" 2>&1); then
+              echo "OK: $desc"; note "$desc"; return 0
+            fi
+            if echo "$out" | grep -qiE "$NOT_FOUND"; then
+              echo "::notice::$desc: already gone or not applicable; skipping."
+              note "$desc: already gone or not applicable"; return 0
+            fi
+            echo "::error::$desc failed: $out"
+            note "**Failed:** $desc"
+            FAILURES=$((FAILURES + 1)); return 0
+          }
+          list() {
+            local desc="$1"; shift
+            local out
+            LIST_OUT=""
+            if out=$("$@" 2>&1); then
+              LIST_OUT="$out"; return 0
+            fi
+            echo "::error::Could not list $desc: $out"
+            note "**Failed to list:** $desc"
+            FAILURES=$((FAILURES + 1)); return 0
+          }
+          finish() {
+            if [ "$FAILURES" -gt 0 ]; then
+              echo "::error::$FAILURES operation(s) failed. See the messages above."
+              exit 1
+            fi
+          }
+          HELPERS
+
       - name: Cancel a running deployment
         if: ${{ !inputs.dry_run }}
         run: |
+          source /tmp/helpers.sh
           state=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.provisioningState -o tsv 2>/dev/null || echo "none")
           if [ "$state" = "Running" ] || [ "$state" = "Accepted" ]; then
-            echo "Cancelling deployment '$DEPLOYMENT_NAME' ($state)..."
-            az deployment sub cancel --name "$DEPLOYMENT_NAME" || echo "::warning::Cancel request failed; continuing."
+            try "Cancel deployment $DEPLOYMENT_NAME ($state)" az deployment sub cancel --name "$DEPLOYMENT_NAME"
             sleep 60
           else
-            echo "No running deployment to cancel."
+            echo "No running deployment to cancel (state: $state)."
+            note "No running deployment to cancel (state: $state)"
           fi
+          finish
 
       - name: Delete the resource group
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !cancelled() && !inputs.dry_run }}
         run: |
+          source /tmp/helpers.sh
           if [ "$(az group exists --name "$RESOURCE_GROUP")" = "true" ]; then
-            echo "Deleting resource group '$RESOURCE_GROUP'..."
-            az group delete --name "$RESOURCE_GROUP" --yes
-            echo "- Deleted resource group \`$RESOURCE_GROUP\`." >> "$GITHUB_STEP_SUMMARY"
+            try "Delete resource group $RESOURCE_GROUP" az group delete --name "$RESOURCE_GROUP" --yes
           else
             echo "Resource group '$RESOURCE_GROUP' does not exist; nothing to delete."
+            note "Resource group \`$RESOURCE_GROUP\` does not exist: nothing to delete"
           fi
+          finish
 
       - name: Purge soft-deleted Foundry and Content Safety accounts
-        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        if: ${{ !cancelled() && !inputs.dry_run && inputs.purge_soft_deleted }}
         run: |
-          az cognitiveservices account list-deleted --query "[].id" -o tsv \
-            | grep -i "/resourceGroups/${RESOURCE_GROUP}/" | while read -r id; do
+          source /tmp/helpers.sh
+          list "soft-deleted Cognitive Services accounts" az cognitiveservices account list-deleted --query "[].id" -o tsv
+          ids=$(printf '%s\n' "$LIST_OUT" | grep -i "/resourceGroups/${RESOURCE_GROUP}/" || true)
+          if [ -z "$ids" ]; then
+            echo "No soft-deleted Cognitive Services accounts for $RESOURCE_GROUP."
+            note "No soft-deleted Cognitive Services accounts"
+          else
+            while read -r id; do
               name="${id##*/}"
               location=$(echo "$id" | sed -E 's#.*/locations/([^/]+)/.*#\1#')
-              echo "Purging cognitive services account '$name' in '$location'..."
-              if az cognitiveservices account purge --name "$name" --location "$location" --resource-group "$RESOURCE_GROUP"; then
-                echo "- Purged Cognitive Services account \`$name\`." >> "$GITHUB_STEP_SUMMARY"
-              else
-                echo "::warning::Could not purge '$name'."
-              fi
-            done || true
+              try "Purge Cognitive Services account $name" az cognitiveservices account purge --name "$name" --location "$location" --resource-group "$RESOURCE_GROUP"
+            done <<< "$ids"
+          fi
+          finish
 
       - name: Purge soft-deleted App Configuration stores
-        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        if: ${{ !cancelled() && !inputs.dry_run && inputs.purge_soft_deleted }}
         run: |
-          az appconfig list-deleted --query "[].[name,location,configurationStoreId]" -o tsv \
-            | grep -i "/resourceGroups/${RESOURCE_GROUP}/" | while IFS=$'\t' read -r name location _; do
-              echo "Purging App Configuration store '$name'..."
-              if az appconfig purge --name "$name" --location "$location" --yes; then
-                echo "- Purged App Configuration \`$name\`." >> "$GITHUB_STEP_SUMMARY"
-              else
-                echo "::warning::Could not purge '$name'."
-              fi
-            done || true
+          source /tmp/helpers.sh
+          list "soft-deleted App Configuration stores" az appconfig list-deleted --query "[].[name,location,configurationStoreId]" -o tsv
+          rows=$(printf '%s\n' "$LIST_OUT" | grep -i "/resourceGroups/${RESOURCE_GROUP}/" || true)
+          if [ -z "$rows" ]; then
+            echo "No soft-deleted App Configuration stores for $RESOURCE_GROUP."
+            note "No soft-deleted App Configuration stores"
+          else
+            while IFS=$'\t' read -r name location _; do
+              try "Purge App Configuration store $name" az appconfig purge --name "$name" --location "$location" --yes
+            done <<< "$rows"
+          fi
+          finish
 
       - name: Purge soft-deleted API Management services
-        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        if: ${{ !cancelled() && !inputs.dry_run && inputs.purge_soft_deleted }}
         run: |
-          az apim deletedservice list --query "[?starts_with(name, 'apim-${ENVIRONMENT}-')].[name,location]" -o tsv \
-            | while IFS=$'\t' read -r name location; do
-              echo "Purging API Management service '$name'..."
-              if az apim deletedservice purge --service-name "$name" --location "$location"; then
-                echo "- Purged API Management \`$name\`." >> "$GITHUB_STEP_SUMMARY"
-              else
-                echo "::warning::Could not purge '$name'."
-              fi
-            done || true
+          source /tmp/helpers.sh
+          list "soft-deleted API Management services" az apim deletedservice list --query "[?starts_with(name, 'apim-${ENVIRONMENT}-')].[name,location]" -o tsv
+          if [ -z "$LIST_OUT" ]; then
+            echo "No soft-deleted API Management services for $ENVIRONMENT."
+            note "No soft-deleted API Management services"
+          else
+            while IFS=$'\t' read -r name location; do
+              try "Purge API Management service $name" az apim deletedservice purge --service-name "$name" --location "$location"
+            done <<< "$LIST_OUT"
+          fi
+          finish
 
       - name: Purge soft-deleted Key Vaults
-        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        if: ${{ !cancelled() && !inputs.dry_run && inputs.purge_soft_deleted }}
         run: |
-          az keyvault list-deleted --query "[?starts_with(name, 'kv-${ENVIRONMENT}-')].[name,properties.location,properties.purgeProtectionEnabled,properties.scheduledPurgeDate]" -o tsv \
-            | while IFS=$'\t' read -r name location protected scheduled; do
+          source /tmp/helpers.sh
+          list "soft-deleted Key Vaults" az keyvault list-deleted --query "[?starts_with(name, 'kv-${ENVIRONMENT}-')].[name,properties.location,properties.purgeProtectionEnabled,properties.scheduledPurgeDate]" -o tsv
+          if [ -z "$LIST_OUT" ]; then
+            echo "No soft-deleted Key Vaults for $ENVIRONMENT."
+            note "No soft-deleted Key Vaults"
+          else
+            while IFS=$'\t' read -r name location protected scheduled; do
               if [ "$protected" = "true" ]; then
                 echo "::notice::Key Vault '$name' has purge protection and cannot be purged. It is reserved until $scheduled. The deploy workflow recovers it automatically."
-                echo "- Key Vault \`$name\` has purge protection: not purged, reserved until \`$scheduled\`. The deploy workflow recovers it." >> "$GITHUB_STEP_SUMMARY"
-              elif az keyvault purge --name "$name" --location "$location"; then
-                echo "- Purged Key Vault \`$name\`." >> "$GITHUB_STEP_SUMMARY"
+                note "Key Vault \`$name\` has purge protection: not purged, reserved until \`$scheduled\`. The deploy workflow recovers it."
               else
-                echo "::warning::Could not purge '$name'."
+                try "Purge Key Vault $name" az keyvault purge --name "$name" --location "$location"
               fi
-            done || true
+            done <<< "$LIST_OUT"
+          fi
+          finish
 
       - name: Delete the deployment record
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !cancelled() && !inputs.dry_run }}
         run: |
-          az deployment sub delete --name "$DEPLOYMENT_NAME" 2>/dev/null \
-            && echo "- Deleted deployment record \`$DEPLOYMENT_NAME\`." >> "$GITHUB_STEP_SUMMARY" \
-            || echo "No deployment record to delete."
+          source /tmp/helpers.sh
+          try "Delete deployment record $DEPLOYMENT_NAME" az deployment sub delete --name "$DEPLOYMENT_NAME"
+          finish

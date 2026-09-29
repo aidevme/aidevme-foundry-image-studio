@@ -16,7 +16,7 @@ The GitHub Actions workflows that deploy these templates are in [.github/workflo
 
 | Workflow | Trigger | Action |
 | --- | --- | --- |
-| [infra-validate.yml](../.github/workflows/infra-validate.yml) | Pull request that changes `.infrastructure/**` | Lint, build, placeholder check, and what-if |
+| [infra-validate.yml](../.github/workflows/infra-validate.yml) | Manual run only | Lint, build, placeholder check, and an optional what-if |
 | [infra-deploy.yml](../.github/workflows/infra-deploy.yml) | Manual run only | Lint, build, what-if, and deploy |
 | [infra-delete.yml](../.github/workflows/infra-delete.yml) | Manual run only | Cancel a running deployment, delete the resource group, and purge soft-deleted resources |
 
@@ -38,32 +38,31 @@ None of these values is a secret. Sign-in uses OpenID Connect (OIDC), so the rep
 
 ### 2. Deployment identity with OIDC federation
 
+Create an app registration, one federated credential per GitHub environment, and the role assignments. In the Azure portal: **Microsoft Entra ID → App registrations → New registration**, then **Certificates & secrets → Federated credentials**.
+
+This repository uses **immutable OIDC subject claims**, so the subject contains numeric IDs instead of names. Read the IDs and the subject prefix with:
+
 ```bash
-az ad app create --display-name "gh-image-studio-deploy"
-az ad sp create --id <app-id>
-az ad app federated-credential create --id <app-id> --parameters '{
-  "name": "github-main",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:<owner>/aidevme-foundry-image-studio:ref:refs/heads/main",
-  "audiences": ["api://AzureADTokenExchange"]
-}'
+gh api repos/<owner>/aidevme-foundry-image-studio --jq '{repo_id: .id, owner_id: .owner.id}'
+gh api repos/<owner>/aidevme-foundry-image-studio/actions/oidc/customization/sub
+```
+
+Then create one credential per environment. The subject is case-sensitive, and the environment name must match the name in the workflow (lowercase `dev`):
+
+```bash
 az ad app federated-credential create --id <app-id> --parameters '{
   "name": "github-env-dev",
   "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:<owner>/aidevme-foundry-image-studio:environment:dev",
-  "audiences": ["api://AzureADTokenExchange"]
-}'
-az ad app federated-credential create --id <app-id> --parameters '{
-  "name": "github-pull-request",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:<owner>/aidevme-foundry-image-studio:pull_request",
+  "subject": "repo:<owner>@<owner-id>/aidevme-foundry-image-studio@<repo-id>:environment:dev",
   "audiences": ["api://AzureADTokenExchange"]
 }'
 az role assignment create --assignee <app-id> --role Contributor --scope /subscriptions/<subscription-id>
 az role assignment create --assignee <app-id> --role "User Access Administrator" --scope /subscriptions/<subscription-id>
 ```
 
-The deploy job runs in the GitHub environment `dev`, so its token subject is `environment:dev`. The validate job runs on pull requests, so its subject is `pull_request`. Each subject needs its own federated credential. The templates run at subscription scope and create role assignments, so the identity needs both roles. Narrow the scope if you create the resource group beforehand.
+All three workflows run manually and use the GitHub environment of the selected name, so their token subject is `environment:<name>`. Add one credential for each environment (`test`, `prod`) when you create it. No `pull_request` or branch credential is needed. The templates run at subscription scope and create role assignments, so the identity needs both roles. Narrow the scope if you create the resource group beforehand.
+
+If a sign-in fails with `AADSTS700213`, the error shows the subject that GitHub sent. Compare it character by character with the credential's subject.
 
 ### 3. GitHub environment (recommended)
 
