@@ -27,7 +27,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: infra-deploy-${{ inputs.environment }}
+  group: infra-${{ inputs.environment }}
   cancel-in-progress: false
 
 env:
@@ -90,6 +90,16 @@ jobs:
             --name "image-studio-${ENVIRONMENT}" \
             --template-file .infrastructure/main.bicep \
             --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
+
+      - name: Recover a soft-deleted Key Vault
+        if: ${{ !inputs.what_if_only }}
+        run: |
+          # A Key Vault with purge protection stays reserved after its resource group is deleted.
+          # Recover it so the deployment can reuse the same name.
+          az keyvault list-deleted --query "[?starts_with(name, 'kv-${ENVIRONMENT}-')].name" -o tsv | while read -r name; do
+            echo "Recovering soft-deleted Key Vault '$name'..."
+            az keyvault recover --name "$name" || echo "::warning::Could not recover '$name'."
+          done
 
       - name: Deploy
         if: ${{ !inputs.what_if_only }}

@@ -18,6 +18,7 @@ The GitHub Actions workflows that deploy these templates are in [.github/workflo
 | --- | --- | --- |
 | [infra-validate.yml](../.github/workflows/infra-validate.yml) | Pull request that changes `.infrastructure/**` | Lint, build, placeholder check, and what-if |
 | [infra-deploy.yml](../.github/workflows/infra-deploy.yml) | Manual run only | Lint, build, what-if, and deploy |
+| [infra-delete.yml](../.github/workflows/infra-delete.yml) | Manual run only | Cancel a running deployment, delete the resource group, and purge soft-deleted resources |
 
 ## One-time setup
 
@@ -75,6 +76,16 @@ Create an environment named `dev` under **Settings → Environments**. Add requi
 ## Deploy
 
 Run **Infrastructure deploy** from the **Actions** tab, and select the environment. Select **Preview the changes without deploying** to run only the what-if. The workflow never runs on its own.
+
+## Delete an environment
+
+Run **Infrastructure delete** from the **Actions** tab.
+
+1. Select the environment.
+2. Type the resource group name to confirm (for `dev`: `rg-image-studio-dev`).
+3. Select **Dry run** first to list what would be deleted, and delete nothing.
+
+The workflow cancels a deployment that is still running, deletes the resource group, purges soft-deleted Foundry, Content Safety, App Configuration and API Management resources so their names can be reused, and deletes the deployment record. A Key Vault with purge protection cannot be purged for 30 days. The deploy workflow recovers it automatically the next time you deploy.
 
 ## Run locally
 

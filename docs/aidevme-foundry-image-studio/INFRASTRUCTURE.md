@@ -5,7 +5,7 @@
 | **Document Title** | Infrastructure provisioning with Bicep |
 | **Document Location** | `docs/aidevme-foundry-image-studio/INFRASTRUCTURE.md` |
 | **Document Description** | Explains how to provision every Azure service that AIDevMe Foundry Image Studio needs by using Bicep and Azure Developer CLI, including the module layout, the code for each module, the deployment procedure, and the steps that Bicep cannot perform. It is intended for the engineers who build and operate the environments. |
-| **Version** | 2.2 |
+| **Version** | 2.3 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -1608,6 +1608,7 @@ Two GitHub Actions workflows deploy the templates. They are stored in `.github/w
 | --- | --- | --- |
 | [infra-validate.yml](../../.github/workflows/infra-validate.yml) | Pull request that changes `.infrastructure/**` | Lint, build, build the parameter file, report unresolved placeholders, and run what-if (skipped for fork pull requests and when Azure sign-in is not configured) |
 | [infra-deploy.yml](../../.github/workflows/infra-deploy.yml) | Manual run only | Verify repository variables, refuse to run while placeholders remain, lint, build, sign in, what-if, deploy, and write the deployment outputs to the job summary |
+| [infra-delete.yml](../../.github/workflows/infra-delete.yml) | Manual run only | Verify the typed confirmation, cancel a running deployment, delete the resource group, purge soft-deleted resources, and delete the deployment record. A dry-run option lists what would be deleted. |
 
 ### Repository variables
 
@@ -1626,6 +1627,12 @@ The workflows read the Azure subscription and the other non-secret settings from
 Create the deployment app registration, one federated credential for each token subject that the workflows use (`environment:dev` for the deploy workflow and `pull_request` for the validate workflow), and the role assignments. The commands are in [.infrastructure/README.md](../../.infrastructure/README.md#2-deployment-identity-with-oidc-federation). Then create the GitHub environment `dev`, and add required reviewers to it to implement the manual approval step in §17.3.
 
 Because `main.bicep` creates the resource group at subscription scope, the deployment identity needs `Contributor` and `User Access Administrator` at the subscription. To narrow the scope, create the resource group beforehand, change the template to resource-group scope, and record the decision as an ADR.
+
+### Delete an environment
+
+Run **Infrastructure delete** from the **Actions** tab, select the environment, and type the resource group name (for example `rg-image-studio-dev`) to confirm. Select **Dry run** first to see what would be deleted. The workflow shares a concurrency group with the deploy workflow, so a delete and a deploy never run at the same time.
+
+Soft-deleted resources keep their names reserved. The delete workflow purges Foundry, Content Safety, App Configuration and API Management resources. A Key Vault that has purge protection cannot be purged for 30 days, so the deploy workflow recovers it (`az keyvault recover`) before it deploys. Purge protection cannot be turned off once it is on.
 
 ### Run a deployment
 

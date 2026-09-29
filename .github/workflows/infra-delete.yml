@@ -1,0 +1,206 @@
+name: Infrastructure delete
+
+# Deletes the resources that infra-deploy.yml created for one environment.
+# Runs only when started manually from the Actions tab (workflow_dispatch).
+#
+# What it does, in order:
+#   1. Checks the confirmation text and the repository variables.
+#   2. Cancels the subscription deployment if it is still running (for example a stuck one).
+#   3. Deletes the resource group rg-image-studio-<environment> and everything in it.
+#   4. Purges soft-deleted resources so their names can be reused
+#      (Foundry and Content Safety accounts, App Configuration, API Management, Key Vault).
+#   5. Deletes the deployment record image-studio-<environment>.
+#
+# Select "Dry run" to list what would be deleted without deleting anything.
+# Key Vault with purge protection cannot be purged; see the job summary for details.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to delete
+        type: choice
+        required: true
+        options: [ dev ]
+        default: dev
+      confirm:
+        description: Type the resource group name to confirm (rg-image-studio-<environment>)
+        type: string
+        required: true
+      dry_run:
+        description: Dry run - list what would be deleted, delete nothing
+        type: boolean
+        default: false
+      purge_soft_deleted:
+        description: Purge soft-deleted resources after deleting the resource group
+        type: boolean
+        default: true
+
+permissions:
+  id-token: write
+  contents: read
+
+# Shares the group with infra-deploy.yml so a delete and a deploy never overlap.
+concurrency:
+  group: infra-${{ inputs.environment }}
+  cancel-in-progress: false
+
+env:
+  ENVIRONMENT: ${{ inputs.environment }}
+  RESOURCE_GROUP: rg-image-studio-${{ inputs.environment }}
+  DEPLOYMENT_NAME: image-studio-${{ inputs.environment }}
+  DRY_RUN: ${{ inputs.dry_run }}
+  PURGE: ${{ inputs.purge_soft_deleted }}
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    # A GitHub environment with the same name lets you require reviewers before deletion.
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Verify the confirmation text
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "$RESOURCE_GROUP" ]; then
+            echo "::error::Confirmation text does not match. Type exactly: $RESOURCE_GROUP"
+            exit 1
+          fi
+
+      - name: Verify repository variables
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+        run: |
+          missing=0
+          for name in AZURE_SUBSCRIPTION_ID AZURE_TENANT_ID AZURE_CLIENT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository variable $name is not set."
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Sign in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Inspect what exists
+        run: |
+          {
+            echo "### Infrastructure delete: ${ENVIRONMENT}"
+            echo
+            echo "Dry run: \`${DRY_RUN}\`. Purge soft-deleted: \`${PURGE}\`."
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          state=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.provisioningState -o tsv 2>/dev/null || echo "none")
+          echo "Subscription deployment '$DEPLOYMENT_NAME': $state"
+          echo "- Subscription deployment \`$DEPLOYMENT_NAME\`: **$state**" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$(az group exists --name "$RESOURCE_GROUP")" = "true" ]; then
+            echo "Resource group '$RESOURCE_GROUP' contains:"
+            az resource list --resource-group "$RESOURCE_GROUP" --query "[].{name:name,type:type}" -o table
+            {
+              echo "- Resource group \`$RESOURCE_GROUP\` exists with these resources:"
+              echo
+              echo '| Name | Type |'
+              echo '| --- | --- |'
+              az resource list --resource-group "$RESOURCE_GROUP" --query "[].[name,type]" -o tsv | awk -F'\t' '{print "| " $1 " | " $2 " |"}'
+              echo
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Resource group '$RESOURCE_GROUP' does not exist."
+            echo "- Resource group \`$RESOURCE_GROUP\` does not exist." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Cancel a running deployment
+        if: ${{ !inputs.dry_run }}
+        run: |
+          state=$(az deployment sub show --name "$DEPLOYMENT_NAME" --query properties.provisioningState -o tsv 2>/dev/null || echo "none")
+          if [ "$state" = "Running" ] || [ "$state" = "Accepted" ]; then
+            echo "Cancelling deployment '$DEPLOYMENT_NAME' ($state)..."
+            az deployment sub cancel --name "$DEPLOYMENT_NAME" || echo "::warning::Cancel request failed; continuing."
+            sleep 60
+          else
+            echo "No running deployment to cancel."
+          fi
+
+      - name: Delete the resource group
+        if: ${{ !inputs.dry_run }}
+        run: |
+          if [ "$(az group exists --name "$RESOURCE_GROUP")" = "true" ]; then
+            echo "Deleting resource group '$RESOURCE_GROUP'..."
+            az group delete --name "$RESOURCE_GROUP" --yes
+            echo "- Deleted resource group \`$RESOURCE_GROUP\`." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Resource group '$RESOURCE_GROUP' does not exist; nothing to delete."
+          fi
+
+      - name: Purge soft-deleted Foundry and Content Safety accounts
+        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        run: |
+          az cognitiveservices account list-deleted --query "[].id" -o tsv \
+            | grep -i "/resourceGroups/${RESOURCE_GROUP}/" | while read -r id; do
+              name="${id##*/}"
+              location=$(echo "$id" | sed -E 's#.*/locations/([^/]+)/.*#\1#')
+              echo "Purging cognitive services account '$name' in '$location'..."
+              if az cognitiveservices account purge --name "$name" --location "$location" --resource-group "$RESOURCE_GROUP"; then
+                echo "- Purged Cognitive Services account \`$name\`." >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "::warning::Could not purge '$name'."
+              fi
+            done || true
+
+      - name: Purge soft-deleted App Configuration stores
+        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        run: |
+          az appconfig list-deleted --query "[].[name,location,configurationStoreId]" -o tsv \
+            | grep -i "/resourceGroups/${RESOURCE_GROUP}/" | while IFS=$'\t' read -r name location _; do
+              echo "Purging App Configuration store '$name'..."
+              if az appconfig purge --name "$name" --location "$location" --yes; then
+                echo "- Purged App Configuration \`$name\`." >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "::warning::Could not purge '$name'."
+              fi
+            done || true
+
+      - name: Purge soft-deleted API Management services
+        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        run: |
+          az apim deletedservice list --query "[?starts_with(name, 'apim-${ENVIRONMENT}-')].[name,location]" -o tsv \
+            | while IFS=$'\t' read -r name location; do
+              echo "Purging API Management service '$name'..."
+              if az apim deletedservice purge --service-name "$name" --location "$location"; then
+                echo "- Purged API Management \`$name\`." >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "::warning::Could not purge '$name'."
+              fi
+            done || true
+
+      - name: Purge soft-deleted Key Vaults
+        if: ${{ !inputs.dry_run && inputs.purge_soft_deleted }}
+        run: |
+          az keyvault list-deleted --query "[?starts_with(name, 'kv-${ENVIRONMENT}-')].[name,properties.location,properties.purgeProtectionEnabled,properties.scheduledPurgeDate]" -o tsv \
+            | while IFS=$'\t' read -r name location protected scheduled; do
+              if [ "$protected" = "true" ]; then
+                echo "::notice::Key Vault '$name' has purge protection and cannot be purged. It is reserved until $scheduled. The deploy workflow recovers it automatically."
+                echo "- Key Vault \`$name\` has purge protection: not purged, reserved until \`$scheduled\`. The deploy workflow recovers it." >> "$GITHUB_STEP_SUMMARY"
+              elif az keyvault purge --name "$name" --location "$location"; then
+                echo "- Purged Key Vault \`$name\`." >> "$GITHUB_STEP_SUMMARY"
+              else
+                echo "::warning::Could not purge '$name'."
+              fi
+            done || true
+
+      - name: Delete the deployment record
+        if: ${{ !inputs.dry_run }}
+        run: |
+          az deployment sub delete --name "$DEPLOYMENT_NAME" 2>/dev/null \
+            && echo "- Deleted deployment record \`$DEPLOYMENT_NAME\`." >> "$GITHUB_STEP_SUMMARY" \
+            || echo "No deployment record to delete."
