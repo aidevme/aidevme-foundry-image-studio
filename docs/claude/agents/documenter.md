@@ -5,12 +5,12 @@
 | **Document Title** | documenter agent |
 | **Document Location** | `docs/claude/agents/documenter.md` |
 | **Document Description** | Describes the documenter subagent, which writes and updates documentation for aidevme-foundry-image-studio according to the repository document style. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 2.0 |
+| **Version** | 3.2 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
 
-The documenter agent writes and updates documentation. It does not write application code. The agent loads the [write-document skill](../../../.claude/skills/write-document/SKILL.md), which applies the [Generic Document Style](../../templates/GENERIC_DOCUMENT_STYLE.md). Read this document to learn what the agent produces and which rules it follows. The agent runs as a Claude Code subagent, and its definition is in [.claude/agents/documenter.md](../../../.claude/agents/documenter.md).
+The documenter agent writes and updates documentation. It does not write application code. The agent loads the [write-document skill](../skills/write-document.md), which applies the [Generic Document Style](../../templates/GENERIC_DOCUMENT_STYLE.md). Read this document to learn what the agent produces and which rules it follows. The agent runs as a Claude Code subagent, and its definition is in [.claude/agents/documenter.md](../../../.claude/agents/documenter.md).
 
 ## Configuration
 
@@ -19,6 +19,7 @@ The documenter agent writes and updates documentation. It does not write applica
 | Model | `sonnet` |
 | Tools | `Read`, `Write`, `Edit`, `Grep`, `Glob` |
 | Skills | `write-document` |
+| Memory | `project` (`.claude/agent-memory/documenter/`) |
 
 ## When to use the agent
 
@@ -64,6 +65,16 @@ Every document that the agent creates or updates contains a header with these fi
 
 The agent returns the documents it created or changed and their versions, and a per-document review result. It flags anything it could not verify against code or configuration, such as an inferred environment variable name.
 
+## Agent memory
+
+The agent has persistent project memory. The memory files are stored in `.claude/agent-memory/documenter/` and are shared with the team through version control.
+
+- Before the agent starts, it reads its memory directory.
+- After the agent finishes, it records durable learnings only, such as terminology decisions, recurring style corrections, and flagged gaps that still need a decision from you.
+- The agent does not store information that it can read from the repository, and it never stores secrets or credentials.
+
+Review memory files in pull requests like any other file. Delete a memory file to make the agent forget its content. For the current contents and the reset procedure, see the [documenter agent memory](../agent-memory/documenter.md).
+
 ## Example request
 
 ```text
@@ -77,5 +88,6 @@ Use the documenter agent to review all documents and update the ones that need i
 ## Related documents
 
 - [Generic Document Style](../../templates/GENERIC_DOCUMENT_STYLE.md): the style that the agent applies
-- [write-document skill](../../../.claude/skills/write-document/SKILL.md): the skill that loads the style
+- [write-document skill](../skills/write-document.md): the skill that loads the style
+- [Skills overview](../skills/index.md): the skill folder convention and how to add a skill
 - [developer agent](developer.md): supplies the changes that the documenter records

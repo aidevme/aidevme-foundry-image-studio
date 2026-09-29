@@ -5,7 +5,7 @@
 | **Document Title** | tester agent |
 | **Document Location** | `docs/claude/agents/tester.md` |
 | **Document Description** | Describes the tester subagent, which writes and runs tests and reproduces reported bugs in aidevme-foundry-image-studio. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 1.0 |
+| **Version** | 2.1 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -19,6 +19,7 @@ The tester agent makes behavior verifiable. It writes test code and runs test su
 | Model | `sonnet` |
 | Tools | `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob` |
 | Skills | None |
+| Memory | `project` (`.claude/agent-memory/tester/`) |
 
 ## When to use the agent
 
@@ -42,6 +43,16 @@ The agent performs these actions:
 ## Output
 
 The agent returns test code and a pass or fail report. The report lists anything the agent could not exercise, such as live Microsoft Foundry behavior when no credentials are available. The agent does not mark a feature as verified when the tests do not cover the claimed behavior.
+
+## Agent memory
+
+The agent has persistent project memory. The memory files are stored in `.claude/agent-memory/tester/` and are shared with the team through version control.
+
+- Before the agent starts, it reads its memory directory.
+- After the agent finishes, it records durable learnings only, such as how to run each test suite, environment limits such as missing live Microsoft Foundry credentials, known flaky tests, and edge cases that previously hid defects.
+- The agent does not store information that it can read from the repository, and it never stores secrets or credentials.
+
+Review memory files in pull requests like any other file. Delete a memory file to make the agent forget its content. For the current contents and the reset procedure, see the [tester agent memory](../agent-memory/tester.md).
 
 ## Example request
 

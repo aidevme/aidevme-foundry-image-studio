@@ -5,7 +5,7 @@
 | **Document Title** | reviewer agent |
 | **Document Location** | `docs/claude/agents/reviewer.md` |
 | **Document Description** | Describes the reviewer subagent, which reviews code changes in aidevme-foundry-image-studio before they merge. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 1.0 |
+| **Version** | 2.1 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -19,8 +19,9 @@ The reviewer agent reports findings about code changes. It does not fix them unl
 | Model | `opus` |
 | Tools | `Read`, `Grep`, `Glob`, `Bash` |
 | Skills | None |
+| Memory | `project` (`.claude/agent-memory/reviewer/`) |
 
-The agent has no `Write` or `Edit` tool, so it cannot change files.
+The agent has no `Write` or `Edit` tool in its tool list, so it does not change repository files. Enabling memory gives it file access for its memory directory only.
 
 ## When to use the agent
 
@@ -55,6 +56,16 @@ The agent does not report:
 ## Output
 
 Each finding includes a concrete failure scenario: the inputs or state that lead to a wrong output or a crash.
+
+## Agent memory
+
+The agent has persistent project memory. The memory files are stored in `.claude/agent-memory/reviewer/` and are shared with the team through version control.
+
+- Before the agent starts, it reads its memory directory.
+- After the agent finishes, it records durable learnings only, such as defect patterns seen in this codebase, areas that need extra scrutiny, and findings that you rejected as not relevant.
+- The agent does not store information that it can read from the repository, and it never stores secrets or credentials.
+
+Review memory files in pull requests like any other file. Delete a memory file to make the agent forget its content. For the current contents and the reset procedure, see the [reviewer agent memory](../agent-memory/reviewer.md).
 
 ## Example request
 

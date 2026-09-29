@@ -5,7 +5,7 @@
 | **Document Title** | architect agent |
 | **Document Location** | `docs/claude/agents/architect.md` |
 | **Document Description** | Describes the architect subagent, which designs and evaluates the architecture of aidevme-foundry-image-studio. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 1.0 |
+| **Version** | 2.1 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -19,8 +19,9 @@ The architect agent produces designs and plans. It does not implement them. Read
 | Model | `opus` |
 | Tools | `Read`, `Grep`, `Glob`, `Bash`, `WebFetch`, `WebSearch` |
 | Skills | None |
+| Memory | `project` (`.claude/agent-memory/architect/`) |
 
-The agent has no `Write` or `Edit` tool, so it cannot change files.
+The agent has no `Write` or `Edit` tool in its tool list, so it does not change repository files. Enabling memory gives it file access for its memory directory only.
 
 ## When to use the agent
 
@@ -44,6 +45,16 @@ The agent performs these actions:
 ## Output
 
 The agent returns a plan with concrete file and module boundaries. The [developer agent](developer.md) can implement the plan directly. The plan does not include speculative abstractions.
+
+## Agent memory
+
+The agent has persistent project memory. The memory files are stored in `.claude/agent-memory/architect/` and are shared with the team through version control.
+
+- Before the agent starts, it reads its memory directory.
+- After the agent finishes, it records durable learnings only, such as earlier design decisions: accepted routing-tier policy, interface contracts, rejected alternatives and the reasons, and open questions for you.
+- The agent does not store information that it can read from the repository, and it never stores secrets or credentials.
+
+Review memory files in pull requests like any other file. Delete a memory file to make the agent forget its content. For the current contents and the reset procedure, see the [architect agent memory](../agent-memory/architect.md).
 
 ## Example request
 

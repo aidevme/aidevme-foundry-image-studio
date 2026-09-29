@@ -5,7 +5,7 @@
 | **Document Title** | developer agent |
 | **Document Location** | `docs/claude/agents/developer.md` |
 | **Document Description** | Describes the developer subagent, which implements features, fixes, and refactors in aidevme-foundry-image-studio from a concrete specification. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 1.0 |
+| **Version** | 2.1 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -19,6 +19,7 @@ The developer agent writes and edits code. It does not decide architecture. Read
 | Model | `sonnet` |
 | Tools | `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob` |
 | Skills | None |
+| Memory | `project` (`.claude/agent-memory/developer/`) |
 
 ## When to use the agent
 
@@ -48,6 +49,16 @@ While the agent implements the change, it follows these rules:
 ## Output
 
 The agent reports what changed, which files changed, and anything it could not verify. For example, it reports when it did not run against the live Microsoft Foundry API because no credentials were available.
+
+## Agent memory
+
+The agent has persistent project memory. The memory files are stored in `.claude/agent-memory/developer/` and are shared with the team through version control.
+
+- Before the agent starts, it reads its memory directory.
+- After the agent finishes, it records durable learnings only, such as project conventions it had to discover, build and test commands that work, and recurring mistakes to avoid.
+- The agent does not store information that it can read from the repository, and it never stores secrets or credentials.
+
+Review memory files in pull requests like any other file. Delete a memory file to make the agent forget its content. For the current contents and the reset procedure, see the [developer agent memory](../agent-memory/developer.md).
 
 ## Example request
 

@@ -5,7 +5,7 @@
 | **Document Title** | researcher agent |
 | **Document Location** | `docs/claude/agents/researcher.md` |
 | **Document Description** | Describes the researcher subagent, which investigates external facts needed to design or implement aidevme-foundry-image-studio. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 1.0 |
+| **Version** | 2.1 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -19,8 +19,9 @@ The researcher agent answers specific factual questions and reports sourced find
 | Model | `opus` |
 | Tools | `Read`, `Grep`, `Glob`, `Bash`, `WebFetch`, `WebSearch` |
 | Skills | None |
+| Memory | `project` (`.claude/agent-memory/researcher/`) |
 
-The agent has no `Write` or `Edit` tool, so it cannot change files.
+The agent has no `Write` or `Edit` tool in its tool list, so it does not change repository files. Enabling memory gives it file access for its memory directory only.
 
 ## When to use the agent
 
@@ -50,6 +51,16 @@ The agent returns a concise report that contains:
 - Any caveat or gap that matters to the requester, usually the architect agent, the developer agent, or you
 
 The report omits tangential findings that were not requested.
+
+## Agent memory
+
+The agent has persistent project memory. The memory files are stored in `.claude/agent-memory/researcher/` and are shared with the team through version control.
+
+- Before the agent starts, it reads its memory directory.
+- After the agent finishes, it records durable learnings only, such as the answer to each question, the primary source, and the date it checked the source, with pricing, limits, and API details marked as time-sensitive.
+- The agent does not store information that it can read from the repository, and it never stores secrets or credentials.
+
+Review memory files in pull requests like any other file. Delete a memory file to make the agent forget its content. For the current contents and the reset procedure, see the [researcher agent memory](../agent-memory/researcher.md).
 
 ## Example request
 

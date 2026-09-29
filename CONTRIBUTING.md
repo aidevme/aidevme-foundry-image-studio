@@ -42,6 +42,8 @@ The repository ships custom Claude Code subagents in [.claude/agents/](.claude/a
 4. [reviewer](docs/claude/agents/reviewer.md) reviews the diff.
 5. [documenter](docs/claude/agents/documenter.md) updates the docs.
 
+The repository also ships Claude Code skills in [.claude/skills/](.claude/skills/), documented in the [skills overview](docs/claude/skills/index.md). The documenter agent preloads the [write-document](docs/claude/skills/write-document.md) skill.
+
 Using them is optional, and you're responsible for the quality of what you submit either way.
 
 ## Microsoft product icons
