@@ -1,24 +1,20 @@
 name: Infrastructure deploy
 
 # Deploys the Bicep templates in .infrastructure/ to Azure.
-#   - Push to main (infrastructure changes): deploys to dev.
-#   - Manual run: choose the environment and whether to only preview (what-if).
+# Runs only when started manually from the Actions tab (workflow_dispatch).
+# Choose the environment and whether to only preview the changes (what-if).
 #
 # The Azure subscription is read from the AZURE_SUBSCRIPTION_ID repository variable.
 # Sign-in uses OpenID Connect, so no secret is stored in GitHub.
 # See .infrastructure/README.md for the one-time setup.
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - '.infrastructure/**'
-      - '.github/workflows/infra-deploy.yml'
   workflow_dispatch:
     inputs:
       environment:
         description: Target environment
         type: choice
+        required: true
         options: [ dev ]
         default: dev
       what_if_only:
@@ -31,11 +27,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: infra-deploy-${{ inputs.environment || 'dev' }}
+  group: infra-${{ inputs.environment }}
   cancel-in-progress: false
 
 env:
-  ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+  ENVIRONMENT: ${{ inputs.environment }}
   AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
   APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL }}
 
@@ -43,7 +39,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     # A GitHub environment with the same name lets you require reviewers before deployment.
-    environment: ${{ inputs.environment || 'dev' }}
+    environment: ${{ inputs.environment }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -95,8 +91,18 @@ jobs:
             --template-file .infrastructure/main.bicep \
             --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
 
+      - name: Recover a soft-deleted Key Vault
+        if: ${{ !inputs.what_if_only }}
+        run: |
+          # A Key Vault with purge protection stays reserved after its resource group is deleted.
+          # Recover it so the deployment can reuse the same name.
+          az keyvault list-deleted --query "[?starts_with(name, 'kv-${ENVIRONMENT}-')].name" -o tsv | while read -r name; do
+            echo "Recovering soft-deleted Key Vault '$name'..."
+            az keyvault recover --name "$name" || echo "::warning::Could not recover '$name'."
+          done
+
       - name: Deploy
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.what_if_only) }}
+        if: ${{ !inputs.what_if_only }}
         run: |
           az deployment sub create \
             --location "$AZURE_LOCATION" \
@@ -105,7 +111,7 @@ jobs:
             --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
 
       - name: Summarize outputs
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.what_if_only) }}
+        if: ${{ !inputs.what_if_only }}
         run: |
           {
             echo "### Deployment outputs (${ENVIRONMENT})"

@@ -14,14 +14,16 @@ param allowedIpAddresses = []
 param enableAsyncJobs = false
 param enableExternalProvider = false
 
-// Replace every <...> placeholder with a verified value from the Foundry model catalog
-// for your region before deploying. The workflow refuses to deploy while placeholders remain.
+// Model names, versions, and SKUs were read from the Foundry model catalog for
+// swedencentral on 2026-09-29 (az cognitiveservices model list). Re-check them before
+// changing the region or upgrading a version. Do not leave <...> placeholders: the
+// workflow refuses to deploy while any remain.
 param modelDeployments = [
   {
     name: 'img-draft-gpt-image-1-mini'
     model: 'gpt-image-1-mini'
     format: 'OpenAI'
-    version: '<pinned-version>'
+    version: '2025-10-06'
     skuName: 'GlobalStandard'
     capacity: 1
   }
@@ -29,15 +31,15 @@ param modelDeployments = [
     name: 'img-std-gpt-image-2-5-flare'
     model: 'gpt-image-2.5-flare'
     format: 'OpenAI'
-    version: '<pinned-version>'
+    version: '2026-09-08'
     skuName: 'GlobalStandard'
     capacity: 1
   }
   {
     name: 'llm-agents'
-    model: '<reasoning-and-vision-model>'
+    model: 'gpt-5.4'
     format: 'OpenAI'
-    version: '<pinned-version>'
+    version: '2026-03-05'
     skuName: 'GlobalStandard'
     capacity: 50
   }
