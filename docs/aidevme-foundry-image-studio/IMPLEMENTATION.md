@@ -5,7 +5,7 @@
 | **Document Title** | Implementation plan |
 | **Document Location** | `docs/aidevme-foundry-image-studio/IMPLEMENTATION.md` |
 | **Document Description** | Detailed, ordered implementation list for AIDevMe Foundry Image Studio, derived from the architecture document. It is intended for the engineers who build the system and for the agents that assist them. |
-| **Version** | 1.2 |
+| **Version** | 1.3 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -58,7 +58,7 @@ The architecture leaves these questions open (§21.2). Record each decision as a
 | ID | Decision | Blocks | Recommended default |
 | --- | --- | --- | --- |
 | D1 | Primary Azure region | P0.3.1, P0.4.1 | **Decided: Sweden Central** (ADR-010, architecture v0.2). It is the only region checked on 2026-09-29 that offers all `gpt-image` models and MAI-Image. |
-| D2 | Implementation language and runtime for the MCP servers, facade, and proxy | P0.1.2 | TypeScript on Node.js for all services and the proxy (the proxy is an npm package). Python only for the icon scripts. |
+| D2 | Implementation language and runtime for the MCP servers, facade, and proxy | P0.1.2 | **Decided: TypeScript on Node.js** for all services and the proxy (ADR-015). Python only for the icon scripts (`find_icon.py`, `compose.py`). |
 | D3 | Orchestration mechanism: connected agents, Foundry workflows, or Agent Framework workflows | P2.4.1 | Connected agents for the first version. Revisit if workflows need loops or parallelism. |
 | D4 | Source of brand guidelines: SharePoint, repository, or DAM | P1.7.1 | Repository folder `brand/`, indexed into Foundry IQ. |
 | D5 | Tenant model: single internal tenant first, or multi-tenant from the start | P1.3.2 | Single tenant with `tenantId` in every key, so multi-tenancy needs no schema change. |

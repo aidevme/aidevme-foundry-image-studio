@@ -33,7 +33,7 @@ This revision closes the gaps found while implementing the first infrastructure,
 | G-12 | Replaced `azd` with the implemented Bicep and GitHub Actions approach, and added naming and lifecycle rules. | [§17](#17-deployment-and-environments) |
 | G-13 | Added backup and recovery facts, and marked RPO and RTO as undecided. | [§2.2](#22-quality-attributes), [§15](#15-reliability-scaling-and-performance) |
 | G-14 | Added observed risks: search capacity, slow account creation, soft-delete name reservation, and low default quota. | [§21](#21-risks-and-open-questions) |
-| G-15 | Added ADR-010 to ADR-014 and new open questions. | [§20](#20-architecture-decision-records), [§21](#21-risks-and-open-questions) |
+| G-15 | Added ADR-010 to ADR-015 and new open questions. | [§20](#20-architecture-decision-records), [§21](#21-risks-and-open-questions) |
 
 ---
 
@@ -1026,7 +1026,7 @@ aidevme-foundry-image-studio/
 │   ├── aidevme-foundry-image-studio/   # ARCHITECTURE, IMPLEMENTATION, INFRASTRUCTURE, SPECIFICATION
 │   ├── claude/                     # agents, agent-memory, skills documentation
 │   ├── templates/                  # document style
-│   ├── adr/                        # (planned) ADR-001 ... ADR-014
+│   ├── adr/                        # (planned) ADR-001 ... ADR-015
 │   └── runbooks/                   # (planned)
 ├── .infrastructure/                # Bicep: main.bicep, modules/, main.<env>.bicepparam, bicepconfig.json
 ├── .github/
@@ -1068,6 +1068,7 @@ aidevme-foundry-image-studio/
 | **ADR-012** | Include the environment type and a deterministic unique token in resource names. | Accepted |
 | **ADR-013** | Add an `overlay_text` tool so long or exact text is rendered in code, not by the image model. | Proposed |
 | **ADR-014** | Key Vault uses purge protection, and the deploy workflow recovers a soft-deleted vault. Revisit for `dev` and `test`, where purge protection blocks clean recreation. | Accepted, to be revisited |
+| **ADR-015** | Implement the Image MCP server, the facade, the shared libraries and the VS Code proxy in TypeScript on Node.js. The icon scripts (`find_icon.py`, `compose.py`) stay in Python. Reason: the proxy is an npm package, and one language lets the services share types and JSON schemas. | Accepted |
 
 Full ADRs will live in `docs/adr/`. The folder does not exist yet (implementation plan task P0.2.1).
 

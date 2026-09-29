@@ -5,7 +5,7 @@
 | **Document Title** | developer agent |
 | **Document Location** | `docs/claude/agents/developer.md` |
 | **Document Description** | Describes the developer subagent, which implements features, fixes, and refactors in aidevme-foundry-image-studio from a concrete specification. It is intended for contributors who use Claude Code subagents. |
-| **Version** | 3.1 |
+| **Version** | 3.2 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -33,7 +33,7 @@ Provide a concrete specification, ideally a plan from the [architect agent](arch
 
 ## Behavior
 
-The agent stores all source code under `src/`, in the folder of the service it belongs to (`src/image-mcp`, `src/facade-mcp`, `src/icon-service`, `src/vscode-proxy`, or `src/shared`). It does not place source files at the repository root or under `docs/`.
+The agent stores all source code under `src/`, in the folder of the service it belongs to (`src/image-mcp`, `src/facade-mcp`, `src/icon-service`, `src/vscode-proxy`, or `src/shared`). It does not place source files at the repository root or under `docs/`. It writes TypeScript on Node.js for every service and for the VS Code proxy, and Python only for the icon scripts (decision D2, ADR-015).
 
 Before the agent writes code, it performs these actions:
 

@@ -24,7 +24,7 @@ This repository currently contains no implemented source code — only project s
 - `.claude/agent-memory/<agent>/` — persistent project memory for each subagent (`memory: project`), created by the agents at run time and shared through version control; never store secrets there
 - `.claude/skills/write-document/` — skill (with `evals/evals.json`) that applies the document style; preloaded by the `documenter` agent
 
-There is no build system, package manifest, lint config, or test suite yet. Do not assume any particular language, framework, or tooling until it is actually added to the repo — check for a manifest file (e.g. `package.json`, `pyproject.toml`, `*.csproj`) before running build/lint/test commands, since none currently exists. When the codebase is scaffolded, update this file with the real commands and architecture.
+There is no build system, package manifest, lint config, or test suite yet. The implementation language is decided: **TypeScript on Node.js** for all services under `src/` and for the VS Code proxy (an npm package), with Python only for the icon scripts (ADR-015, decision D2). The toolchain (workspace manifest, TypeScript configuration, linter, formatter, test runner) is task P0.1.2 and does not exist yet, so check for a `package.json` before running build, lint, or test commands, and do not invent commands. When the codebase is scaffolded, update this file with the real commands and architecture.
 
 ## Source code conventions
 
