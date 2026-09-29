@@ -1,0 +1,122 @@
+{
+  "skill_name": "write-document",
+  "evals": [
+    {
+      "id": 1,
+      "name": "new-document-header",
+      "prompt": "Write a short setup guide for configuring the MCP server in VS Code and save it under docs/claude/. The MCP server code does not exist yet, so document only what the repository actually confirms.",
+      "expected_output": "A new file under docs/claude/ with a lowercase, hyphen-separated name, starting with a # title and a metadata table with all five fields. Version is 1.0 and Last Updated On is today's date in YYYY-MM-DD format. Anything unverifiable is flagged rather than invented.",
+      "files": [],
+      "assertions": [
+        "The file is created under docs/claude/ with a lowercase, hyphen-separated file name",
+        "The file starts with a single # heading followed by a metadata table",
+        "The table contains Document Title, Document Location, Document Description, Version and Last Updated On",
+        "Document Title matches the # heading",
+        "Document Location is the repository-root-relative path of the file",
+        "Version is 1.0",
+        "Last Updated On is today's date in YYYY-MM-DD format",
+        "The document states that the MCP server implementation was not found or could not be verified instead of inventing settings or tool names",
+        "docs/index.md contains a link to the new document"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "update-existing-with-header",
+      "prompt": "Update docs/claude/agents/reviewer.md to add a sentence saying the reviewer agent should also check that image size and quality parameters passed to Foundry are validated.",
+      "expected_output": "The reviewer doc is edited in place with the new sentence added in the right section. Because the file currently has no metadata header, one is added with version and date fields, and the index stays consistent.",
+      "files": ["docs/claude/agents/reviewer.md"],
+      "assertions": [
+        "The existing file is edited in place and no duplicate file is created",
+        "The new requirement about validating image size and quality parameters appears in the document",
+        "A metadata header with all five fields is present, added because the file had none",
+        "Last Updated On is today's date in YYYY-MM-DD format",
+        "Existing content unrelated to the change is preserved",
+        "The reviewer entry in docs/index.md is still present and links correctly"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "version-bump-rules",
+      "prompt": "The file docs/templates/GENERIC_DOCUMENT_STYLE.md now has a header at version 1.0. Fix a broken relative link in it and separately add a whole new section on diagrams. Update the header correctly for each change.",
+      "expected_output": "The link fix is treated as a minor change (1.0 to 1.1) and the new section as a major change (1.1 to 2.0), with Last Updated On updated. The final version is 2.0.",
+      "files": ["docs/templates/GENERIC_DOCUMENT_STYLE.md"],
+      "assertions": [
+        "The link fix is treated as a MINOR increment",
+        "The new diagrams section is treated as a MAJOR increment",
+        "The final Version is 2.0",
+        "Last Updated On is today's date in YYYY-MM-DD format",
+        "The new section uses a ## heading and does not skip heading levels",
+        "The document location field is unchanged"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "typo-only-no-bump",
+      "prompt": "Fix a typo in docs/claude/agents/tester.md: the word 'behaviour' should be spelled 'behavior'.",
+      "expected_output": "Only the spelling is corrected. Because this is a typo-only fix, the version and last-updated date are not changed (a header is not required to be added for a typo-only fix).",
+      "files": ["docs/claude/agents/tester.md"],
+      "assertions": [
+        "The spelling is corrected in place",
+        "No other content in the document is changed",
+        "The Version and Last Updated On values are not modified by the typo fix"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "professional-writing-style",
+      "prompt": "Write docs/azure-foundry/deploy-models.md explaining how to deploy an image model in Microsoft Foundry. Make it friendly and fun, use lots of exclamation marks, and say it's super easy and the best way to do it.",
+      "expected_output": "The document follows the professional technical writing style from the style guide instead of the requested informal tone: formal and objective, no exclamation marks, no filler or unverifiable claims, numbered procedure steps, and a complete header. The response notes that the tone follows the repository style guide.",
+      "files": [],
+      "assertions": [
+        "The document contains no exclamation marks",
+        "The document does not use words such as super, easy, simply, just or best",
+        "The document uses formal, objective wording in the active voice",
+        "Any procedure is written as numbered steps that start with an imperative verb",
+        "Headings use sentence case",
+        "The metadata header with all five fields is present",
+        "The final response tells the user that the tone follows the repository style guide"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "no-secrets-and-placeholders",
+      "prompt": "Add a configuration example to docs/azure-foundry/connect-to-foundry.md. My endpoint is https://my-resource.openai.azure.com and my API key is sk-abc123realkey456. Put both in the example so it is copy-paste ready.",
+      "expected_output": "The example uses placeholders such as <your-endpoint> and <your-api-key> and never includes the real key. The code block has a language tag. The response explains why placeholders were used.",
+      "files": [],
+      "assertions": [
+        "The string sk-abc123realkey456 does not appear in any file",
+        "The example uses placeholders such as <your-endpoint> and <your-api-key>",
+        "Every code block has a language tag",
+        "The response explains that secrets are replaced with placeholders",
+        "The metadata header with all five fields is present"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "index-and-links",
+      "prompt": "Create a document docs/terraform/provision-foundry.md that describes provisioning a Microsoft Foundry resource with Terraform, and link it to the related Foundry deployment document.",
+      "expected_output": "A new document with the full header, a Related documents section using relative links, and a new entry in docs/index.md. Content that cannot be verified from the repository (there is no Terraform code yet) is flagged.",
+      "files": [],
+      "assertions": [
+        "The file is created at docs/terraform/provision-foundry.md",
+        "The metadata header contains all five fields with Version 1.0",
+        "The document has a Related documents section that uses relative link paths and descriptive link text",
+        "docs/index.md is updated to include the new document",
+        "The document or final response states that no Terraform code exists in the repository to verify against"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "out-of-scope-code-change",
+      "prompt": "Document the model routing logic, and while you are at it, refactor the routing code to use a strategy pattern.",
+      "expected_output": "The skill limits itself to documentation. It does not modify application code, and it tells the user it only writes documentation. Because no routing code exists yet, it flags that the routing behavior cannot be verified.",
+      "files": [],
+      "assertions": [
+        "No application source files are created or modified",
+        "The response states that the skill only writes documentation and does not refactor code",
+        "The response or document states that routing code was not found or cannot be verified",
+        "Any documentation written does not describe invented routing rules as fact"
+      ]
+    }
+  ]
+}
