@@ -5,7 +5,7 @@
 | **Document Title** | Infrastructure provisioning with Bicep |
 | **Document Location** | `docs/aidevme-foundry-image-studio/INFRASTRUCTURE.md` |
 | **Document Description** | Explains how to provision every Azure service that AIDevMe Foundry Image Studio needs by using Bicep and Azure Developer CLI, including the module layout, the code for each module, the deployment procedure, and the steps that Bicep cannot perform. It is intended for the engineers who build and operate the environments. |
-| **Version** | 2.1 |
+| **Version** | 2.2 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -119,7 +119,7 @@ Infrastructure code lives in `.infrastructure/` (the architecture, §17.2 and §
 azure.yaml                          # azd project definition (not created yet)
 .github/workflows/
 ├── infra-validate.yml              # pull request: lint, build, what-if
-└── infra-deploy.yml                # push to main or manual: deploy
+└── infra-deploy.yml                # manual run only: deploy
 .infrastructure/
 ├── main.bicep                      # subscription-scope entry point
 ├── main.dev.bicepparam             # parameters per environment
@@ -1607,7 +1607,7 @@ Two GitHub Actions workflows deploy the templates. They are stored in `.github/w
 | Workflow | Trigger | Steps |
 | --- | --- | --- |
 | [infra-validate.yml](../../.github/workflows/infra-validate.yml) | Pull request that changes `.infrastructure/**` | Lint, build, build the parameter file, report unresolved placeholders, and run what-if (skipped for fork pull requests and when Azure sign-in is not configured) |
-| [infra-deploy.yml](../../.github/workflows/infra-deploy.yml) | Push to `main` that changes `.infrastructure/**`, or a manual run | Verify repository variables, refuse to run while placeholders remain, lint, build, sign in, what-if, deploy, and write the deployment outputs to the job summary |
+| [infra-deploy.yml](../../.github/workflows/infra-deploy.yml) | Manual run only | Verify repository variables, refuse to run while placeholders remain, lint, build, sign in, what-if, deploy, and write the deployment outputs to the job summary |
 
 ### Repository variables
 
@@ -1623,14 +1623,13 @@ The workflows read the Azure subscription and the other non-secret settings from
 
 ### One-time setup
 
-Create the deployment app registration, one federated credential for each token subject that the workflows use (`ref:refs/heads/main`, `environment:dev`, and `pull_request`), and the role assignments. The commands are in [.infrastructure/README.md](../../.infrastructure/README.md#2-deployment-identity-with-oidc-federation). Then create the GitHub environment `dev`, and add required reviewers to it to implement the manual approval step in §17.3.
+Create the deployment app registration, one federated credential for each token subject that the workflows use (`environment:dev` for the deploy workflow and `pull_request` for the validate workflow), and the role assignments. The commands are in [.infrastructure/README.md](../../.infrastructure/README.md#2-deployment-identity-with-oidc-federation). Then create the GitHub environment `dev`, and add required reviewers to it to implement the manual approval step in §17.3.
 
 Because `main.bicep` creates the resource group at subscription scope, the deployment identity needs `Contributor` and `User Access Administrator` at the subscription. To narrow the scope, create the resource group beforehand, change the template to resource-group scope, and record the decision as an ADR.
 
 ### Run a deployment
 
-- **Automatic:** merge a change under `.infrastructure/` into `main`.
-- **Manual:** run **Infrastructure deploy** from the **Actions** tab. Select **Preview the changes without deploying** to run only the what-if.
+Run **Infrastructure deploy** from the **Actions** tab, and select the environment. Select **Preview the changes without deploying** to run only the what-if. The workflow never runs on its own, so merging a change does not deploy it.
 
 Only the `dev` environment exists. To add `test` or `prod`, add a `main.<environment>.bicepparam` file, add the environment to the `options` list in `infra-deploy.yml`, create a matching GitHub environment, and add its federated credential.
 

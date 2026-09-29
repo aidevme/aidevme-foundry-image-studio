@@ -17,7 +17,7 @@ The GitHub Actions workflows that deploy these templates are in [.github/workflo
 | Workflow | Trigger | Action |
 | --- | --- | --- |
 | [infra-validate.yml](../.github/workflows/infra-validate.yml) | Pull request that changes `.infrastructure/**` | Lint, build, placeholder check, and what-if |
-| [infra-deploy.yml](../.github/workflows/infra-deploy.yml) | Push to `main` that changes `.infrastructure/**`, or manual run | Lint, build, what-if, and deploy |
+| [infra-deploy.yml](../.github/workflows/infra-deploy.yml) | Manual run only | Lint, build, what-if, and deploy |
 
 ## One-time setup
 
@@ -74,8 +74,7 @@ Create an environment named `dev` under **Settings → Environments**. Add requi
 
 ## Deploy
 
-- **Automatically:** merge a change under `.infrastructure/` into `main`.
-- **Manually:** run **Infrastructure deploy** from the **Actions** tab. Select **Preview the changes without deploying** to run only the what-if.
+Run **Infrastructure deploy** from the **Actions** tab, and select the environment. Select **Preview the changes without deploying** to run only the what-if. The workflow never runs on its own.
 
 ## Run locally
 
