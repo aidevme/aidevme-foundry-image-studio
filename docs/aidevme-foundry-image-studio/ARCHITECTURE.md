@@ -5,10 +5,35 @@
 | | |
 |---|---|
 | **Repository** | `aidevme-foundry-image-studio` |
-| **Status** | Proposed (v0.1) |
+| **Status** | Proposed (v0.2) |
 | **Owner** | Zsolt Zombik |
 | **Last updated** | 2026-09-29 |
 | **Platform** | Microsoft Foundry (Agent Service, Models, Toolboxes), Azure |
+| **Facts verified** | 2026-09-29 against the subscription model catalog, regions and quota (see [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure)) |
+
+---
+
+### Changes in v0.2
+
+This revision closes the gaps found while implementing the first infrastructure, and it records decisions taken since v0.1.
+
+| Ref | Change | Section |
+|---|---|---|
+| G-1 | Added the `overlay_text` tool contract for long in-image text. | [§7.1](#71-internal-image-mcp-server-agents-only) |
+| G-2 | Defined `brief_id` as the id of the job record that holds the brief. | [§7.1](#71-internal-image-mcp-server-agents-only), [§9.2](#92-job-record-cosmos-db-container-jobs-partition-key-tenantid) |
+| G-3 | Added `vary_visual` and `upscale_visual` to the facade, and stated that `alternative` is not client-selectable. | [§7.2](#72-external-agent-mcp-facade-clients) |
+| G-4 | Added the composite index that `list_recent_visuals` needs. | [§9.2](#92-job-record-cosmos-db-container-jobs-partition-key-tenantid) |
+| G-5 | Corrected the repository structure to the actual layout. | [§18](#18-repository-structure) |
+| G-6 | Stated that the four product skills do not exist yet. | [§12](#12-agent-skills) |
+| G-7 | Defined a 50 s agent-run budget inside the 60 s facade timeout. | [§15](#15-reliability-scaling-and-performance) |
+| G-8 | Recorded that image models are offered only as `GlobalStandard`, which conflicts with EU-only processing. | [§2.2](#22-quality-attributes), [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure), [§21](#21-risks-and-open-questions) |
+| G-9 | Decided the region (Sweden Central) and removed the EU Data Zone fallback that image models cannot use. | [§2.3](#23-constraints), [§6.3](#63-routing-rules), [§15](#15-reliability-scaling-and-performance), [§20](#20-architecture-decision-records) |
+| G-10 | Replaced generic model names with the verified catalog names, versions, and status. | [§5.1](#51-agent-inventory), [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure) |
+| G-11 | Documented the deployment identity, its OIDC subject format, and its roles. | [§10.1](#101-identity-model), [§10.2](#102-rbac-least-privilege) |
+| G-12 | Replaced `azd` with the implemented Bicep and GitHub Actions approach, and added naming and lifecycle rules. | [§17](#17-deployment-and-environments) |
+| G-13 | Added backup and recovery facts, and marked RPO and RTO as undecided. | [§2.2](#22-quality-attributes), [§15](#15-reliability-scaling-and-performance) |
+| G-14 | Added observed risks: search capacity, slow account creation, soft-delete name reservation, and low default quota. | [§21](#21-risks-and-open-questions) |
+| G-15 | Added ADR-010 to ADR-014 and new open questions. | [§20](#20-architecture-decision-records), [§21](#21-risks-and-open-questions) |
 
 ---
 
@@ -97,10 +122,11 @@ Teams need on-brand, governed images (blog heroes, social cards, slide backgroun
 | **Latency (standard tier, 1 image)** | p50 < 20 s, p95 < 45 s end-to-end including agent reasoning (validate against live measurements). |
 | **Availability** | 99.5% for the API surface; graceful fallback to another tier or model when one deployment is throttled. |
 | **Security** | No API keys in clients; managed identities; private endpoints in production. |
-| **Data residency** | EU processing for EU tenants (region or EU Data Zone deployments). |
+| **Data residency** | EU-hosted resources and EU-region deployments. **Caveat:** every image model in the verified catalog is offered only with the `GlobalStandard` SKU, which can process prompts and images outside the EU, and a Data Zone (EU) deployment is not available for them. See [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure), risk R-8 and open question 8. |
 | **Extensibility** | Add or swap a model with a configuration change only; add an agent without changing existing agents. |
 | **Auditability** | Every generated asset traceable to request, user, prompt, model version and safety verdict. |
 | **Cost control** | Per-user/team quotas and chargeback via API Management. |
+| **Recovery** | Not yet defined: RPO and RTO targets need an owner decision (open question 9). Backup facts are in [§15](#15-reliability-scaling-and-performance). |
 
 ### 2.3 Constraints
 
@@ -108,6 +134,8 @@ Teams need on-brand, governed images (blog heroes, social cards, slide backgroun
 - Enterprise clients in the DACH/Benelux market: expect security reviews, data-processing agreements and preference for a single cloud vendor.
 - Several models and Foundry features used here are **preview** at the time of writing. Every preview dependency is isolated behind an interface (see [§21](#21-risks-and-open-questions)).
 - Microsoft icon usage terms: icons may be used unmodified in architecture diagrams, training and documentation.
+- **Region (decided, [ADR-010](#20-architecture-decision-records)):** Sweden Central. On 2026-09-29 the subscription model catalog (`az cognitiveservices model list`) showed that, of the regions checked, only Sweden Central offers all image models (`gpt-image-1-mini`, `gpt-image-2`, `gpt-image-2.5-flare`, `gpt-image-2.5-sunburst`) and MAI-Image. West Europe and France Central lack the `gpt-image` models. East US 2 and West US 3 have the `gpt-image` models but no MAI-Image.
+- **Quota:** the default quota for image models is very low (see [§15](#15-reliability-scaling-and-performance)). Plan quota requests before load tests.
 
 ---
 
@@ -220,7 +248,7 @@ flowchart TB
 | C14 | **Content safety** | Prompt and image moderation beyond model built-ins | Azure AI Content Safety | Also Prompt Shields for injection in user-supplied text/images. |
 | C15 | **Secrets and config** | External provider keys, routing table | Key Vault, App Configuration | Managed identity access only. |
 | C16 | **Observability** | Traces, metrics, logs, agent evaluations | Application Insights, Azure Monitor, Foundry tracing and Agent Monitoring Dashboard | OpenTelemetry end to end. |
-| C17 | **Local MCP proxy** | Bridges VS Code to C3; downloads outputs into the workspace | npm package `@aidevme/image-studio-mcp` (stdio) | Uses the developer's Azure sign-in. |
+| C17 | **Local MCP proxy** | Bridges VS Code to C3; downloads outputs into the workspace | npm package `@aidevme/image-studio-mcp` (stdio); source in `src/vscode-proxy/` | Uses the developer's Azure sign-in. |
 
 ---
 
@@ -230,7 +258,7 @@ flowchart TB
 
 | Agent | Type | Model | Tools | Phase |
 |---|---|---|---|---|
-| **Orchestrator** | Prompt agent (hosted later if workflows get complex) | Reasoning model (e.g. gpt-5 family) | Connected agents: image, copy, QA; `get_job_status` | 2 |
+| **Orchestrator** | Prompt agent (hosted later if workflows get complex) | Reasoning model (`gpt-5.4`, version 2026-03-05, available in Sweden Central; see [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure)) | Connected agents: image, copy, QA; `get_job_status` | 2 |
 | **Image agent** | Prompt agent in phase 1; hosted agent (Agent Framework) in phase 2 | Reasoning + vision model | Image MCP (via Toolbox), Foundry IQ, icon service | 1 |
 | **Copy agent** | Prompt agent | Reasoning model | Foundry IQ (brand voice), web search | 3 |
 | **Brand QA agent** | Prompt agent | Vision model | Foundry IQ, Content Safety, image analysis | 3 |
@@ -293,15 +321,23 @@ Always:
 
 ### 6.1 Image model catalog (Foundry, sold directly by Azure)
 
-| Model | Role in this design | Notes |
-|---|---|---|
-| `gpt-image-1-mini` | **draft** tier | Cheapest; thumbnails, bulk variants, exploration. |
-| `gpt-image-2.5-flare` | **standard** tier (default) | OpenAI's recommended default for most applications; faster than gpt-image-2 with higher quality per OpenAI. |
-| `gpt-image-2.5-sunburst` | **precision** tier | Slower; best for precise, multi-step edits and hero assets. |
-| `gpt-image-2` | **fallback** | Used when a 2.5 deployment is throttled or not available in a region. |
-| `gpt-image-1.5`, `gpt-image-1` | Not used by default | Kept only if an existing workflow depends on them. |
-| MAI-Image models | **alternative look** | Second candidate in A/B critic runs; photoreal speed. Preview. |
-| Catalog models (e.g. FLUX) | Optional | Stylistic range; confirm regional availability first. |
+| Model | Version verified in Sweden Central | Status | Role in this design | Notes |
+|---|---|---|---|---|
+| `gpt-image-1-mini` | 2025-10-06 | GA | **draft** tier | Cheapest; thumbnails, bulk variants, exploration. |
+| `gpt-image-2.5-flare` | 2026-09-08 | GA | **standard** tier (default) | OpenAI's recommended default for most applications; faster than gpt-image-2 with higher quality per OpenAI. |
+| `gpt-image-2.5-sunburst` | 2026-09-08 | GA | **precision** tier | Slower; best for precise, multi-step edits and hero assets. |
+| `gpt-image-2` | 2026-04-21 | GA | **fallback** | Used when a 2.5 deployment is throttled or not available. |
+| `gpt-image-1.5`, `gpt-image-1` | 2025-12-16, 2025-04-15 | GA, preview | Not used by default | Kept only if an existing workflow depends on them. |
+| `MAI-Image-2.6`, `MAI-Image-2.6-Flash` | 2026-07-31 | Preview | **alternative look** (candidate) | Second candidate in A/B critic runs; photoreal speed. Which MAI model becomes the `alternative` tier is decided by the evaluation gate (open question 3). Deployment `format` is `Microsoft`. |
+| `MAI-Image-2.5`, `-2.5-Flash`, `-2.5-Pro` | 2026-06-02, 2026-06-02, 2026-06-19 | Preview | Alternatives to evaluate | Older preview generation. |
+| `MAI-Image-2`, `MAI-Image-2e` | 2026-02-20, 2026-04-09 | Deprecated | Not used | Do not deploy. |
+| Catalog models (e.g. `FLUX.2-pro`, `FLUX-1.1-pro`) | 1 | GA | Optional | Stylistic range. Offered with `GlobalStandard` and `DataZoneStandard`. |
+
+**Observed facts (2026-09-29, subscription catalog, `az cognitiveservices model list`)**
+
+- Every image model above is offered with the **`GlobalStandard`** SKU only. No `DataZoneStandard` or `Standard` (regional) option exists for them. This drives [ADR-010](#20-architecture-decision-records) and risk R-8.
+- Regions checked: Sweden Central has all image models and MAI-Image. East US 2 and West US 3 have the four `gpt-image` models but no MAI-Image. East US, West US, West Central US and West Europe have MAI-Image but no `gpt-image` models. France Central, North Central US, South Central US and Central US have neither.
+- The agent reasoning model is `gpt-5.4` (2026-03-05, GA, `GlobalStandard`). The catalog does not state whether it accepts image input, so vision use in the critic must be confirmed before phase 2 (open question 11).
 
 Reasoning and vision models for agents and the critic are deployed separately in the same Foundry project.
 
@@ -343,7 +379,7 @@ overrides:
 | `edit_chain >= 3` | Force `precision` for every step. |
 | `text_in_image.required` and text longer than ~8 words | Generate without text; overlay text in code. |
 | Primary returns 429 / 5xx after retries | Next fallback; record `fallback_used=true`. |
-| Primary deployment region lacks model | Route to the fallback deployment in the EU Data Zone. |
+| Primary deployment region lacks the model or capacity | Route to the fallback deployment in a second region. Image models have no EU Data Zone option ([§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure)), so the second region must be chosen explicitly (open question 8). Until then, fall back to another tier in the same region. |
 | Request exceeds per-user budget | Downgrade to `standard`, or reject with a budget error when the brief demands precision. |
 
 ### 6.4 Version management
@@ -381,6 +417,7 @@ Each provider normalizes parameters (size, quality, background, mask, references
 | `variations` | Alternatives of an existing asset. |
 | `upscale` | Upscale an accepted asset. |
 | `compose_icons` | Place official icons on an asset. |
+| `overlay_text` | Render long or exact text onto an asset in code (see [§6.3](#63-routing-rules)). |
 | `get_job_status` | Poll an async job. |
 
 **`generate_image` input**
@@ -450,11 +487,25 @@ Each provider normalizes parameters (size, quality, background, mask, references
 }
 ```
 
+**`overlay_text` input** (proposed, [ADR-013](#20-architecture-decision-records))
+
+```json
+{
+  "image": "asset_id | url",
+  "text": "string (exact text, UTF-8)",
+  "font": { "family": "string (from the brand fonts in the brand container)", "size": 48, "weight": 700, "color": "#FFFFFF" },
+  "box": { "x": 0.08, "y": 0.10, "width": 0.50, "height": 0.30, "align": "left | center | right" }
+}
+```
+
+The tool returns a new asset linked to the source (`parent_asset_id`) and a sidecar that records the text and font. It fails with `TEXT_OVERFLOW` when the text does not fit the box.
+
 Contract rules:
 
 - Inputs never contain base64; images are passed as asset ids or URLs.
 - `tier` is required; model names are rejected.
-- Errors use MCP error results with codes: `BLOCKED_BY_SAFETY`, `BUDGET_EXCEEDED`, `UNSUPPORTED_SIZE`, `PROVIDER_UNAVAILABLE`, `INVALID_MASK`.
+- `brief_id` is the id of the job record that holds the brief ([§9.2](#92-job-record-cosmos-db-container-jobs-partition-key-tenantid)). The image agent creates the brief with its first tool call, and later calls in the same request pass the same `brief_id`.
+- Errors use MCP error results with codes: `BLOCKED_BY_SAFETY`, `BUDGET_EXCEEDED`, `UNSUPPORTED_SIZE`, `PROVIDER_UNAVAILABLE`, `INVALID_MASK`, `TEXT_OVERFLOW`.
 
 ### 7.2 External: Agent MCP facade (clients)
 
@@ -464,6 +515,8 @@ Contract rules:
 | `edit_visual` | Edit an existing image via the agent. |
 | `get_job_status` | Poll async work. |
 | `list_recent_visuals` | The caller's recent assets. |
+| `vary_visual` (phase 2) | Alternatives of an existing asset through the agent. |
+| `upscale_visual` (phase 2) | Upscale an accepted asset through the agent. |
 
 ```json
 {
@@ -478,6 +531,8 @@ Contract rules:
   }
 }
 ```
+
+The `tier` value `alternative` is not selectable by clients. The agent uses it internally in A/B mode ([§8.5](#85-critic-loop)).
 
 The facade calls the agent through the Responses API on the Foundry project endpoint and returns asset URLs, job ids and the agent's rationale.
 
@@ -643,6 +698,12 @@ icons/
 }
 ```
 
+**Indexing and identity notes**
+
+- The job record `id` is also the `brief_id` used by the tools ([§7.1](#71-internal-image-mcp-server-agents-only)). The brief is stored inside the record (`brief`).
+- `list_recent_visuals` queries by user, but the partition key is `/tenantId`. The container has a composite index on `/userId` (ascending) and `/createdAt` (descending), so the query stays within one partition.
+- `tenantId` identifies the consuming organization or team, not the Microsoft Entra tenant. In the first version there is a single value. It is present in every key and path so that adding tenants needs no schema change.
+
 ### 9.3 Sidecar (next to every asset)
 
 Contains the job id, brief, final prompt, tier, provider, deployment, model version, icon sources, safety verdict, and provenance/C2PA info where the model supplies it. The same file is written next to the image in the VS Code workspace.
@@ -671,6 +732,7 @@ Contains the job id, brief, final prompt, tier, provider, deployment, model vers
 | Image MCP → model deployments | Managed identity, Cognitive Services / Foundry user role. No keys. |
 | Image MCP → Storage, Cosmos, Service Bus, Content Safety | Managed identity with data-plane RBAC. |
 | Image MCP → OpenAI (gated) | API key in Key Vault, read via managed identity. |
+| GitHub Actions → Azure | OIDC federation from a Microsoft Entra app registration, with one federated credential per GitHub environment (`dev`, `test`, `prod`). No secret is stored in GitHub. This repository uses **immutable OIDC subject claims**, so the subject carries numeric IDs: `repo:<owner>@<owner-id>/<repo>@<repo-id>:environment:<name>`. The comparison is case-sensitive, so the environment name in the workflow and the credential must match exactly. |
 
 Agents that are published get their own identity, distinct from the project's managed identity. Permissions must be re-granted to the agent identity after publishing.
 
@@ -687,6 +749,7 @@ Agents that are published get their own identity, distinct from the project's ma
 | Image MCP MI | Key Vault Secrets User | Key Vault (only if external provider enabled) |
 | Developers | Custom `ImageStudio.User` app role | Facade app registration |
 | Platform team | Contributor | Resource group (via PIM) |
+| Deployment identity (GitHub Actions) | Contributor and User Access Administrator | Subscription. Limit the second role with a condition to the roles that the templates assign (data-plane and pull roles, none of Owner, User Access Administrator or RBAC Administrator). The templates run at subscription scope and create the resource group. |
 
 ### 10.3 Network
 
@@ -731,6 +794,8 @@ Portable skills in the open `SKILL.md` format, shared by the Foundry agents (ser
 | `image-generate` | Prompt structure, exploration strategy, review checklist, retry and escalation rules. |
 | `image-edit` | Edit classification, masks, keep-lists, one change per call, drift checks. |
 | `microsoft-product-icons` | Finds official icons (`find_icon.py`) and composites them unchanged (`compose.py`). |
+
+**Status:** none of the four product skills exists yet (implementation plan task P0.6). The repository currently ships one process skill, `write-document`, which applies the documentation style and is not part of the image system.
 
 **Brief schema (summary)**
 
@@ -845,9 +910,10 @@ Dashboards: the Foundry Agent Monitoring Dashboard for agent runs, token usage a
 
 - **Retries:** exponential backoff with jitter on 429/5xx (max 3), honoring `retry-after`.
 - **Fallback:** per-tier fallback chain ([§6.2](#62-tier-routing-table)); circuit breaker per deployment (open after 5 consecutive failures, half-open after 60 s).
-- **Capacity:** separate deployments per tier to isolate quotas; request quota increases for the standard tier first; consider provisioned throughput (PTU) once volume is predictable.
-- **Multi-region:** primary in an EU region (e.g. Sweden Central, if the models are available there) with fallback deployments in an EU Data Zone; the router is region-aware.
-- **Timeouts:** facade 60 s for sync calls; anything expected to exceed it (precision, batches, count > 4) is automatically async.
+- **Capacity:** separate deployments per tier to isolate quotas; request quota increases for the standard tier first; consider provisioned throughput (PTU) once volume is predictable. Observed default quota (2026-09-29, Sweden Central, `GlobalStandard`): `gpt-image-1-mini` 4, `gpt-image-2.5-flare` 2, `gpt-image-2.5-sunburst` 2, `gpt-image-2` 2, `gpt-5.4` 1000. The image quotas are too low for batch work, so request increases before load tests.
+- **Multi-region:** primary in Sweden Central ([ADR-010](#20-architecture-decision-records)). Image models have no EU Data Zone deployment, and the only other regions observed with the `gpt-image` models are in the US (East US 2, West US 3). A fallback region is therefore an explicit residency decision (open question 8). Until it is made, the router falls back to another tier in the same region and never to another region.
+- **Timeouts:** facade 60 s for sync calls; the agent run has a 50 s budget so that the facade can still return a job id before its own limit; anything expected to exceed it (precision, batches, count > 4) is automatically async.
+- **Backup and recovery (as configured in the templates):** Blob soft delete and container soft delete for 7 days; Key Vault soft delete for 30 days with purge protection; App Configuration soft delete for 7 days; Cosmos DB with its default periodic backup (enable continuous backup for `prod` if the recovery target requires it). RPO and RTO are not defined (open question 9).
 - **Idempotency:** clients send an `Idempotency-Key`; duplicate submissions return the existing job.
 - **Back-pressure:** per-deployment concurrency semaphore in workers; queue-based load leveling.
 
@@ -879,13 +945,33 @@ Always check current prices on the Azure pricing page. The OpenAI list price for
 | `test` | Integration and evaluation gate | Private endpoints | All tiers, candidate versions |
 | `prod` | Production | Private endpoints, internal APIM | All tiers, pinned versions |
 
+Only `dev` exists today. The GitHub environments are named `dev`, `test` and `prod`, matching the environment types in resource names.
+
 ### 17.2 Infrastructure as code
 
-- **Azure Developer CLI (`azd`)** with **Bicep** modules: Foundry resource and project, model deployments, Container Apps environment, APIM, Storage, Cosmos DB, Service Bus, Key Vault, App Configuration, Content Safety, monitoring, private endpoints.
+- **Bicep** in `.infrastructure/` ([ADR-011](#20-architecture-decision-records)): `main.bicep` at subscription scope (it creates the resource group), one module per service group under `modules/`, and one `main.<env>.bicepparam` file per environment. It is deployed with `az deployment sub create`. `azd` is not used, and there is no `azure.yaml`.
+- Services in the templates: Foundry resource, project and model deployments; Content Safety; Storage; Cosmos DB; Key Vault; App Configuration; Azure AI Search; Container Registry; Container Apps environment and apps; API Management; Log Analytics and Application Insights; managed identities; role assignments. Service Bus and the worker job are behind `enableAsyncJobs`.
+- **Not implemented yet:** virtual network, private endpoints, Azure Firewall, the API Management policy and products, and the `test` and `prod` parameter files. The `dev` environment uses public network access with Entra authentication.
 - Agent definitions (instructions, tools, model) stored as YAML in `agents/` and applied by a deployment script through the Foundry SDK.
 - Toolbox definitions in `toolboxes/`.
 
+**Naming ([ADR-012](#20-architecture-decision-records)).** Environment-specific names contain the environment type (`dev`, `test`, `prod`) and a 13-character unique token, `toLower(uniqueString(subscription().id, environmentName, location))`. Storage accounts and container registries use a form without hyphens (`stdev<token>`, `crdev<token>`). Others use `<prefix>-<env>-<token>` (for example `kv-dev-<token>`, `cosmos-dev-<token>`). The resource group is `rg-image-studio-<env>`. The token is deterministic, so recreating an environment in the same subscription and region reuses the same names.
+
+**Lifecycle and soft delete ([ADR-014](#20-architecture-decision-records)).** Deleting a resource group leaves soft-deleted Foundry, Content Safety, App Configuration, API Management and Key Vault resources whose names stay reserved. A new deployment with the same name fails until they are purged (or, for a Key Vault with purge protection, recovered). The `infra-delete` workflow purges what can be purged, and the `infra-deploy` workflow recovers a soft-deleted Key Vault before it deploys. Purge protection cannot be turned off once enabled, so enable it for `prod` only unless a reason exists for `dev` and `test`.
+
 ### 17.3 CI/CD (GitHub Actions, OIDC federation to Azure)
+
+**Infrastructure (implemented).** Three workflows in `.github/workflows/`, all started manually (`workflow_dispatch`). Each runs in the GitHub environment of the same name, so required reviewers can gate it, and each signs in with the `environment:<name>` federated credential.
+
+| Workflow | Purpose |
+|---|---|
+| `infra-validate.yml` | Lint and build the templates and the parameter file, warn about unresolved placeholders, and optionally run what-if. |
+| `infra-deploy.yml` | Check repository variables and placeholders, run what-if, recover a soft-deleted Key Vault, and deploy. A preview-only option skips the deployment. |
+| `infra-delete.yml` | Confirm by typing the resource group name, cancel a running deployment, delete the resource group, and purge soft-deleted resources. It tolerates resources that are already gone. A dry-run option lists what would be deleted. |
+
+The subscription, tenant, client, region and publisher e-mail come from repository variables (`AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_LOCATION`, `APIM_PUBLISHER_EMAIL`).
+
+**Application (target, not implemented).**
 
 ```mermaid
 flowchart LR
@@ -905,40 +991,49 @@ flowchart LR
 
 ## 18. Repository structure
 
+Items marked *(planned)* do not exist yet.
+
 ```text
 aidevme-foundry-image-studio/
-├── ARCHITECTURE.md
 ├── README.md
-├── azure.yaml                      # azd project
-├── infra/                          # Bicep modules + main.bicep, per-env parameters
-├── agents/
-│   ├── orchestrator/agent.yaml     # instructions, model, connected agents
-│   └── image/agent.yaml
-├── toolboxes/
-│   └── image-studio.yaml           # Image MCP + icon tools + knowledge
+├── CONTRIBUTING.md
+├── CLAUDE.md
 ├── src/
-│   ├── image-mcp/                  # Image MCP server, router, providers, workers
-│   ├── facade-mcp/                 # Agent MCP facade
-│   ├── icon-service/               # find + compose (wraps skill scripts)
-│   ├── vscode-proxy/               # @aidevme/image-studio-mcp (stdio)
-│   └── shared/                     # contracts, telemetry, auth helpers
-├── skills/
+│   ├── image-mcp/                  # Image MCP server, router, providers, workers (stub)
+│   ├── facade-mcp/                 # Agent MCP facade (stub)
+│   ├── icon-service/               # find + compose (wraps skill scripts) (stub)
+│   ├── vscode-proxy/               # @aidevme/image-studio-mcp (stdio) (stub)
+│   └── shared/                     # contracts, telemetry, auth helpers (stub)
+├── agents/                         # (planned) Foundry agent definitions
+│   ├── orchestrator/agent.yaml
+│   └── image/agent.yaml
+├── toolboxes/                      # (planned)
+│   └── image-studio.yaml           # Image MCP + icon tools + knowledge
+├── skills/                         # (planned) the four product skills
 │   ├── image-brief/
 │   ├── image-generate/
 │   ├── image-edit/
 │   └── microsoft-product-icons/
 ├── config/
-│   └── routing.yaml                # tier → deployment table (seed for App Configuration)
-├── evals/
-│   ├── golden-set/                 # briefs + reference expectations
+│   └── routing.yaml                # (planned) tier -> deployment table, seed for App Configuration
+├── evals/                          # (planned)
+│   ├── golden-set/
 │   └── runners/
-├── brand/                          # sample brand guidelines for grounding
+├── brand/                          # (planned) sample brand guidelines for grounding
+├── assets/                         # repository images (social preview)
 ├── docs/
-│   ├── adr/                        # ADR-001 ... ADR-00n
-│   └── runbooks/
-└── .github/
-    ├── workflows/
-    └── skills/                     # copies/symlinks for Copilot in this repo
+│   ├── index.md
+│   ├── aidevme-foundry-image-studio/   # ARCHITECTURE, IMPLEMENTATION, INFRASTRUCTURE, SPECIFICATION
+│   ├── claude/                     # agents, agent-memory, skills documentation
+│   ├── templates/                  # document style
+│   ├── adr/                        # (planned) ADR-001 ... ADR-014
+│   └── runbooks/                   # (planned)
+├── .infrastructure/                # Bicep: main.bicep, modules/, main.<env>.bicepparam, bicepconfig.json
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── workflows/                  # infra-validate.yml, infra-deploy.yml, infra-delete.yml
+│   └── skills/                     # (planned) copies for Copilot in this repo
+└── .claude/                        # subagents, agent memory, and the write-document skill
 ```
 
 ---
@@ -968,8 +1063,13 @@ aidevme-foundry-image-studio/
 | **ADR-007** | Official Microsoft icons are composited, never generated. | Accepted |
 | **ADR-008** | Prompt agents first; move the image agent to a hosted agent (Agent Framework) for the critic loop in phase 2. | Proposed |
 | **ADR-009** | Images move as Blob references with short-lived user-delegation SAS; no base64 in agent context. | Accepted |
+| **ADR-010** | Deploy to Sweden Central. It is the only region checked (2026-09-29) that offers all `gpt-image` models and MAI-Image. Consequence: image models are `GlobalStandard` only, so EU-only processing cannot be guaranteed (risk R-8). | Accepted |
+| **ADR-011** | Provision with Bicep (subscription-scope `main.bicep` in `.infrastructure/`) deployed by manually started GitHub Actions workflows. `azd` is not used. | Accepted |
+| **ADR-012** | Include the environment type and a deterministic unique token in resource names. | Accepted |
+| **ADR-013** | Add an `overlay_text` tool so long or exact text is rendered in code, not by the image model. | Proposed |
+| **ADR-014** | Key Vault uses purge protection, and the deploy workflow recovers a soft-deleted vault. Revisit for `dev` and `test`, where purge protection blocks clean recreation. | Accepted, to be revisited |
 
-Full ADRs live in `docs/adr/`.
+Full ADRs will live in `docs/adr/`. The folder does not exist yet (implementation plan task P0.2.1).
 
 ---
 
@@ -985,17 +1085,28 @@ Full ADRs live in `docs/adr/`.
 | Quota limits for image models | Throttling | High in early phase | Separate deployments per tier; async queue; quota requests; PTU later. |
 | Cost overrun from retries/precision tier | Budget | Medium | Budgets, alerts, draft-first exploration. |
 | In-image text errors | Rework | Medium | Precision tier for text; overlay long text in code; OCR check. |
+| **R-8** Image models are `GlobalStandard` only, so prompts and images may be processed outside the EU | Residency and contract conflict for EU clients | High (observed) | Decide the policy (open question 8): document the processing location, obtain client acceptance, or restrict to text-free briefs. Re-check the catalog for Data Zone options before each rollout. |
+| Azure AI Search `basic` failed in Sweden Central with "insufficient capacity in region" (2026-09-29, after 39 min) | Blocks the whole deployment | Medium (observed) | Fail fast with a pre-check, use another SKU, or place Search in another region. Search stays a required service. |
+| Foundry and Content Safety accounts stayed in `Creating` for over 45 minutes (2026-09-29) | Slow or stuck deployments | Medium (observed) | Cancel and retry, check Azure status, allow long timeouts, and purge failed accounts before redeploying. |
+| Soft-deleted resources reserve names after a delete | Redeploy fails on name conflict | High | Purge (delete workflow), recover Key Vault (deploy workflow). See [§17.2](#172-infrastructure-as-code). |
+| Default quota for image models is 2 to 4 units | Throttling under load | High (observed) | Request quota early. See [§15](#15-reliability-scaling-and-performance). |
 | Trademark or likeness issues | Legal | Low–medium | Icon policy; people policy; brand QA; human approval for external use. |
 
 ### 21.2 Open questions
 
-1. Which Azure region is primary, given current availability of gpt-image-2.5 models and MAI-Image?
+1. **Resolved:** Sweden Central is the primary region ([ADR-010](#20-architecture-decision-records)).
 2. Is the orchestrator's multi-agent routing built with connected agents, Foundry workflows or Agent Framework workflows?
 3. Should MAI-Image or a catalog model (FLUX) be the `alternative` tier after the first evals?
 4. Which brand guidelines are the grounding source (SharePoint, repo, DAM)?
 5. Retention periods per tenant and whether immutability is required.
 6. Is an approval workflow needed from phase 1 for any external publication?
 7. Which tenants, if any, may use the external OpenAI provider?
+8. **Data residency:** is processing under the `GlobalStandard` SKU acceptable for EU clients, and which second region (if any) may host a fallback? ([§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure))
+9. What are the RPO and RTO for `prod`, and does Cosmos DB need continuous backup?
+10. Does API Management (at the chosen SKU) support the streamable HTTP transport that MCP uses, and which SKU is required for virtual network integration? Neither is verified.
+11. Does `gpt-5.4` (or the chosen reasoning model) accept image input for the critic step? The catalog does not say.
+12. Which SKU and region should Azure AI Search use, given the capacity failure in Sweden Central?
+13. Which MAI-Image model (2.6, 2.6-Flash, 2.5 family) becomes the `alternative` tier?
 
 ---
 

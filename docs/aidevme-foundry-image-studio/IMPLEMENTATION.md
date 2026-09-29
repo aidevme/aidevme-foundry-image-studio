@@ -5,7 +5,7 @@
 | **Document Title** | Implementation plan |
 | **Document Location** | `docs/aidevme-foundry-image-studio/IMPLEMENTATION.md` |
 | **Document Description** | Detailed, ordered implementation list for AIDevMe Foundry Image Studio, derived from the architecture document. It is intended for the engineers who build the system and for the agents that assist them. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-29 |
 
 ## Introduction
@@ -16,7 +16,7 @@ Read this document to plan a sprint, to find what blocks a task, or to check whe
 
 ## Current state
 
-The repository contains no source code, no infrastructure code, and no build system. It contains only documentation, issue templates, Claude Code subagents, and one skill (see [CLAUDE.md](../../CLAUDE.md)). Every task below therefore starts from an empty codebase.
+The repository contains documentation, issue templates, Claude Code subagents and one skill, README stubs for the services under `src/`, and the infrastructure code: Bicep templates in `.infrastructure/` and three manually started GitHub Actions workflows in `.github/workflows/`. The infrastructure code lints and compiles. Its first deployment to `dev` had not completed when this document was updated (see [INFRASTRUCTURE.md](INFRASTRUCTURE.md)). There is no application code and no build system.
 
 ## How to read this plan
 
@@ -45,7 +45,7 @@ The sizes are planning estimates. Confirm them against live measurements after t
 
 | Phase | Name | Architecture reference | Exit criteria |
 | --- | --- | --- | --- |
-| 0 | Foundations | §17, §18, §19 | `azd up` succeeds in `dev`, and one image is generated through the SDK |
+| 0 | Foundations | §17, §18, §19 | The `infra-deploy` workflow succeeds in `dev`, and one image is generated through the SDK |
 | 1 | Image agent MVP | §4, §5, §6, §7, §13 | Developers generate and edit images from VS Code, and jobs are traceable |
 | 2 | Quality and orchestration | §8, §14, §15 | The evaluation gate runs in CI, fallback is tested, and icons compose correctly |
 | 3 | More agents and channels | §5, §11 | The social-post bundle workflow runs in production |
@@ -57,7 +57,7 @@ The architecture leaves these questions open (§21.2). Record each decision as a
 
 | ID | Decision | Blocks | Recommended default |
 | --- | --- | --- | --- |
-| D1 | Primary Azure region, based on current availability of the gpt-image-2.5 models and MAI-Image | P0.3.1, P0.4.1 | An EU region that hosts the standard-tier model. Verify in the Foundry model catalog. |
+| D1 | Primary Azure region | P0.3.1, P0.4.1 | **Decided: Sweden Central** (ADR-010, architecture v0.2). It is the only region checked on 2026-09-29 that offers all `gpt-image` models and MAI-Image. |
 | D2 | Implementation language and runtime for the MCP servers, facade, and proxy | P0.1.2 | TypeScript on Node.js for all services and the proxy (the proxy is an npm package). Python only for the icon scripts. |
 | D3 | Orchestration mechanism: connected agents, Foundry workflows, or Agent Framework workflows | P2.4.1 | Connected agents for the first version. Revisit if workflows need loops or parallelism. |
 | D4 | Source of brand guidelines: SharePoint, repository, or DAM | P1.7.1 | Repository folder `brand/`, indexed into Foundry IQ. |
@@ -68,7 +68,7 @@ The architecture leaves these questions open (§21.2). Record each decision as a
 
 ## Gaps in the architecture document
 
-The following items are used in the architecture but are not specified. Resolve each one before the related task starts, and update the architecture document.
+These items were used in the architecture (v0.1) without a specification. **G-1 to G-7 are resolved in ARCHITECTURE.md v0.2**, and the table is kept for traceability. Tasks that mention a gap use the resolution in the architecture document. New gaps found later (data residency, quota, soft delete, and others) are listed in the change table at the top of [ARCHITECTURE.md](ARCHITECTURE.md) and in its section 21.
 
 | ID | Gap | Affects | Proposed resolution |
 | --- | --- | --- | --- |
@@ -88,7 +88,7 @@ The following items are used in the architecture but are not specified. Resolve 
 
 | ID | Task | Deliverable and details | Depends on | Size | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| P0.1.1 | Create the directory layout from §18 | Directories `infra/`, `agents/orchestrator/`, `agents/image/`, `toolboxes/`, `src/image-mcp/`, `src/facade-mcp/`, `src/icon-service/`, `src/shared/`, `src/vscode-proxy/`, `skills/`, `config/`, `evals/golden-set/`, `evals/runners/`, `brand/`, `docs/adr/`, `docs/runbooks/`, `.github/workflows/`. Each directory contains a `README.md` that states its purpose. Fix gap G-5. | D2 | S | The layout matches §18, and `docs/index.md` lists the new documents. |
+| P0.1.1 | Create the directory layout from §18 | Directories `.infrastructure/`, `agents/orchestrator/`, `agents/image/`, `toolboxes/`, `src/image-mcp/`, `src/facade-mcp/`, `src/icon-service/`, `src/shared/`, `src/vscode-proxy/`, `skills/`, `config/`, `evals/golden-set/`, `evals/runners/`, `brand/`, `docs/adr/`, `docs/runbooks/`, `.github/workflows/`. Each directory contains a `README.md` that states its purpose. Fix gap G-5. | D2 | S | The layout matches §18, and `docs/index.md` lists the new documents. |
 | P0.1.2 | Initialize the toolchain | Workspace manifest, TypeScript configuration, linter, formatter, test runner, `.editorconfig`, and `.gitignore` (which excludes `.env`, `node_modules`, `.azure/`, and build output). | D2 | S | `npm run lint`, `npm run build`, and `npm test` succeed on an empty workspace. |
 | P0.1.3 | Add pre-commit and secret scanning | A pre-commit hook for lint and format, and a secret scanner (for example gitleaks) with a repository baseline. | P0.1.2 | S | A commit that contains a fake key is rejected locally. |
 | P0.1.4 | Update `CLAUDE.md` | Add real build, lint, and test commands, and the architecture summary, as the file requires. | P0.1.2 | S | `CLAUDE.md` no longer states that no build system exists. |
@@ -99,20 +99,20 @@ The following items are used in the architecture but are not specified. Resolve 
 | --- | --- | --- | --- | --- | --- |
 | P0.2.1 | Write ADR-001 to ADR-009 | One file per decision in `docs/adr/`, using the decisions in §20. Include context, decision, consequences, and status. | P0.1.1 | M | Nine files exist, and the statuses match §20. |
 | P0.2.2 | Record decisions D1 to D8 | One ADR per decision (ADR-010 onward), or an explicit "deferred" entry with a due phase. | P0.2.1 | S | Every decision in the table above has a status. |
-| P0.2.3 | Update the architecture document | Resolve gaps G-1 to G-7 in the architecture, and raise its version. | P0.2.2 | S | The architecture document contains no unresolved gap. |
+| P0.2.3 | Update the architecture document | Resolve gaps G-1 to G-7 in the architecture, and raise its version. **Done in v0.2.** Keep it current as decisions are made. | P0.2.2 | S | The architecture document contains no unresolved gap. |
 
 ### P0.3 Infrastructure for the `dev` environment
 
-All modules use Bicep and are deployed with Azure Developer CLI (`azd`). Every resource uses managed identity and data-plane RBAC, with no keys.
+All modules use Bicep and are deployed with `az deployment sub create` from manually started GitHub Actions workflows (ADR-011). `azd` is not used. Every resource uses managed identity and data-plane RBAC, with no keys. The templates are written in `.infrastructure/` and compile cleanly. They had not completed a deployment when this document was updated.
 
 | ID | Task | Deliverable and details | Depends on | Size | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| P0.3.1 | Foundry resource and project | `infra/modules/foundry.bicep`: Foundry resource, project, and region from D1. Parameter file for `dev`. | D1, P0.1.1 | M | `azd provision` creates the project. |
-| P0.3.2 | Model deployments | `infra/modules/models.bicep`: deployments for draft (`img-draft-gpt-image-1-mini`) and standard (`img-std-gpt-image-2-5-flare`), plus one reasoning and vision model for the agents. Pinned versions, upgrade policy set to manual (§6.4). | P0.3.1, P0.4.1 | M | Each deployment answers a smoke request. |
-| P0.3.3 | Data services | `infra/modules/data.bicep`: Storage account (containers `assets`, `inputs`, `brand`, `icons`), Cosmos DB (container `jobs`, partition key `/tenantId`), Key Vault, and App Configuration. Lifecycle rules from §9.1. | P0.3.1 | M | Containers exist, the lifecycle policy is applied, and public access is off for blobs. |
-| P0.3.4 | Safety and monitoring | `infra/modules/monitoring.bicep`: Log Analytics, Application Insights, Azure AI Content Safety. | P0.3.1 | S | Telemetry from a test app appears in Application Insights. |
-| P0.3.5 | Identities and RBAC | `infra/modules/identity.bicep`: user-assigned managed identities for the facade and the Image MCP server, with the role assignments listed in §10.2. | P0.3.1, P0.3.3, P0.3.4 | M | The role assignments match §10.2, and no assignment is broader than listed. |
-| P0.3.6 | `azd` project | `azure.yaml`, `infra/main.bicep`, and per-environment parameter files. | P0.3.1 to P0.3.5 | S | `azd up` completes from a clean subscription in `dev`. |
+| P0.3.1 | Foundry resource and project | `.infrastructure/modules/foundry.bicep`: Foundry resource, project, and region from D1. Parameter file for `dev`. | D1, P0.1.1 | M | The `infra-deploy` workflow creates the project. |
+| P0.3.2 | Model deployments | `.infrastructure/modules/models.bicep`: deployments for draft (`img-draft-gpt-image-1-mini`) and standard (`img-std-gpt-image-2-5-flare`), plus one reasoning and vision model for the agents. Pinned versions, upgrade policy set to manual (§6.4). | P0.3.1, P0.4.1 | M | Each deployment answers a smoke request. |
+| P0.3.3 | Data services | `.infrastructure/modules/data.bicep`: Storage account (containers `assets`, `inputs`, `brand`, `icons`), Cosmos DB (container `jobs`, partition key `/tenantId`), Key Vault, and App Configuration. Lifecycle rules from §9.1. | P0.3.1 | M | Containers exist, the lifecycle policy is applied, and public access is off for blobs. |
+| P0.3.4 | Safety and monitoring | `.infrastructure/modules/monitoring.bicep`: Log Analytics, Application Insights, Azure AI Content Safety. | P0.3.1 | S | Telemetry from a test app appears in Application Insights. |
+| P0.3.5 | Identities and RBAC | `.infrastructure/modules/identity.bicep`: user-assigned managed identities for the facade and the Image MCP server, with the role assignments listed in §10.2. | P0.3.1, P0.3.3, P0.3.4 | M | The role assignments match §10.2, and no assignment is broader than listed. |
+| P0.3.6 | Deployment entry point | `.infrastructure/main.bicep` (subscription scope), `main.<env>.bicepparam` per environment, and the naming rules in ARCHITECTURE.md section 17.2. Only `dev` exists. | P0.3.1 to P0.3.5 | S | The `infra-deploy` workflow completes from a clean subscription in `dev`. |
 
 ### P0.4 Access and quota
 
@@ -125,9 +125,9 @@ All modules use Bicep and are deployed with Azure Developer CLI (`azd`). Every r
 
 | ID | Task | Deliverable and details | Depends on | Size | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| P0.5.1 | Pull request workflow | `.github/workflows/ci.yml`: lint, unit tests, Bicep build and `what-if`, secret scan. | P0.1.2, P0.3.6 | M | A pull request with a lint error fails the workflow. |
-| P0.5.2 | Azure federation | OIDC federation between GitHub Actions and Azure, with a role scoped to the `dev` resource group. | P0.3.6 | S | The workflow authenticates without stored secrets. |
-| P0.5.3 | Deploy workflow for `dev` | `.github/workflows/deploy-dev.yml`: runs `azd deploy` on merge to `main`. | P0.5.1, P0.5.2 | S | A merge deploys to `dev`. |
+| P0.5.1 | Validate workflow | `.github/workflows/infra-validate.yml` (manual): lint, build, placeholder check, optional what-if. Application lint, unit tests and secret scan are added when code exists. | P0.1.2, P0.3.6 | M | Running the workflow with a lint error fails it. |
+| P0.5.2 | Azure federation | OIDC federation between GitHub Actions and Azure: an app registration with one federated credential per GitHub environment (immutable subject format, see ARCHITECTURE.md section 10.1), and the roles in section 10.2. | P0.3.6 | S | The workflow authenticates without stored secrets. |
+| P0.5.3 | Deploy and delete workflows | `.github/workflows/infra-deploy.yml` and `infra-delete.yml` (both manual, run in the GitHub environment). Delete tolerates missing resources and purges soft-deleted ones. | P0.5.1, P0.5.2 | S | A deploy creates `dev`, and a delete followed by a deploy succeeds. |
 
 ### P0.6 Skills
 
@@ -155,7 +155,7 @@ All modules use Bicep and are deployed with Azure Developer CLI (`azd`). Every r
 | P0.8.1 | Generate one image through the SDK | A script in `src/image-mcp/spikes/` that calls the draft and standard deployments with Entra authentication. | P0.3.2, P0.7.4 | S | One image per tier is saved locally. |
 | P0.8.2 | Record the latency baseline | Measure 20 requests per tier and record p50 and p95 in `docs/runbooks/baseline.md`. | P0.8.1 | S | The baseline is documented and is used for the alerts in `P1.12.3`. |
 
-**Phase 0 exit check:** `azd up` succeeds in `dev`, the pull request workflow is green, and `P0.8.1` produces an image.
+**Phase 0 exit check:** the `infra-deploy` workflow succeeds in `dev`, the validate workflow is green, and `P0.8.1` produces an image.
 
 ## Phase 1: Image agent MVP
 
@@ -242,7 +242,7 @@ All modules use Bicep and are deployed with Azure Developer CLI (`azd`). Every r
 
 | ID | Task | Deliverable and details | Depends on | Size | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| P1.10.1 | APIM instance | `infra/modules/apim.bicep`: the AI gateway with JWT validation for the facade app registration and a product per consumer group. | P1.9.3 | M | A call without a token returns 401, and a call with a valid token reaches the facade. |
+| P1.10.1 | APIM instance | `.infrastructure/modules/apim.bicep`: the AI gateway with JWT validation for the facade app registration and a product per consumer group. | P1.9.3 | M | A call without a token returns 401, and a call with a valid token reaches the facade. |
 | P1.10.2 | Quotas and metering | Per-subscription quotas and rate limits, and metering per user. | P1.10.1 | M | A caller who exceeds the quota receives a 429. |
 | P1.10.3 | App roles | Custom `ImageStudio.User` app role on the facade app registration. | P1.10.1 | S | Only holders of the role can call the facade. |
 
@@ -283,7 +283,7 @@ All modules use Bicep and are deployed with Azure Developer CLI (`azd`). Every r
 
 | ID | Task | Deliverable and details | Depends on | Size | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| P2.1.1 | Service Bus | `infra/modules/servicebus.bicep`: namespace, queue with sessions per job, and a monitored dead-letter queue. | P0.3.1 | M | A message round-trips, and dead-lettered messages are visible. |
+| P2.1.1 | Service Bus | `.infrastructure/modules/servicebus.bicep`: namespace, queue with sessions per job, and a monitored dead-letter queue. | P0.3.1 | M | A message round-trips, and dead-lettered messages are visible. |
 | P2.1.2 | Async submission | `generate_image` and `edit_image` accept `async=true`, create a queued job, enqueue work items, and return the job identifier. Requests that exceed 60 seconds, precision jobs, and `count > 4` become asynchronous automatically (§15). | P2.1.1, P1.5.2 | M | The tool returns a job identifier without waiting. |
 | P2.1.3 | Worker | A Container Apps job that receives work items, routes, generates, checks safety, stores, and updates the job state. | P2.1.2 | L | A batch of 50 items completes, and failed items report partial success. |
 | P2.1.4 | Scaling and back-pressure | KEDA scaling on queue length, and a per-deployment concurrency semaphore. | P2.1.3 | M | Load tests show no 429 storm, and workers scale up and down with the queue. |
@@ -345,7 +345,7 @@ All modules use Bicep and are deployed with Azure Developer CLI (`azd`). Every r
 
 | ID | Task | Deliverable and details | Depends on | Size | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| P2.8.1 | `test` environment | Parameter file and deployment with private endpoints, all tiers, and candidate versions. | P2.2.5, P0.3.6 | L | `azd up` succeeds for `test`. |
+| P2.8.1 | `test` environment | Parameter file `main.test.bicepparam`, a `test` GitHub environment with its federated credential, and deployment with private endpoints, all tiers, and candidate versions. | P2.2.5, P0.3.6 | L | The `infra-deploy` workflow succeeds for `test`. |
 | P2.8.2 | Delivery pipeline | Merge deploys to `test`, runs the evaluation gate, requires manual approval, then deploys to `prod` (§17.3). Model and routing changes go through pull requests. | P2.7.3, P2.8.1 | M | A failing gate blocks the release and reports the result. |
 | P2.8.3 | Proxy publishing | Publish the npm package from tagged releases. | P1.11.1 | S | A tag publishes a package version. |
 | P2.8.4 | Fallback tests | Force throttling and regional gaps in `test` and verify the fallback chain and circuit breaker. | P1.2.4, P2.8.1 | M | Each row of §6.3 is exercised, and `fallback_used` is correct. |
