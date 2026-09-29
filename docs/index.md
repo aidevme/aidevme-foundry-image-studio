@@ -49,3 +49,13 @@ Persistent project memory of each subagent, stored in [.claude/agent-memory/](..
 | [reviewer memory](claude/agent-memory/reviewer.md) | What the reviewer records, current contents, and how to reset it |
 | [researcher memory](claude/agent-memory/researcher.md) | What the researcher records, current contents, and how to reset it |
 | [documenter memory](claude/agent-memory/documenter.md) | What the documenter records, current contents, and how to reset it |
+
+## aidevme-foundry-image-studio
+
+Design and delivery documents for the system.
+
+| Document | Purpose |
+| --- | --- |
+| [Architecture](aidevme-foundry-image-studio/ARCHITECTURE.md) | Proposed architecture: components, agents, model strategy, tool contracts, security, and roadmap |
+| [Implementation plan](aidevme-foundry-image-studio/IMPLEMENTATION.md) | Ordered work packages, tasks, dependencies, and acceptance criteria derived from the architecture |
+| [Infrastructure provisioning with Bicep](aidevme-foundry-image-studio/INFRASTRUCTURE.md) | How to provision all Azure services with Bicep and Azure Developer CLI: modules, deployment, verification, and troubleshooting |

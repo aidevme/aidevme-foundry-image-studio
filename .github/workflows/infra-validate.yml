@@ -1,0 +1,73 @@
+name: Infrastructure validate
+
+# Runs on pull requests that change the infrastructure code.
+# Lints and compiles the Bicep templates, checks for unresolved placeholders,
+# and (when Azure sign-in is configured) previews the changes with what-if.
+
+on:
+  pull_request:
+    paths:
+      - '.infrastructure/**'
+      - '.github/workflows/infra-*.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: infra-validate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ENVIRONMENT: dev
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Lint Bicep
+        run: az bicep lint --file .infrastructure/main.bicep
+
+      - name: Build Bicep
+        run: az bicep build --file .infrastructure/main.bicep --stdout > /dev/null
+
+      - name: Build parameter file
+        run: az bicep build-params --file .infrastructure/main.${ENVIRONMENT}.bicepparam --stdout > /dev/null
+        env:
+          AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'westeurope' }}
+          APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL || 'platform@example.com' }}
+
+      - name: Report unresolved placeholders
+        run: |
+          if grep -nE "<[a-z][a-z0-9-]*>" ".infrastructure/main.${ENVIRONMENT}.bicepparam"; then
+            echo "::warning::The parameter file contains unresolved placeholders. The deploy workflow refuses to run until they are replaced."
+          fi
+
+  what-if:
+    needs: validate
+    runs-on: ubuntu-latest
+    # Fork pull requests and repositories without Azure sign-in configured skip this job.
+    if: ${{ vars.AZURE_CLIENT_ID != '' && vars.AZURE_TENANT_ID != '' && vars.AZURE_SUBSCRIPTION_ID != '' && vars.AZURE_LOCATION != '' && github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Sign in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-if
+        run: |
+          az deployment sub what-if \
+            --location "$AZURE_LOCATION" \
+            --name "image-studio-${ENVIRONMENT}" \
+            --template-file .infrastructure/main.bicep \
+            --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"

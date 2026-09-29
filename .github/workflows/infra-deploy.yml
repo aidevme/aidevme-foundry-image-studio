@@ -1,0 +1,118 @@
+name: Infrastructure deploy
+
+# Deploys the Bicep templates in .infrastructure/ to Azure.
+#   - Push to main (infrastructure changes): deploys to dev.
+#   - Manual run: choose the environment and whether to only preview (what-if).
+#
+# The Azure subscription is read from the AZURE_SUBSCRIPTION_ID repository variable.
+# Sign-in uses OpenID Connect, so no secret is stored in GitHub.
+# See .infrastructure/README.md for the one-time setup.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.infrastructure/**'
+      - '.github/workflows/infra-deploy.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [ dev ]
+        default: dev
+      what_if_only:
+        description: Preview the changes without deploying
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: infra-deploy-${{ inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
+env:
+  ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # A GitHub environment with the same name lets you require reviewers before deployment.
+    environment: ${{ inputs.environment || 'dev' }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Verify repository variables
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+        run: |
+          missing=0
+          for name in AZURE_SUBSCRIPTION_ID AZURE_TENANT_ID AZURE_CLIENT_ID AZURE_LOCATION APIM_PUBLISHER_EMAIL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository variable $name is not set."
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Verify the parameter file has no placeholders
+        run: |
+          file=".infrastructure/main.${ENVIRONMENT}.bicepparam"
+          if [ ! -f "$file" ]; then
+            echo "::error::Parameter file $file does not exist."
+            exit 1
+          fi
+          if grep -nE "<[a-z][a-z0-9-]*>" "$file"; then
+            echo "::error::Replace the placeholders listed above with verified values before deploying."
+            exit 1
+          fi
+
+      - name: Lint and build Bicep
+        run: |
+          az bicep lint --file .infrastructure/main.bicep
+          az bicep build --file .infrastructure/main.bicep --stdout > /dev/null
+
+      - name: Sign in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: What-if
+        run: |
+          az deployment sub what-if \
+            --location "$AZURE_LOCATION" \
+            --name "image-studio-${ENVIRONMENT}" \
+            --template-file .infrastructure/main.bicep \
+            --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
+
+      - name: Deploy
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.what_if_only) }}
+        run: |
+          az deployment sub create \
+            --location "$AZURE_LOCATION" \
+            --name "image-studio-${ENVIRONMENT}" \
+            --template-file .infrastructure/main.bicep \
+            --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
+
+      - name: Summarize outputs
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.what_if_only) }}
+        run: |
+          {
+            echo "### Deployment outputs (${ENVIRONMENT})"
+            echo
+            echo '| Output | Value |'
+            echo '| --- | --- |'
+            az deployment sub show --name "image-studio-${ENVIRONMENT}" \
+              --query "properties.outputs" -o json \
+              | python3 -c "import json,sys; [print(f'| {k} | {v[\"value\"]} |') for k,v in json.load(sys.stdin).items()]"
+          } >> "$GITHUB_STEP_SUMMARY"

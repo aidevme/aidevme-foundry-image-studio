@@ -8,7 +8,7 @@ aidevme-foundry-image-studio: multi-agent image generation on Microsoft Foundry 
 
 ## Repository state
 
-This repository currently contains no source code — only project scaffolding:
+This repository currently contains no implemented source code — only project scaffolding:
 
 - `README.md`, `CONTRIBUTING.md`, `LICENSE` (MIT), `assets/` (social preview image)
 - `.github/ISSUE_TEMPLATE/` — bug report, feature request, and question templates
@@ -18,12 +18,19 @@ This repository currently contains no source code — only project scaffolding:
   - `docs/claude/skills/` — one document per skill, plus an overview
   - `docs/templates/GENERIC_DOCUMENT_STYLE.md` — the required document header and writing style
   - `docs/azure-foundry/`, `docs/open-ai/`, `docs/azure-ai-search/`, `docs/terraform/` — empty placeholder directories for future documentation
-- `.infrastructure/` — empty placeholder directory for future deployment/infra config
+- `src/` — all source code lives here, one folder per service (`image-mcp`, `facade-mcp`, `icon-service`, `vscode-proxy`, `shared`); each currently holds only a README stub
+- `.infrastructure/` — Bicep templates (`main.bicep`, `modules/`, `main.dev.bicepparam`) that provision the Azure resources; workflows that deploy them are `.github/workflows/infra-validate.yml` and `infra-deploy.yml`. Check with `az bicep lint --file .infrastructure/main.bicep`. See `docs/aidevme-foundry-image-studio/INFRASTRUCTURE.md`.
 - `.claude/agents/` — custom subagents (`architect`, `developer`, `tester`, `reviewer`, `documenter`, `researcher`) for this project's workflow
 - `.claude/agent-memory/<agent>/` — persistent project memory for each subagent (`memory: project`), created by the agents at run time and shared through version control; never store secrets there
 - `.claude/skills/write-document/` — skill (with `evals/evals.json`) that applies the document style; preloaded by the `documenter` agent
 
 There is no build system, package manifest, lint config, or test suite yet. Do not assume any particular language, framework, or tooling until it is actually added to the repo — check for a manifest file (e.g. `package.json`, `pyproject.toml`, `*.csproj`) before running build/lint/test commands, since none currently exists. When the codebase is scaffolded, update this file with the real commands and architecture.
+
+## Source code conventions
+
+- Store all source code under `src/`, in the folder of the service it belongs to. Do not put source files at the repository root or under `docs/`.
+- The planned layout and build order are in `docs/aidevme-foundry-image-studio/ARCHITECTURE.md` (section 18) and `IMPLEMENTATION.md`. Follow them unless you record a decision to change them.
+- The VS Code proxy lives in `src/vscode-proxy/` (the architecture originally placed it in `clients/`; the architecture has been updated).
 
 ## Documentation conventions
 
