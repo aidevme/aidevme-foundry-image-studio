@@ -5,7 +5,7 @@
 | **Document Title** | Microsoft Foundry quickstarts |
 | **Document Location** | `docs/research-docs/azure-foundry/04-get-started/01-quickstarts.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Microsoft Foundry quickstarts". Find a Microsoft Foundry quickstart. Create resources, build your first agent, deploy hosted agents, and evaluate and trace them. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/quickstarts/quickstarts). Article date: 2026-08-26. Page updated: 2026-09-24. Retrieved: 2026-09-29. Navigation: Get started > Quickstarts.
@@ -26,7 +26,7 @@ Get hands-on with Microsoft Foundry. Each quickstart takes you from zero to a wo
 | --- | --- |
 | [Create a prompt agent](04.1-what-do-you-want-to-build/01-prompt-agent.md) | Build a prompt agent with the Microsoft Foundry SDK. |
 | [Create a voice-based prompt agent](04.1-what-do-you-want-to-build/02-prompt-voice-agent.md) | Create a managed real-time voice agent, connect over WebSocket, and complete a spoken turn. |
-| [Optimize a prompt agent](../07-agents/07.2-prompt-agents/09-quickstart-optimize-prompt-agent.md) | Run the agent optimizer in the portal to improve a prompt agent's instructions, tool descriptions, and model selection, then promote the best candidate. |
+| [Optimize a prompt agent](../11-optimization/11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md) | Run the agent optimizer in the portal to improve a prompt agent's instructions, tool descriptions, and model selection, then promote the best candidate. |
 | [Build agents using the Responses API](../07-agents/07.2-prompt-agents/01-responses-api.md) | Call the Responses API from your own code with the Agent Framework or the OpenAI SDK. |
 | [Chat with an agent in code](04.1-what-do-you-want-to-build/03-get-started-code.md) | Use the Microsoft Foundry SDK to build an AI chat application. |
 
@@ -39,7 +39,7 @@ Get hands-on with Microsoft Foundry. Each quickstart takes you from zero to a wo
 | [Build a toolbox and use it with a hosted agent](../07-agents/07.3-hosted-agents/08-quickstart-toolbox-agent.md) | Combine web search and the Microsoft Learn MCP server, then use the toolbox from a hosted agent. |
 | [Give a hosted agent persistent memory](../07-agents/07.3-hosted-agents/11-quickstart-memory-hosted-agent.md) | Provision a Foundry memory store and deploy a Python hosted agent that remembers facts about each user across sessions. |
 | [Add a Foundry IQ knowledge base to a hosted agent](../07-agents/07.3-hosted-agents/09-quickstart-foundry-iq-hosted-agent.md) | Ground a hosted agent in a Foundry IQ knowledge base exposed through a toolbox. |
-| [Optimize a hosted agent](../07-agents/07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md) | Run the agent optimizer to automatically improve a hosted agent's instructions, then deploy the winning candidate. |
+| [Optimize a hosted agent](../11-optimization/11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md) | Run the agent optimizer to automatically improve a hosted agent's instructions, then deploy the winning candidate. |
 | [Create a CI/CD pipeline](../07-agents/07.3-hosted-agents/16-set-up-cicd-hosted-agent.md) | Establish a Continuous Integration and Continuous Deployment (CI/CD) pipeline for a hosted agent in Microsoft Foundry project. |
 
 ## Evaluate and trace

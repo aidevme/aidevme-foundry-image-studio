@@ -13,14 +13,14 @@ Documentation for **aidevme-foundry-image-studio**, grouped by topic.
 | `project-docs/bicep/` | Bicep templates: [overview](project-docs/bicep/index.md) |
 | `project-docs/github/` | GitHub Actions workflows: [overview](project-docs/github/workflows/index.md) |
 | `terraform/` | Infrastructure as code for provisioning the Azure resources |
-| `templates/` | Document templates: [Generic Document Style](templates/GENERIC_DOCUMENT_STYLE.md) |
+| `templates/` | Document templates: [Generic Document Style](templates/GENERIC_DOCUMENT_STYLE.md) and [Research Document Style](templates/RESEARCH_DOCUMENT_STYLE.md) (layout, index table, and sync rules for copies of external documentation) |
 
 > Folders without links below don't contain any documents yet. When you add pages, link them here
 > (for example `[Deploy models](research-docs/azure-foundry/deploy-models.md)`) and keep this table in sync.
 
 ## project-docs/claude/agents
 
-Custom Claude Code subagents defined in [.claude/agents/](../.claude/agents/).
+Custom Claude Code subagents defined in [.claude/agents/](../.claude/agents).
 
 | Agent | Purpose |
 | --- | --- |
@@ -33,7 +33,7 @@ Custom Claude Code subagents defined in [.claude/agents/](../.claude/agents/).
 
 ## project-docs/claude/skills
 
-Claude Code skills defined in [.claude/skills/](../.claude/skills/).
+Claude Code skills defined in [.claude/skills/](../.claude/skills).
 
 | Document | Purpose |
 | --- | --- |
@@ -42,7 +42,7 @@ Claude Code skills defined in [.claude/skills/](../.claude/skills/).
 
 ## project-docs/claude/agent-memory
 
-Persistent project memory of each subagent, stored in [.claude/agent-memory/](../.claude/agent-memory/).
+Persistent project memory of each subagent, stored in [.claude/agent-memory/](../.claude/agent-memory).
 
 | Document | Purpose |
 | --- | --- |
@@ -56,7 +56,7 @@ Persistent project memory of each subagent, stored in [.claude/agent-memory/](..
 
 ## project-docs/bicep
 
-Bicep templates in [bicep/](../bicep/), documented file by file.
+Bicep templates in [bicep/](../bicep), documented file by file.
 
 | Document | Purpose |
 | --- | --- |
@@ -79,7 +79,7 @@ Bicep templates in [bicep/](../bicep/), documented file by file.
 
 ## project-docs/github/workflows
 
-GitHub Actions workflows defined in [.github/workflows/](../.github/workflows/).
+GitHub Actions workflows defined in [.github/workflows/](../.github/workflows).
 
 | Document | Purpose |
 | --- | --- |

@@ -34,7 +34,7 @@ The repository is still being scaffolded and has no build system or test suite y
 
 ## Project workflow with Claude Code
 
-The repository ships custom Claude Code subagents in [.claude/agents/](.claude/agents/), documented in [docs/project-docs/claude/agents/](docs/index.md#project-docsclaudeagents). You can use them for a typical change:
+The repository ships custom Claude Code subagents in [.claude/agents/](.claude/agents), documented in [docs/project-docs/claude/agents/](docs/index.md#project-docsclaudeagents). You can use them for a typical change:
 
 1. [architect](docs/project-docs/claude/agents/architect.md) designs the change.
 2. [developer](docs/project-docs/claude/agents/developer.md) implements it.
@@ -42,7 +42,7 @@ The repository ships custom Claude Code subagents in [.claude/agents/](.claude/a
 4. [reviewer](docs/project-docs/claude/agents/reviewer.md) reviews the diff.
 5. [documenter](docs/project-docs/claude/agents/documenter.md) updates the docs.
 
-The repository also ships Claude Code skills in [.claude/skills/](.claude/skills/), documented in the [skills overview](docs/project-docs/claude/skills/index.md). The documenter agent preloads the [write-document](docs/project-docs/claude/skills/write-document.md) skill.
+The repository also ships Claude Code skills in [.claude/skills/](.claude/skills), documented in the [skills overview](docs/project-docs/claude/skills/index.md). The documenter agent preloads the [write-document](docs/project-docs/claude/skills/write-document.md) skill.
 
 Using them is optional, and you're responsible for the quality of what you submit either way.
 

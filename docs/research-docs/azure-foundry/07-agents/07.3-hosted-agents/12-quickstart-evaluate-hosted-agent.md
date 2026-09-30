@@ -5,7 +5,7 @@
 | **Document Title** | Quickstart: Evaluate your hosted agent |
 | **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/12-quickstart-evaluate-hosted-agent.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Quickstart: Evaluate your hosted agent". Evaluate a deployed hosted agent in Foundry Agent Service by using the Azure Developer CLI, the Microsoft Foundry portal, or the Microsoft Foundry SDK for Python, C#, or JavaScript/TypeScript. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/quickstarts/quickstart-evaluate-hosted-agent). Article date: 2026-09-03. Page updated: 2026-09-11. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Quickstarts > Evaluate an agent.
@@ -784,7 +784,7 @@ In this quickstart, you:
 
 ## Next steps
 
-[Optimize a hosted agent](13-quickstart-optimize-hosted-agent.md)
+[Optimize a hosted agent](../../11-optimization/11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md)
 
 Continue improving your evaluation workflow:
 

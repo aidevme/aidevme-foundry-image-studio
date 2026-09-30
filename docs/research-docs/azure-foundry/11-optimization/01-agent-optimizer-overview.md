@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | What is the agent optimizer? (preview) |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.2-prompt-agents/07-agent-optimizer-overview.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/01-agent-optimizer-overview.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "What is the agent optimizer? (preview)". Improve prompt and hosted agents by evaluating behavior and generating better instructions, skills, tools, and model configurations. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-optimizer-overview). Article date: 2026-08-07. Page updated: 2026-08-19. Retrieved: 2026-09-29. Navigation: Agents > Prompt agents > Text-based agents > Build > Agent optimizer overview.
@@ -39,7 +39,7 @@ Start the optimization wizard from the agent's **Optimize** tab in the Foundry p
 
 When the run finishes, compare score changes, review the before-and-after prompt, and inspect per-evaluator results. You can then promote a selected candidate to a new prompt-agent version from the optimization run.
 
-For the end-to-end portal experience, see [Quickstart: Optimize a prompt agent](09-quickstart-optimize-prompt-agent.md).
+For the end-to-end portal experience, see [Quickstart: Optimize a prompt agent](11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md).
 
 ### Hosted agents
 
@@ -47,7 +47,7 @@ For a hosted agent, the optimizer improves the configuration that your code load
 
 Hosted-agent optimization supports local JSONL datasets and datasets registered in your Foundry project, including evaluation datasets generated from traces. After a run, apply the selected candidate to your local configuration, review the changes, and redeploy the agent.
 
-For the end-to-end hosted-agent experience, see [Quickstart: Optimize a hosted agent](../07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md).
+For the end-to-end hosted-agent experience, see [Quickstart: Optimize a hosted agent](11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md).
 
 ## The optimization workflow
 
@@ -56,11 +56,11 @@ Both agent types follow the same high-level path:
 1. **Select the agent baseline.** Choose the prompt-agent version or hosted-agent configuration that you compare candidates against.
 2. **Select an evaluation dataset.** Use representative tasks from an existing or uploaded dataset. You can also use a registered dataset generated from agent traces.
 3. **Select evaluation criteria.** Choose built-in or custom evaluators that measure the behaviors you want to improve.
-4. **Run the optimizer.** Choose the available optimization targets and models, and then generate and evaluate candidates. For prompt agents, review the [cost estimate](08-agent-optimizer-costs.md#pre-run-cost-estimate-for-prompt-agents) in the portal before you submit the run.
-5. **Review the results.** Compare candidate scores against your baseline, and then pick the best candidate. When available, review the [post-run measured token usage](08-agent-optimizer-costs.md#post-run-measured-token-usage). See [Understand optimization results](#understand-optimization-results).
+4. **Run the optimizer.** Choose the available optimization targets and models, and then generate and evaluate candidates. For prompt agents, review the [cost estimate](02-agent-optimizer-costs.md#pre-run-cost-estimate-for-prompt-agents) in the portal before you submit the run.
+5. **Review the results.** Compare candidate scores against your baseline, and then pick the best candidate. When available, review the [post-run measured token usage](02-agent-optimizer-costs.md#post-run-measured-token-usage). See [Understand optimization results](#understand-optimization-results).
 6. **Apply the selected candidate.** Promote a prompt-agent candidate to a new agent version, or apply the hosted-agent configuration and redeploy.
 
-Hosted agents require optimizer-ready code integration. Foundry Toolkit automatically scaffolds this integration when you start an optimization. For the Azure Developer CLI workflow, add the optimization package and a baseline configuration before you start. See [Make your agent optimizer-ready](../07.3-hosted-agents/37-make-agent-optimizer-ready.md). Prompt agents don't require this code integration.
+Hosted agents require optimizer-ready code integration. Foundry Toolkit automatically scaffolds this integration when you start an optimization. For the Azure Developer CLI workflow, add the optimization package and a baseline configuration before you start. See [Make your agent optimizer-ready](11.1-run-optimizations/04-make-agent-optimizer-ready.md). Prompt agents don't require this code integration.
 
 ## How the agent optimizer works
 
@@ -73,7 +73,7 @@ The agent optimizer runs a closed-loop evaluation and improvement cycle:
 
 The entire process runs in the cloud. Run time depends on the dataset size, the number of candidates, and the selected models.
 
-For hosted agents, after you make your agent [optimizer-ready](../07.3-hosted-agents/37-make-agent-optimizer-ready.md), no further code changes are needed between runs. `load_config()` returns your baseline normally and supplies optimized configuration during a run without feature flags or conditional logic.
+For hosted agents, after you make your agent [optimizer-ready](11.1-run-optimizations/04-make-agent-optimizer-ready.md), no further code changes are needed between runs. `load_config()` returns your baseline normally and supplies optimized configuration during a run without feature flags or conditional logic.
 
 > **Warning**
 >
@@ -90,7 +90,7 @@ An optimization *target* is a specific aspect of your agent's configuration that
 | **Tool optimization** | Improves function-calling tool and parameter descriptions so the model calls tools more accurately. It doesn't change types, defaults, or required fields. | Available for function-calling tools. Because the client executes these tools, tool execution isn't evaluated during optimization. | Activates when the baseline has a `tools.json` file. Only function-calling tools are supported. |
 | **Model selection** | Evaluates the agent across multiple model deployments to find the best quality-to-cost trade-off. | Select candidate models in the optimization wizard. | Add candidate deployments to `model_search_space` in `eval.yaml`. |
 
-For hosted-agent baseline inputs, see [Make your agent optimizer-ready](../07.3-hosted-agents/37-make-agent-optimizer-ready.md). To run and configure hosted-agent targets, see [Optimize agent instructions, skills, tools, and models](../07.3-hosted-agents/39-optimize-agent-targets.md).
+For hosted-agent baseline inputs, see [Make your agent optimizer-ready](11.1-run-optimizations/04-make-agent-optimizer-ready.md). To run and configure hosted-agent targets, see [Optimize agent instructions, skills, tools, and models](11.1-run-optimizations/06-optimize-agent-targets.md).
 
 ## Models
 
@@ -103,7 +103,7 @@ The agent optimizer uses two models during an optimization run. Both must be dep
 
 The eval model runs once for each evaluator, task, and candidate evaluation. It reads the agent's response and each criterion, then returns a binary score. The optimization model analyzes baseline results and generates improved candidates across the configured targets, including instructions, skills, tools, and models. Because it reasons over the full dataset, a more capable optimization model typically produces better candidates.
 
-For prompt agents, select the eval model and candidate models in the optimization wizard. For hosted agents, specify the models in `eval.yaml` or with CLI flags. The `optimization_model` setting is required for hosted-agent runs. For configuration steps, see [Choose the eval and optimization models](../07.3-hosted-agents/39-optimize-agent-targets.md#choose-the-eval-and-optimization-models).
+For prompt agents, select the eval model and candidate models in the optimization wizard. For hosted agents, specify the models in `eval.yaml` or with CLI flags. The `optimization_model` setting is required for hosted-agent runs. For configuration steps, see [Choose the eval and optimization models](11.1-run-optimizations/06-optimize-agent-targets.md#choose-the-eval-and-optimization-models).
 
 ## Understand optimization results
 
@@ -177,23 +177,23 @@ Optimized instructions are often longer and more detailed, which can increase re
 - Whether the cost increase fits your budget
 - Whether responses are unnecessarily verbose or adding value with the extra length
 
-For details about the pre-run cost range and post-run measured usage, see [Agent optimizer cost estimates and token usage](08-agent-optimizer-costs.md).
+For details about the pre-run cost range and post-run measured usage, see [Agent optimizer cost estimates and token usage](02-agent-optimizer-costs.md).
 
 ## Limitations and availability
 
 - The agent optimizer supports prompt agents and hosted agents during preview.
 - Prompt-agent optimization runs start in the Foundry portal. You can promote a selected candidate to a new agent version from the completed run.
-- Hosted-agent optimization is available in all regions where [hosted agents are available](../07.3-hosted-agents/01-hosted-agents.md#region-availability), except Norway East.
-- Hosted-agent optimization requires the [Responses protocol](../07.3-hosted-agents/01-hosted-agents.md#protocols-responses-invocations-and-invocations-websocket).
+- Hosted-agent optimization is available in all regions where [hosted agents are available](../07-agents/07.3-hosted-agents/01-hosted-agents.md#region-availability), except Norway East.
+- Hosted-agent optimization requires the [Responses protocol](../07-agents/07.3-hosted-agents/01-hosted-agents.md#protocols-responses-invocations-and-invocations-websocket).
 
 ## Related content
 
-- [Quickstart: Create a prompt agent](../../04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md)
-- [Quickstart: Optimize a prompt agent](09-quickstart-optimize-prompt-agent.md)
-- [Quickstart: Optimize a hosted agent](../07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md)
-- [Agent optimizer cost estimates and token usage](08-agent-optimizer-costs.md)
-- [Make your agent optimizer-ready](../07.3-hosted-agents/37-make-agent-optimizer-ready.md)
-- [Create an evaluation dataset and evaluators](../07.3-hosted-agents/38-create-optimizer-dataset.md)
-- [Optimize agent instructions, skills, tools, and models](../07.3-hosted-agents/39-optimize-agent-targets.md)
-- [Convert agent traces into evaluation datasets](../../09-observability/09.2-tracing/08-traces-to-dataset.md)
-- [Run agent evaluations with the azd CLI](../../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md)
+- [Quickstart: Create a prompt agent](../04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md)
+- [Quickstart: Optimize a prompt agent](11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md)
+- [Quickstart: Optimize a hosted agent](11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md)
+- [Agent optimizer cost estimates and token usage](02-agent-optimizer-costs.md)
+- [Make your agent optimizer-ready](11.1-run-optimizations/04-make-agent-optimizer-ready.md)
+- [Create an evaluation dataset and evaluators](11.1-run-optimizations/05-create-optimizer-dataset.md)
+- [Optimize agent instructions, skills, tools, and models](11.1-run-optimizations/06-optimize-agent-targets.md)
+- [Convert agent traces into evaluation datasets](../09-observability/09.2-tracing/08-traces-to-dataset.md)
+- [Run agent evaluations with the azd CLI](../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md)

@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | Quickstart: Optimize a hosted agent (preview) |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Quickstart: Optimize a hosted agent (preview)". Deploy and optimize a hosted agent by using the Azure Developer CLI, Python SDK, VS Code, or the Microsoft Foundry Skill. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-optimize-hosted-agent). Article date: 2026-09-03. Page updated: 2026-09-11. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Quickstarts > Optimize a hosted agent.
@@ -18,7 +18,7 @@
 
 In this quickstart, you deploy the optimization sample agent, run the agent optimizer to improve its instructions, and deploy the winning candidate.
 
-For the concepts behind each step and the full end-to-end path, see the [optimization workflow](../07.2-prompt-agents/07-agent-optimizer-overview.md#the-optimization-workflow).
+For the concepts behind each step and the full end-to-end path, see the [optimization workflow](../01-agent-optimizer-overview.md#the-optimization-workflow).
 
 ## Prerequisites
 
@@ -125,11 +125,11 @@ The sample calls `load_config()` to load baseline or candidate configuration and
 
 > **Tip**
 >
-> If you already have an existing agent project, see [Make your agent optimizer-ready](37-make-agent-optimizer-ready.md) to add optimization support.
+> If you already have an existing agent project, see [Make your agent optimizer-ready](04-make-agent-optimizer-ready.md) to add optimization support.
 >
 > If you already have a Foundry project, add `-p <project-resource-id>` to target existing resources.
 >
-> To optimize an already deployed agent without running `azd ai agent init` or creating `azure.yaml` and `.azure` files, skip this project-creation step and follow [Optimize an existing agent without AZD project files](39-optimize-agent-targets.md#optimize-an-existing-agent-without-azd-project-files).
+> To optimize an already deployed agent without running `azd ai agent init` or creating `azure.yaml` and `.azure` files, skip this project-creation step and follow [Optimize an existing agent without AZD project files](06-optimize-agent-targets.md#optimize-an-existing-agent-without-azd-project-files).
 
 ## Step 2: Provision and deploy
 
@@ -190,7 +190,7 @@ Optimizing agent "customer-support-py"...
 
 Use the portal URL to monitor your job in the Foundry portal.
 
-The *eval model* scores each response (any chat-completion model works). The *optimization model* (`--optimize-model`) generates improved candidates and must be from the [supported list](../07.2-prompt-agents/07-agent-optimizer-overview.md#models) (gpt-5 family or DeepSeek). You can also set `optimization_model` under `options:` in `eval.yaml` to avoid passing the flag each time.
+The *eval model* scores each response (any chat-completion model works). The *optimization model* (`--optimize-model`) generates improved candidates and must be from the [supported list](../01-agent-optimizer-overview.md#models) (gpt-5 family or DeepSeek). You can also set `optimization_model` under `options:` in `eval.yaml` to avoid passing the flag each time.
 
 ## Step 4: Deploy the winner
 
@@ -530,7 +530,7 @@ Foundry Toolkit includes a native Agent Optimization experience for deployed hos
 1. Select **Foundry Toolkit** in the Activity Bar.
 2. Under **My Resources**, select **Agents**.
 3. If you have a deployed hosted agent, select it to open the hosted agent playground.
-4. If you don't have a deployed hosted agent, complete the VS Code path in [Quickstart: Deploy your first hosted agent](07-quickstart-hosted-agent.md). After deployment finishes, return to **Agents** and select the new hosted agent.
+4. If you don't have a deployed hosted agent, complete the VS Code path in [Quickstart: Deploy your first hosted agent](../../07-agents/07.3-hosted-agents/07-quickstart-hosted-agent.md). After deployment finishes, return to **Agents** and select the new hosted agent.
 
 ### Step 2: Start an optimization run
 
@@ -555,7 +555,7 @@ Foundry Toolkit includes a native Agent Optimization experience for deployed hos
    | Evaluation metrics | Enter the metrics or evaluators to use. If you don't have them, choose whether to run `azd ai agent eval generate` or use the optimizer's built-in defaults. |
    | Dataset | Select the optimization dataset. If you don't have one, choose whether to run `azd ai agent eval generate` or use the optimizer's built-in defaults. |
    | Maximum candidates | Enter the maximum number of candidates to generate, such as `2`. |
-   | Optimization model | Select an existing deployment from the [supported optimization models](../07.2-prompt-agents/07-agent-optimizer-overview.md#models). |
+   | Optimization model | Select an existing deployment from the [supported optimization models](../01-agent-optimizer-overview.md#models). |
 
 GitHub Copilot waits for these inputs before it starts optimization. The generated request directs Copilot to use the Microsoft Foundry Skill's Agent Optimizer workflow and Azure Developer CLI commands exclusively. It doesn't use Foundry MCP tools. Copilot:
 
@@ -665,8 +665,8 @@ In this quickstart, you:
 
 ## Next steps
 
-- [Agent optimizer overview](../07.2-prompt-agents/07-agent-optimizer-overview.md)
-- [Make your agent optimizer-ready](37-make-agent-optimizer-ready.md)
-- [Create an evaluation dataset and evaluators](38-create-optimizer-dataset.md)
-- [Optimize agent instructions, skills, tools, and models](39-optimize-agent-targets.md)
+- [Agent optimizer overview](../01-agent-optimizer-overview.md)
+- [Make your agent optimizer-ready](04-make-agent-optimizer-ready.md)
+- [Create an evaluation dataset and evaluators](05-create-optimizer-dataset.md)
+- [Optimize agent instructions, skills, tools, and models](06-optimize-agent-targets.md)
 - [Run agent evaluations with the azd CLI](../../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md)

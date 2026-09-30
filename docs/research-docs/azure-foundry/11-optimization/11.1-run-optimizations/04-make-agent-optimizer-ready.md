@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | Make your agent optimizer-ready (preview) |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/37-make-agent-optimizer-ready.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/11.1-run-optimizations/04-make-agent-optimizer-ready.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Make your agent optimizer-ready (preview)". Add a few lines of code to your hosted agent to enable the agent optimizer for automatic improvement of system instructions, tools, and skills in Foundry Agent Service. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/make-agent-optimizer-ready). Article date: 2026-05-18. Page updated: 2026-09-11. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Run, test, and debug > Make your agent optimizer-ready.
@@ -18,7 +18,7 @@
 
 Adding support for the agent optimizer to your agent requires a few lines of code. No framework changes or conditional logic are needed. You install the optimization package, set up a configuration directory, and call `load_config()` at startup.
 
-This step is the first step in the [optimization workflow](../07.2-prompt-agents/07-agent-optimizer-overview.md#the-optimization-workflow). The baseline configuration you create defines the inputs the optimizer improves: instructions, tools, skills, and the model. Your agent works the same whether or not optimization is active.
+This step is the first step in the [optimization workflow](../01-agent-optimizer-overview.md#the-optimization-workflow). The baseline configuration you create defines the inputs the optimizer improves: instructions, tools, skills, and the model. Your agent works the same whether or not optimization is active.
 
 To make your agent optimizer-ready, complete three steps:
 
@@ -26,12 +26,12 @@ To make your agent optimizer-ready, complete three steps:
 2. [Set up a baseline configuration directory](#set-up-the-configuration-directory) with your instructions and, optionally, tools and skills.
 3. [Load the config at startup](#load-and-use-the-config) with `load_config()` and use the values it returns.
 
-The rest of this article gives a complete example and explains how configuration resolution works. After an optimization run finishes, you apply the winning candidate and deploy—see [Deploy the winner](39-optimize-agent-targets.md#deploy-the-winner).
+The rest of this article gives a complete example and explains how configuration resolution works. After an optimization run finishes, you apply the winning candidate and deploy—see [Deploy the winner](06-optimize-agent-targets.md#deploy-the-winner).
 
 ## Prerequisites
 
 - A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md) with a deployed hosted agent
-- Familiarity with [hosted agents](01-hosted-agents.md)
+- Familiarity with [hosted agents](../../07-agents/07.3-hosted-agents/01-hosted-agents.md)
 - Python 3.10 or later
 
 ## Install the optimization package
@@ -360,8 +360,8 @@ if __name__ == "__main__":
 
    > **Note**
    >
-   > During evaluation, the optimizer invokes your agent against every task in your dataset, so any external tool calls run for real. For guidance on avoiding unintended side effects, see [How the agent optimizer works](../07.2-prompt-agents/07-agent-optimizer-overview.md#how-the-agent-optimizer-works).
-3. **After applying a winner**: You run `azd ai agent optimize apply --candidate <id>` to write the optimized config files into `.agent_configs/<candidate_id>/` in your project. Then `azd deploy` deploys the agent with the improved configuration. For the full apply and deploy steps, see [Deploy the winner](39-optimize-agent-targets.md#deploy-the-winner).
+   > During evaluation, the optimizer invokes your agent against every task in your dataset, so any external tool calls run for real. For guidance on avoiding unintended side effects, see [How the agent optimizer works](../01-agent-optimizer-overview.md#how-the-agent-optimizer-works).
+3. **After applying a winner**: You run `azd ai agent optimize apply --candidate <id>` to write the optimized config files into `.agent_configs/<candidate_id>/` in your project. Then `azd deploy` deploys the agent with the improved configuration. For the full apply and deploy steps, see [Deploy the winner](06-optimize-agent-targets.md#deploy-the-winner).
 
 Your code never changes between these states. The config resolution is fully automatic.
 
@@ -391,8 +391,8 @@ azd ai agent run
 
 ## Related content
 
-- [Agent optimizer overview](../07.2-prompt-agents/07-agent-optimizer-overview.md)
-- [Create an evaluation dataset and evaluators](38-create-optimizer-dataset.md)
-- [Optimize agent instructions, skills, tools, and models](39-optimize-agent-targets.md)
-- [Quickstart: Optimize a hosted agent](13-quickstart-optimize-hosted-agent.md)
+- [Agent optimizer overview](../01-agent-optimizer-overview.md)
+- [Create an evaluation dataset and evaluators](05-create-optimizer-dataset.md)
+- [Optimize agent instructions, skills, tools, and models](06-optimize-agent-targets.md)
+- [Quickstart: Optimize a hosted agent](03-quickstart-optimize-hosted-agent.md)
 - [Agent Skills format](https://agentskills.io/) — open standard for portable agent skills

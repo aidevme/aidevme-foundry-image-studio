@@ -5,7 +5,7 @@
 | **Document Title** | Use Insights in Foundry (preview) |
 | **Document Location** | `docs/research-docs/azure-foundry/09-observability/09.1-monitoring/02-agent-insights.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Use Insights in Foundry (preview)". Learn how to run Insights scans, review recurring production behaviors and supporting traces, and route confirmed Insights to evaluation or optimization workflows. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/agent-insights). Article date: 2026-09-22. Page updated: 2026-09-22. Retrieved: 2026-09-29. Navigation: Observability > Monitoring > Use Insights in Foundry.
@@ -556,5 +556,5 @@ Insights in Foundry can incur charges for the model deployment used to generate 
 - [Monitor agents](../../07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md)
 - [Evaluate agents](../../10-evaluation/10.3-run-evaluations/01-evaluate-agent.md)
 - [Agent Insights Python samples](https://github.com/Azure/azure-sdk-for-python/tree/fedc3ab96021c2b0d42496cb4ddf0c476f77b63d/sdk/ai/azure-ai-projects/samples/agent_insights)
-- [Agent optimizer overview](../../07-agents/07.2-prompt-agents/07-agent-optimizer-overview.md)
+- [Agent optimizer overview](../../11-optimization/01-agent-optimizer-overview.md)
 - [Insights in Foundry REST API specification](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/ai-foundry/data-plane/Foundry/src/agent-insights/routes.tsp)

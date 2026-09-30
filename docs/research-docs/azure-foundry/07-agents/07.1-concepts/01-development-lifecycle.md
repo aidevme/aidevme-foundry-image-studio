@@ -5,7 +5,7 @@
 | **Document Title** | Agent development lifecycle |
 | **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.1-concepts/01-development-lifecycle.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Agent development lifecycle". Learn the agent development lifecycle in Microsoft Foundry, from creating and versioning to tracing, evaluation, publishing, and monitoring. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/development-lifecycle). Article date: 2026-08-21. Page updated: 2026-09-24. Retrieved: 2026-09-29. Navigation: Agents > Concepts > Agent development lifecycle.
@@ -32,7 +32,7 @@ Use this lifecycle as a practical checklist while you build and ship an agent.
 4. **Save changes as versions**: Capture meaningful milestones and compare versions.
 5. **Debug with tracing**: Use tracing to confirm tool calls, latency, and end-to-end behavior. For details, see [Agent tracing overview](../../09-observability/09.2-tracing/01-trace-agent-concept.md).
 6. **Evaluate quality and safety**: Run repeatable evaluations to catch regressions before publishing. For conceptual guidance, see [Agent evaluators](../../10-evaluation/10.1-supported-evaluators/06-agent-evaluators.md).
-7. **Optimize hosted agents (preview)**: Automatically improve your hosted agent's instructions and discover skills using the [agent optimizer](../07.2-prompt-agents/07-agent-optimizer-overview.md).
+7. **Optimize hosted agents (preview)**: Automatically improve your hosted agent's instructions and discover skills using the [agent optimizer](../../11-optimization/01-agent-optimizer-overview.md).
 8. **Publish and integrate**: Publish a stable endpoint and integrate it into your application. For steps, see [Agent applications in Microsoft Foundry](../07.2-prompt-agents/04-agent-applications.md).
 9. **Monitor and iterate**: Monitor performance and quality in production, then update and republish as needed. For guidance, see [Monitor agents](../07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md).
 

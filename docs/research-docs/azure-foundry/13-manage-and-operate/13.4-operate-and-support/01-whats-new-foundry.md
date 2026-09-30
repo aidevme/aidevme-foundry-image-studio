@@ -5,7 +5,7 @@
 | **Document Title** | What's new in Microsoft Foundry? |
 | **Document Location** | `docs/research-docs/azure-foundry/13-manage-and-operate/13.4-operate-and-support/01-whats-new-foundry.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "What's new in Microsoft Foundry?". Discover documentation and product updates in Microsoft Foundry for August 2026. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/whats-new-foundry). Article date: 2026-09-01. Page updated: 2026-09-09. Retrieved: 2026-09-29. Navigation: Manage and operate > Operate and support > What's new.
@@ -17,7 +17,7 @@ Welcome! This article highlights key updates for Microsoft Foundry in August 202
 ## New articles
 
 - Foundry Agent Service
-  - [Agent optimizer cost and token usage overview](../../07-agents/07.2-prompt-agents/08-agent-optimizer-costs.md)
+  - [Agent optimizer cost and token usage overview](../../11-optimization/02-agent-optimizer-costs.md)
   - [Autopilot lifecycle in Microsoft Foundry](../../07-agents/07.4-autopilots/02-autopilot-lifecycle.md)
   - [What is an autopilot in Microsoft Foundry?](../../07-agents/07.4-autopilots/01-autopilot-overview.md)
   - [Long-running agent API reference (preview)](../../07-agents/07.3-hosted-agents/06-long-running-agent-reference.md)
@@ -32,7 +32,7 @@ Welcome! This article highlights key updates for Microsoft Foundry in August 202
   - [Steer an in-flight agent turn (preview)](../../07-agents/07.3-hosted-agents/44-steer-hosted-agent.md)
   - [Stream long-running agent output with reconnect (preview)](../../07-agents/07.3-hosted-agents/47-stream-with-reconnect.md)
   - [Network isolation for a toolbox in Microsoft Foundry](../../08-toolboxes/08.2-manage-toolbox/03-toolbox-network-isolation.md)
-  - [Quickstart: Optimize a prompt agent (preview)](../../07-agents/07.2-prompt-agents/09-quickstart-optimize-prompt-agent.md)
+  - [Quickstart: Optimize a prompt agent (preview)](../../11-optimization/11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md)
 - Foundry Models and APIs
   - [Model migration: Upgrade or switch models in Microsoft Foundry](../../06-models/06.1-explore-foundry-models/11-model-migration.md)
   - [Microsoft Foundry reasoning models](../../06-models/06.6-develop-with-ai-models/17-use-chat-reasoning.md)

@@ -5,12 +5,12 @@
 | **Document Title** | GitHub Actions workflows overview |
 | **Document Location** | `docs/project-docs/github/workflows/index.md` |
 | **Document Description** | Describes the three GitHub Actions workflows that validate, deploy, and delete the Azure infrastructure of aidevme-foundry-image-studio, and the concepts they share: manual triggers, OpenID Connect sign-in, repository variables, the GitHub environment, concurrency, and troubleshooting. It is intended for engineers who run or maintain the workflows. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 ## Introduction
 
-The repository contains three GitHub Actions workflows in [.github/workflows/](../../../../.github/workflows/). They manage the lifecycle of an Azure environment that is defined by the Bicep templates in `bicep/`. All three start manually, and none of them runs on its own.
+The repository contains three GitHub Actions workflows in [.github/workflows/](../../../../.github/workflows). They manage the lifecycle of an Azure environment that is defined by the Bicep templates in `bicep/`. All three start manually, and none of them runs on its own.
 
 Read this document to learn what the workflows do, which settings they need, and how to run them. Each workflow has its own document with a step-by-step description. The one-time setup of the Azure identity is described in [bicep/README.md](../../../../bicep/README.md#one-time-setup), and this document links to it instead of repeating the commands.
 

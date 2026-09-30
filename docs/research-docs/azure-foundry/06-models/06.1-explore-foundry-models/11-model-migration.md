@@ -5,7 +5,7 @@
 | **Document Title** | Model migration process |
 | **Document Location** | `docs/research-docs/azure-foundry/06-models/06.1-explore-foundry-models/11-model-migration.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Model migration process". Model migration in Microsoft Foundry moves through six phases, from Discover to Retire. Learn how to upgrade or switch models without regressing product behavior. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/model-migration). Article date: 2026-08-19. Page updated: 2026-08-26. Retrieved: 2026-09-29. Navigation: Models > Explore Foundry Models > Model versions and lifecycle > Model upgrades and switches.
@@ -72,7 +72,7 @@ The per-phase sections later in this article explain why each phase exists, what
 | --- | --- | --- |
 | **Discover** | Learn that a model change is coming or needed, and decide whether to act. | [Model retirement schedule](15-model-retirement-schedule.md) [Lifecycle policy](13-model-retirements.md) Azure Service Health alerts Models API (`lifecycleStatus`) |
 | **Assess** | Choose the target model and confirm it's operationally available. | [Model leaderboards and benchmarks](05-model-benchmarks.md) (quality, safety, cost, throughput) [Side-by-side compare](06-benchmark-model-in-catalog.md) Trade-off charts |
-| **Adapt** | Replay the current workload on the new model, diagnose behavioral changes, and re-engineer prompts, parameters, tool definitions, output schemas, and the calling code around them. | [Prompt Optimizer](../../07-agents/07.3-hosted-agents/40-prompt-optimizer.md) (**Foundry only**): the **Optimize** button under system instructions in the Agent playground [Agent optimization](../../07-agents/07.3-hosted-agents/39-optimize-agent-targets.md) (**Foundry only**) [Simulator](../../10-evaluation/10.2-evaluation-datasets/03-evaluation-dataset-synthetic.md) for synthetic data |
+| **Adapt** | Replay the current workload on the new model, diagnose behavioral changes, and re-engineer prompts, parameters, tool definitions, output schemas, and the calling code around them. | [Prompt Optimizer](../../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md) (**Foundry only**): the **Optimize** button under system instructions in the Agent playground [Agent optimization](../../11-optimization/11.1-run-optimizations/06-optimize-agent-targets.md) (**Foundry only**) [Simulator](../../10-evaluation/10.2-evaluation-datasets/03-evaluation-dataset-synthetic.md) for synthetic data |
 | **Validate** | Score the adapted workload against a quality rubric to decide whether it's safe to ship. | [Azure AI Evaluation SDK](../../10-evaluation/10.3-run-evaluations/02-cloud-evaluation.md) (30+ evaluators, LLM-as-judge, graders) [Portal evaluation](../../10-evaluation/10.3-run-evaluations/12-evaluate-generative-ai-app.md) |
 | **Roll out** | Promote to production through staged exposure, monitor live behavior, and commit or roll back. | [Auto-upgrade with `versionUpgradeOption`](13-model-retirements.md) Provisioned in-place and side-by-side migration [Continuous evaluation](../../07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md#set-up-continuous-evaluation) Azure Monitor alerts |
 | **Retire** | Decommission the old deployment, free capacity, archive evals, and update downstream documentation. | [Models API](17-retired-models.md) to confirm retirement [Observability dashboard](../../09-observability/01-observability.md) for deployment count |
@@ -153,8 +153,8 @@ For agentic and workflow workloads, schema and tool-call work often outweighs pr
 
 Three Foundry features support this phase:
 
-- **[Prompt Optimizer](../../07-agents/07.3-hosted-agents/40-prompt-optimizer.md)** is the **Optimize** button directly below the system instructions field in the Agent playground. It restructures your instructions using prompt-engineering best practices, shows per-paragraph reasoning for each change, and supports an iterate loop: add a suggestion such as *"keep the JSON schema exactly"* and re-optimize. Available in **Foundry only**, not Azure OpenAI.
-- **[Agent optimization](../../07-agents/07.3-hosted-agents/39-optimize-agent-targets.md)** tunes instructions, tools, and model selection together for agent workloads. Available in **Foundry only**, not Azure OpenAI.
+- **[Prompt Optimizer](../../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md)** is the **Optimize** button directly below the system instructions field in the Agent playground. It restructures your instructions using prompt-engineering best practices, shows per-paragraph reasoning for each change, and supports an iterate loop: add a suggestion such as *"keep the JSON schema exactly"* and re-optimize. Available in **Foundry only**, not Azure OpenAI.
+- **[Agent optimization](../../11-optimization/11.1-run-optimizations/06-optimize-agent-targets.md)** tunes instructions, tools, and model selection together for agent workloads. Available in **Foundry only**, not Azure OpenAI.
 - **[Simulator](../../10-evaluation/10.2-evaluation-datasets/03-evaluation-dataset-synthetic.md)** generates synthetic and adversarial inputs when you don't have production data to replay.
 
 ### Where it commonly breaks
@@ -264,6 +264,6 @@ Real migrations are often split-state: part of a workload runs on the new model 
 - Check retirement dates and replacements in the [Model retirement schedule](15-model-retirement-schedule.md)
 - See what's already retired in [Retired Microsoft Foundry Models](17-retired-models.md)
 - Compare candidate models with [Model benchmarks and leaderboards](05-model-benchmarks.md)
-- Adapt prompts to a new model with [Optimize prompts with Prompt Optimizer](../../07-agents/07.3-hosted-agents/40-prompt-optimizer.md)
+- Adapt prompts to a new model with [Optimize prompts with Prompt Optimizer](../../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md)
 - Validate quality before you switch by [running evaluations from the Foundry portal](../../10-evaluation/10.3-run-evaluations/12-evaluate-generative-ai-app.md)
 - Monitor the migrated workload with [Observability in generative AI](../../09-observability/01-observability.md)

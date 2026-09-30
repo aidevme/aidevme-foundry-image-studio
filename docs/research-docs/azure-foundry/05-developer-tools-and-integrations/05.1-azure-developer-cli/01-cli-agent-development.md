@@ -5,7 +5,7 @@
 | **Document Title** | Agent development with the Azure Developer CLI |
 | **Document Location** | `docs/research-docs/azure-foundry/05-developer-tools-and-integrations/05.1-azure-developer-cli/01-cli-agent-development.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Agent development with the Azure Developer CLI". Understand the end-to-end Azure Developer CLI workflow for building, deploying, and operating hosted and prompt-based voice agents on Microsoft Foundry. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/cli-agent-development). Article date: 2026-08-27. Page updated: 2026-09-28. Retrieved: 2026-09-29. Navigation: Developer tools and integrations > Azure Developer CLI > Overview.
@@ -123,7 +123,7 @@ After an agent runs, two related workflows help you measure and improve its qual
 - Evaluation runs your agent against a dataset, scores the responses with one or more evaluators, and reports an aggregate quality signal. You manage it with `azd ai agent eval`.
 - Optimization iteratively rewrites your agent's prompt to lift an evaluation signal. It uses an evaluation as its objective function and produces a candidate prompt that you review and accept. You manage it with `azd ai agent optimize`.
 
-For details, see [Run agent evaluations with the azd CLI](../../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md) and [Optimize agent prompts](../../07-agents/07.3-hosted-agents/40-prompt-optimizer.md).
+For details, see [Run agent evaluations with the azd CLI](../../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md) and [Optimize agent prompts](../../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md).
 
 ## Deployment lifecycle
 

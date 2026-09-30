@@ -5,7 +5,7 @@
 | **Document Title** | Agents in Microsoft Foundry |
 | **Document Location** | `docs/research-docs/azure-foundry/07-agents/01-overview.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Agents in Microsoft Foundry". Learn about Microsoft Foundry Agent Service capabilities, agent types, tools, and runtime features for building AI agents. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/overview). Article date: 2026-09-25. Page updated: 2026-09-25. Retrieved: 2026-09-29. Navigation: Agents > Overview.
@@ -24,7 +24,7 @@ Foundry meets you anywhere on the spectrum from declarative to full code: define
 | **[Toolboxes](../04-get-started/04.1-what-do-you-want-to-build/06-toolbox-overview.md)** | Curate a set of tools once, such as: web search, file search, code interpreter, MCP servers, and custom functions. Then share them across agents through a single managed MCP endpoint with centralized authentication, governance, and versioning. |
 | **[Models](https://ai.azure.com/catalog/models?capabilities=agentsv2&cid=learnDocs)** | Works with many models from the Foundry model catalog, such as GPT-4o, Llama, and DeepSeek. Swap models without changing your agent code. |
 | **[Observability](../09-observability/09.2-tracing/01-trace-agent-concept.md)** | End-to-end tracing, metrics, evaluations, and Application Insights integration. See every decision your agent makes and measure its quality. |
-| **[Optimization](07.2-prompt-agents/07-agent-optimizer-overview.md)** | Agent optimizer (preview) evaluates agent behavior and automatically generates better instructions, skills, tool descriptions, and model selections for prompt agents and Hosted agents. |
+| **[Optimization](../11-optimization/01-agent-optimizer-overview.md)** | Agent optimizer (preview) evaluates agent behavior and automatically generates better instructions, skills, tool descriptions, and model selections for prompt agents and Hosted agents. |
 | **[Identity & Security](07.1-concepts/02-agent-identity.md)** | Microsoft Entra identity, RBAC, content filters, and virtual network isolation. Enterprise-grade trust built in. |
 | **[Publishing](07.5-publish-and-share/01-publish-copilot.md)** | Version agents, create stable endpoints, and share through Microsoft Teams, Microsoft Copilot, and the Entra Agent Registry. |
 
@@ -211,7 +211,7 @@ Agent Service supports the full build-test-deploy-monitor workflow:
 2. **Test**: Chat with your agent in the [agents playground](../05-developer-tools-and-integrations/02-concept-playgrounds.md) or run locally. MCP server integrations, including custom MCP servers hosted on Azure Functions, can be exercised directly in the playground to validate tool connectivity, permissions, and behavior before publishing.
 3. **Trace**: Inspect every model call, tool invocation, and decision with [agent tracing](../09-observability/09.2-tracing/01-trace-agent-concept.md).
 4. **Evaluate**: Run evaluations to measure quality and catch regressions.
-5. **Optimize**: Automatically improve your hosted agent's instructions using the [agent optimizer](07.2-prompt-agents/07-agent-optimizer-overview.md).
+5. **Optimize**: Automatically improve your hosted agent's instructions using the [agent optimizer](../11-optimization/01-agent-optimizer-overview.md).
 6. **Publish**: [Promote your agent](07.2-prompt-agents/04-agent-applications.md) to a managed resource with a stable endpoint.
 7. **Monitor**: Track performance and reliability with [service metrics](07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md) and dashboards.
 

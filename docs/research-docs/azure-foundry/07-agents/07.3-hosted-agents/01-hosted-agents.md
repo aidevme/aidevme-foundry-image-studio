@@ -5,7 +5,7 @@
 | **Document Title** | What are hosted agents? |
 | **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/01-hosted-agents.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "What are hosted agents?". Deploy and manage containerized agents on Foundry Agent Service with managed hosting, scaling, and observability. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/hosted-agents). Article date: 2026-09-11. Page updated: 2026-09-14. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Concepts > Overview.
@@ -308,7 +308,7 @@ Hosted agents are currently available in the following regions:
 | Deploy using the Foundry SDK | [Deploy a Hosted agent by using the Foundry SDK](49-deploy-hosted-agent.md) |
 | Update, delete, invoke, or stream logs | [Manage Hosted agents](52-manage-hosted-agent.md) |
 | Set up tracing and monitoring | [Enable tracing in your project](../../09-observability/09.2-tracing/01-trace-agent-concept.md) |
-| Optimize agent instructions automatically | [Agent optimizer overview](../07.2-prompt-agents/07-agent-optimizer-overview.md) |
+| Optimize agent instructions automatically | [Agent optimizer overview](../../11-optimization/01-agent-optimizer-overview.md) |
 | Evaluate agent performance | [Agent evaluators](../../10-evaluation/10.1-supported-evaluators/06-agent-evaluators.md) |
 | Publish to Teams, Microsoft 365, or custom apps | [Agent applications](../07.2-prompt-agents/04-agent-applications.md) |
 | Browse code samples | [Python samples](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents) and [C# samples](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/csharp/hosted-agents) |

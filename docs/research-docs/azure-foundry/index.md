@@ -1,721 +1,738 @@
-# Microsoft Foundry documentation (reference copy)
+# Microsoft Foundry Documentation Guide
 
 | Field | Value |
 | --- | --- |
-| **Document Title** | Microsoft Foundry documentation (reference copy) |
+| **Document Title** | Microsoft Foundry Documentation Guide |
 | **Document Location** | `docs/research-docs/azure-foundry/index.md` |
-| **Document Description** | Index of the local reference copy of the Microsoft Foundry documentation on Microsoft Learn, in the order of its navigation. It is intended for engineers who need the Foundry documentation offline or next to the architecture documents. |
-| **Version** | 1.1 |
+| **Document Description** | Index of the local reference copy of the Microsoft Foundry documentation on Microsoft Learn, in the order of its navigation, with the source URL and synchronization status of every page. It is intended for engineers who need the Foundry documentation offline or next to the architecture documents. |
+| **Version** | 2.2 |
 | **Last Updated On** | 2026-09-30 |
+
+Reference: <https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry>
 
 ## Introduction
 
-The folders below follow the navigation of the Microsoft Foundry documentation (start page: https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry). Top-level sections are numbered `01` to `13`. Second-level groups inside a section are numbered `NN.1`, `NN.2`, and so on. Each page is a Markdown copy of a Microsoft Learn article that starts with a source block. Pages that appear in more than one place in the navigation are stored once.
+This set follows the [Research Document Style](../../templates/RESEARCH_DOCUMENT_STYLE.md). The pages are Markdown copies of Microsoft Learn articles. Each page starts with a source block. The article text is not rewritten, and images are linked to the source and not downloaded.
 
-Articles outside the Foundry documentation set (API references and other Azure services) and external sites are linked, not copied.
+The navigation of the source has 13 top-level sections. Each section has a folder named `NN-<section-slug>`. Sections with second-level groups also have group subfolders named `NN.g-<group-slug>`, where `g` counts the groups from 1. The Research Document Style treats group subfolders as an option, and this set uses them because its sections are very large. File names have the form `<seq>-<url-name>.md`, where `<seq>` is the position in the folder and `<url-name>` is the last part of the source URL.
 
-## Contents
+How to read the table:
 
-- [What is Microsoft Foundry?](01-what-is-microsoft-foundry/01-what-is-foundry.md)
-- [Product and capability map](02-product-and-capability-map/01-capabilities.md)
-- [Capability reference](03-capability-reference/01-capability-reference.md)
-- **Get started**
-  - [Quickstarts](04-get-started/01-quickstarts.md)
-  - [Create Foundry resources](04-get-started/02-quickstart-create-foundry-resources.md)
-  - [Tutorial: Idea to prototype](04-get-started/03-developer-journey-idea-to-prototype.md)
-  - **What do you want to build?**
-    - [Build a prompt agent](04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md)
-    - [Build a prompt voice agent](04-get-started/04.1-what-do-you-want-to-build/02-prompt-voice-agent.md)
-    - [Chat with an agent in code](04-get-started/04.1-what-do-you-want-to-build/03-get-started-code.md)
-    - [Host an existing agent](04-get-started/04.1-what-do-you-want-to-build/04-deploy-hosted-agent-code.md)
-    - [Build with AI and coding agents](04-get-started/04.1-what-do-you-want-to-build/05-use-microsoft-foundry-skill.md)
-    - [Add tools and knowledge with Toolbox](04-get-started/04.1-what-do-you-want-to-build/06-toolbox-overview.md)
-    - [Start from a template](04-get-started/04.1-what-do-you-want-to-build/07-ai-template-get-started.md)
-  - **Explore and migrate**
-    - [Migrate from Foundry (classic) portal](04-get-started/04.2-explore-and-migrate/01-navigate-from-classic.md)
-- **Developer tools and integrations**
-  - [Set up your developer environment](05-developer-tools-and-integrations/01-install-cli-sdk.md)
-  - [Playgrounds and quick evaluation](05-developer-tools-and-integrations/02-concept-playgrounds.md)
-  - **Azure Developer CLI**
-    - [Overview](05-developer-tools-and-integrations/05.1-azure-developer-cli/01-cli-agent-development.md)
-    - [Install the Foundry extensions](05-developer-tools-and-integrations/05.1-azure-developer-cli/02-install-cli-foundry-extensions.md)
-    - [Set the project context](05-developer-tools-and-integrations/05.1-azure-developer-cli/03-cli-project-context.md)
-  - **Foundry Toolkit for Visual Studio Code**
-    - [Overview](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/01-get-started-projects-visual-studio-code.md)
-    - [Install Foundry Toolkit](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/02-install-foundry-toolkit-visual-studio-code.md)
-    - [Set up a Foundry project](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/03-set-up-foundry-project-visual-studio-code.md)
-    - [Create an agent](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/04-create-agent-visual-studio-code.md)
-    - [Create a prompt agent](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/05-create-prompt-agent-visual-studio-code.md)
-    - [Create hosted agents](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/06-vs-code-agents-workflow-pro-code.md)
-    - [Use and migrate declarative agent workflows](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/07-vs-code-agents-workflow-low-code.md)
-  - **Coding agents**
-    - [Build with AI and coding agents](04-get-started/04.1-what-do-you-want-to-build/05-use-microsoft-foundry-skill.md)
-    - [Foundry Skills scenarios and example prompts](05-developer-tools-and-integrations/05.3-coding-agents/01-foundry-skills-scenarios-example-prompts.md)
-    - [Best practices for coding agents](05-developer-tools-and-integrations/05.3-coding-agents/02-use-cli-with-coding-agents.md)
-    - [Foundry Agent Canvas](05-developer-tools-and-integrations/05.3-coding-agents/03-foundry-agent-canvas.md)
-    - [Configure Claude Code with Microsoft Foundry](05-developer-tools-and-integrations/05.3-coding-agents/04-configure-claude-code.md)
-    - [Configure Claude Desktop with Microsoft Foundry](05-developer-tools-and-integrations/05.3-coding-agents/05-configure-claude-desktop.md)
-  - **SDKs and APIs**
-    - [Foundry API Reference](https://ai.azure.com/api-reference/) (not copied)
-    - [Microsoft Foundry SDKs](05-developer-tools-and-integrations/05.4-sdks-and-apis/01-sdk-overview.md)
-    - [Endpoints for Foundry Models](05-developer-tools-and-integrations/05.4-sdks-and-apis/02-endpoints.md)
-    - [Auto and direct model routing](05-developer-tools-and-integrations/05.4-sdks-and-apis/03-responses-model-routing.md)
-    - **Foundry SDK Reference**
-      - [Python](https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python-latest&preserve-view=true) (not copied)
-      - [C#](https://learn.microsoft.com/dotnet/api/overview/azure/ai.projects-readme) (not copied)
-      - [JavaScript](https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme?view=azure-node-latest&preserve-view=true) (not copied)
-      - [Java](https://learn.microsoft.com/java/api/overview/azure/ai-projects-readme?view=azure-java-latest&preserve-view=true) (not copied)
-    - **Azure OpenAI**
-      - [API lifecycle](05-developer-tools-and-integrations/05.4-sdks-and-apis/04-api-version-lifecycle.md)
-      - [SDK language support](05-developer-tools-and-integrations/05.4-sdks-and-apis/05-supported-languages.md)
-      - **v1 API**
-        - [v1 API](https://learn.microsoft.com/rest/api/microsoft-foundry/?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Chat](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/chat?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Embeddings](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/embeddings?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Evals](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/evals?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Files](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/files?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Fine-tuning](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/fine-tuning?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Models](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/models?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Responses](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/responses?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Vector stores](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/vector_stores?view=rest-microsoft-foundry-v1&preserve-view=true) (not copied)
-        - [Image, audio, and video (preview)](05-developer-tools-and-integrations/05.4-sdks-and-apis/06-reference-preview-latest.md)
-      - **Previous versions**
-        - [2024-10-21 API reference](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/chat?view=rest-microsoft-foundry-2024-10-21&preserve-view=true) (not copied)
-        - [2024-10-21 image and audio reference](05-developer-tools-and-integrations/05.4-sdks-and-apis/07-reference.md)
-        - **Preview APIs**
-          - [2025-04-01-preview API reference](https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/chat?view=rest-microsoft-foundry-2025-04-01-preview&preserve-view=true) (not copied)
-          - [2025-04-01-preview - image and audio](05-developer-tools-and-integrations/05.4-sdks-and-apis/08-reference-preview.md)
-      - [REST API (resource creation and deployment)](https://learn.microsoft.com/rest/api/aiservices/accountmanagement/deployments/create-or-update?tabs=HTTP) (not copied)
-    - **Reference documentation**
-      - [Azure OpenAI monitoring data reference](05-developer-tools-and-integrations/05.4-sdks-and-apis/09-monitor-openai-reference.md)
-      - [Realtime API reference](05-developer-tools-and-integrations/05.4-sdks-and-apis/10-realtime-audio-reference.md)
-      - [GPT-Live event API reference](05-developer-tools-and-integrations/05.4-sdks-and-apis/11-gpt-live-reference.md)
-    - [Foundry Tools SDKs](https://learn.microsoft.com/en-us/azure/ai-services/reference/sdk-package-resources?context=/azure/foundry/context/context) (not copied)
-    - [Foundry Tools REST APIs](https://learn.microsoft.com/en-us/azure/ai-services/reference/rest-api-resources?context=/azure/foundry/context/context) (not copied)
-    - **Resource Management**
-      - [Azure Resource Manager/Bicep/Terraform](https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/accounts?pivots=deployment-language-bicep) (not copied)
-      - [Azure CLI](https://learn.microsoft.com/cli/azure/cognitiveservices?view=azure-cli-latest&preserve-view=true) (not copied)
-  - [Start from a template](04-get-started/04.1-what-do-you-want-to-build/07-ai-template-get-started.md)
-  - [Foundry samples on GitHub](https://github.com/microsoft-foundry/foundry-samples) (not copied)
-  - **Develop with LangChain and LangGraph**
-    - [Get started with LangChain and LangGraph in Foundry](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/01-langchain.md)
-    - [Use Foundry Models](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/02-langchain-models.md)
-    - [Use Foundry Content Moderation](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/03-langchain-middleware.md)
-    - [Use Foundry Agent Service](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/04-langchain-agents.md)
-    - [Use Foundry Toolbox](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/05-langchain-toolbox.md)
-    - [Host LangGraph agents as Foundry hosted agents](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/06-langchain-hosted-agents.md)
-    - [Use Foundry Memory](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/07-langchain-memory.md)
-    - [Trace with Foundry Observability](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/08-langchain-traces.md)
-  - **Foundry MCP Server (preview)**
-    - [Get started with Foundry MCP Server](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/01-get-started.md)
-    - [Best practices and security guidance](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/02-security-best-practices.md)
-    - [Available tools and sample prompts](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/03-available-tools.md)
-  - **Fireworks on Foundry**
-    - [Use Fireworks models](05-developer-tools-and-integrations/05.7-fireworks-on-foundry/01-enable-fireworks-models.md)
-    - [Import custom models with Fireworks](05-developer-tools-and-integrations/05.7-fireworks-on-foundry/02-import-custom-models.md)
-    - [Privacy and compliance FAQ](05-developer-tools-and-integrations/05.7-fireworks-on-foundry/03-privacy-compliance-faq.md)
-- **Models**
-  - [Overview](06-models/01-foundry-models-overview.md)
-  - **Explore Foundry Models**
-    - [Foundry Models sold by Azure](06-models/06.1-explore-foundry-models/01-models-sold-directly-by-azure.md)
-    - [Foundry Models sold by Azure (government)](06-models/06.1-explore-foundry-models/02-models-sold-directly-by-azure-gov.md)
-    - [Foundry Models sold from partners and community](06-models/06.1-explore-foundry-models/03-models-from-partners.md)
-    - [Hugging Face models in Foundry](06-models/06.1-explore-foundry-models/04-hugging-face-models.md)
-    - **Benchmark models**
-      - [Model leaderboards](06-models/06.1-explore-foundry-models/05-model-benchmarks.md)
-      - [Compare models](06-models/06.1-explore-foundry-models/06-benchmark-model-in-catalog.md)
-      - [Benchmark evaluations](06-models/06.1-explore-foundry-models/07-benchmark-evaluations.md)
-      - [GPT-5 vs GPT-4.1](06-models/06.1-explore-foundry-models/08-model-choice-guide.md)
-      - [Model playgrounds](05-developer-tools-and-integrations/02-concept-playgrounds.md)
-    - **Model versions and lifecycle**
-      - [Model versions](06-models/06.1-explore-foundry-models/09-model-versions.md)
-      - [Model versions (government)](06-models/06.1-explore-foundry-models/10-model-versions-gov.md)
-      - [Model upgrades and switches](06-models/06.1-explore-foundry-models/11-model-migration.md)
-      - [Automatic model updates for Azure OpenAI Models](06-models/06.1-explore-foundry-models/12-working-with-models.md)
-      - [Lifecycle and support policy](06-models/06.1-explore-foundry-models/13-model-retirements.md)
-      - [Lifecycle and support policy (government)](06-models/06.1-explore-foundry-models/14-model-retirements-gov.md)
-      - [Retirement schedule](06-models/06.1-explore-foundry-models/15-model-retirement-schedule.md)
-      - [Retirement schedule (government)](06-models/06.1-explore-foundry-models/16-model-retirement-schedule-gov.md)
-      - [Retired models](06-models/06.1-explore-foundry-models/17-retired-models.md)
-    - [Data, privacy, and security for model catalog](06-models/06.1-explore-foundry-models/18-data-privacy.md)
-    - **Model Router**
-      - [Overview](06-models/06.1-explore-foundry-models/19-model-router.md)
-      - [What's new in Model Router](06-models/06.1-explore-foundry-models/20-whats-new-model-router.md)
-      - [Get started with model router](06-models/06.1-explore-foundry-models/21-model-router.md)
-      - [Monitor model router](06-models/06.1-explore-foundry-models/22-monitor-model-router.md)
-      - [Evaluate model router](06-models/06.1-explore-foundry-models/23-evaluate-model-router.md)
-      - [Govern model router with Azure Policy](06-models/06.1-explore-foundry-models/24-model-router-policy.md)
-      - [Use model router with agents](06-models/06.1-explore-foundry-models/25-model-router-agents.md)
-      - [Auto and direct routing with Responses API](05-developer-tools-and-integrations/05.4-sdks-and-apis/03-responses-model-routing.md)
-      - [How model router works](06-models/06.1-explore-foundry-models/26-model-router-how-it-works.md)
-  - **Quota limits and region availability**
-    - [Region availability for Foundry Models sold by Azure](06-models/06.2-quota-limits-and-region-availability/01-models-sold-directly-by-azure-region-availability.md)
-    - [Manage quotas for Foundry resources](06-models/06.2-quota-limits-and-region-availability/02-quota.md)
-    - [Manage Azure OpenAI deployment quotas](06-models/06.2-quota-limits-and-region-availability/03-quota.md)
-    - [Automate Azure OpenAI deployments with quota](06-models/06.2-quota-limits-and-region-availability/04-automate-quota-deployments.md)
-    - [Foundry Models quotas and limits](06-models/06.2-quota-limits-and-region-availability/05-quotas-limits.md)
-    - [Azure OpenAI quotas and limits](06-models/06.2-quota-limits-and-region-availability/06-quotas-limits.md)
-    - [Azure OpenAI quotas and limits in Azure Government](06-models/06.2-quota-limits-and-region-availability/07-quotas-limits-gov.md)
-    - [Feature availability by region](06-models/06.2-quota-limits-and-region-availability/08-region-support.md)
-  - **Offers, deployment types, and pricing**
-    - [Overview](06-models/06.3-offers-deployment-types-and-pricing/01-deployments-overview.md)
-    - [Instant access models (preview)](06-models/06.3-offers-deployment-types-and-pricing/02-instant-models.md)
-    - [Managed compute (preview)](06-models/06.3-offers-deployment-types-and-pricing/03-managed-compute-overview.md)
-    - [Deployment types](06-models/06.3-offers-deployment-types-and-pricing/04-deployment-types.md)
-    - [Deployment types (government)](06-models/06.3-offers-deployment-types-and-pricing/05-deployment-types-gov.md)
-    - [Batch processing](06-models/06.3-offers-deployment-types-and-pricing/06-batch.md)
-    - [Flex processing (preview)](06-models/06.3-offers-deployment-types-and-pricing/07-flex-processing.md)
-    - [Priority processing](06-models/06.3-offers-deployment-types-and-pricing/08-priority-processing.md)
-    - **Provisioned throughput**
-      - [Overview](06-models/06.3-offers-deployment-types-and-pricing/09-provisioned-throughput.md)
-      - [Overview (government)](06-models/06.3-offers-deployment-types-and-pricing/10-provisioned-throughput-gov.md)
-      - [Quickstart](06-models/06.3-offers-deployment-types-and-pricing/11-provisioned-quickstart.md)
-      - [Determine PTU sizing for a workload](06-models/06.3-offers-deployment-types-and-pricing/12-provisioned-throughput-sizing.md)
-      - [PTU billing and cost management](06-models/06.3-offers-deployment-types-and-pricing/13-provisioned-throughput-billing.md)
-      - [Operate provisioned deployments in production](06-models/06.3-offers-deployment-types-and-pricing/14-provisioned-get-started.md)
-      - [Provisioned spillover](06-models/06.3-offers-deployment-types-and-pricing/15-spillover-traffic-management.md)
-    - [Plan and manage costs](06-models/06.3-offers-deployment-types-and-pricing/16-manage-costs.md)
-  - **Model deployment**
-    - [Deploy in the portal](06-models/06.4-model-deployment/01-deploy-foundry-models.md)
-    - [Deploy using code](06-models/06.4-model-deployment/02-create-model-deployments.md)
-    - [Migrate from GitHub Models](06-models/06.4-model-deployment/03-quickstart-github-models.md)
-    - [Deploy with managed compute (preview)](06-models/06.4-model-deployment/04-deploy-models-managed.md)
-    - [Troubleshoot deployments](https://learn.microsoft.com/en-us/azure/foundry-classic/how-to/troubleshoot-deploy-and-monitor?context=/azure/foundry/context/context) (not copied)
-    - [Troubleshoot Azure OpenAI HTTP errors](06-models/06.4-model-deployment/05-troubleshoot-errors.md)
-  - **Model support**
-    - [Azure OpenAI SDK language support](05-developer-tools-and-integrations/05.4-sdks-and-apis/05-supported-languages.md)
-    - **Microsoft AI (MAI)**
-      - [MAI-Image models](06-models/06.5-model-support/01-use-foundry-models-mai-image.md)
-      - [MAI-Thinking-1 model](06-models/06.5-model-support/02-use-foundry-models-mai-thinking.md)
-      - [MAI-Voice models](https://learn.microsoft.com/azure/ai-services/speech-service/mai-voices?context=/azure/foundry/context/context) (not copied)
-      - [MAI-Transcribe models](https://learn.microsoft.com/azure/ai-services/speech-service/mai-transcribe?context=/azure/foundry/context/context) (not copied)
-    - **Anthropic**
-      - [Overview of Claude models in Foundry](06-models/06.5-model-support/03-claude-models.md)
-      - [Quotas and rate limits](06-models/06.5-model-support/04-claude-models-quotas-limits.md)
-      - [Compare hosting options](06-models/06.5-model-support/05-claude-models-hosting-comparison.md)
-      - [Deploy and use Claude models](06-models/06.5-model-support/06-use-foundry-models-claude.md)
-      - [Deploy Claude with Bicep or Terraform](https://learn.microsoft.com/azure/developer/ai/how-to/deploy-claude-foundry?context=/azure/foundry/context/context) (not copied)
-    - [Black Forest Labs](06-models/06.5-model-support/07-use-foundry-models-flux.md)
-    - [SpaceXAI](06-models/06.5-model-support/08-use-foundry-models-grok.md)
-    - **Healthcare AI models**
-      - [Overview](06-models/06.5-model-support/09-healthcare-ai-models.md)
-      - [Deploy MedImageInsight premium model](06-models/06.5-model-support/10-deploy-medimageinsight-premium.md)
-      - [Deploy CXRReportGen premium model](06-models/06.5-model-support/11-deploy-cxrreportgen-premium.md)
-  - **Develop with AI models**
-    - [Endpoints](05-developer-tools-and-integrations/05.4-sdks-and-apis/02-endpoints.md)
-    - **Chat completions and Responses APIs**
-      - [Chat completions API](06-models/06.6-develop-with-ai-models/01-chatgpt.md)
-      - **Responses API**
-        - [Use the Azure OpenAI Responses API](06-models/06.6-develop-with-ai-models/02-responses.md)
-        - [Migrate from Chat Completions to Responses API](https://learn.microsoft.com/azure/developer/ai/how-to/azure-openai-to-responses?context=/azure/foundry/context/context) (not copied)
-        - [Text generation](06-models/06.6-develop-with-ai-models/03-generate-responses.md)
-        - [Function calling](06-models/06.6-develop-with-ai-models/04-function-calling.md)
-        - [Multi-agent orchestration (preview)](06-models/06.6-develop-with-ai-models/05-responses-multi-agent.md)
-        - [Structured outputs](06-models/06.6-develop-with-ai-models/06-structured-outputs.md)
-        - [JSON mode](06-models/06.6-develop-with-ai-models/07-json-mode.md)
-        - [Deep research](06-models/06.6-develop-with-ai-models/08-deep-research.md)
-        - [Tool search](06-models/06.6-develop-with-ai-models/09-tool-search.md)
-        - [Web search](06-models/06.6-develop-with-ai-models/10-web-search.md)
-        - [WebSocket mode](06-models/06.6-develop-with-ai-models/11-websockets.md)
-        - [Shell tool](06-models/06.6-develop-with-ai-models/12-shells.md)
-        - [Skills](06-models/06.6-develop-with-ai-models/13-skills.md)
-      - [Predicted outputs](06-models/06.6-develop-with-ai-models/14-predicted-outputs.md)
-      - [Prompt caching](06-models/06.6-develop-with-ai-models/15-prompt-caching.md)
-      - [Reasoning models (Azure OpenAI)](06-models/06.6-develop-with-ai-models/16-reasoning.md)
-      - [Reasoning models (Foundry Models)](06-models/06.6-develop-with-ai-models/17-use-chat-reasoning.md)
-    - **Embeddings**
-      - [Embeddings](06-models/06.6-develop-with-ai-models/18-embeddings.md)
-      - [Embeddings tutorial](06-models/06.6-develop-with-ai-models/19-embeddings.md)
-    - [Codex](06-models/06.6-develop-with-ai-models/20-codex.md)
-    - [Webhooks](06-models/06.6-develop-with-ai-models/21-webhooks.md)
-    - [Claude Code](05-developer-tools-and-integrations/05.3-coding-agents/04-configure-claude-code.md)
-    - [Claude Desktop](05-developer-tools-and-integrations/05.3-coding-agents/05-configure-claude-desktop.md)
-  - **Model capabilities**
-    - **Image and video**
-      - [Image generation](06-models/06.7-model-capabilities/01-dall-e.md)
-      - [Image prompt engineering techniques](06-models/06.7-model-capabilities/02-gpt-4-v-prompt-engineering.md)
-      - [Image prompt transformation](06-models/06.7-model-capabilities/03-prompt-transformation.md)
-      - [Video generation](06-models/06.7-model-capabilities/04-video-generation.md)
-      - [Vision-enabled chats](06-models/06.7-model-capabilities/05-gpt-with-vision.md)
-      - [Video translation](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/video-translation-get-started?context=/azure/foundry/context/context) (not copied)
-    - **Audio and speech**
-      - **GPT-Live**
-        - [What is GPT-Live?](06-models/06.7-model-capabilities/06-gpt-live.md)
-        - [Use GPT-Live for real-time voice](06-models/06.7-model-capabilities/07-gpt-live.md)
-        - [Use GPT-Live via WebRTC](06-models/06.7-model-capabilities/08-gpt-live-webrtc.md)
-        - [Delegate work in GPT-Live](06-models/06.7-model-capabilities/09-gpt-live-delegation.md)
-      - [Audio generation](06-models/06.7-model-capabilities/10-audio-completions-quickstart.md)
-      - [Speech to text](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-speech-to-text?context=/azure/foundry/context/context) (not copied)
-      - [Speech to text with transcription models](06-models/06.7-model-capabilities/11-whisper-quickstart.md)
-      - [Text to speech](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-text-to-speech?context=/azure/foundry/context/context) (not copied)
-      - [Text to speech avatar](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/text-to-speech-avatar/batch-synthesis-avatar?context=/azure/foundry/context/context) (not copied)
-      - [Voice Live](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/voice-live-quickstart?context=/azure/foundry/context/context) (not copied)
-    - **Realtime API**
-      - [GPT Realtime 2.x](06-models/06.7-model-capabilities/12-realtime-2.md)
-      - [Realtime API for speech and audio](06-models/06.7-model-capabilities/13-realtime-audio.md)
-      - [Realtime API via WebRTC](06-models/06.7-model-capabilities/14-realtime-audio-webrtc.md)
-      - [Realtime API via WebSockets](06-models/06.7-model-capabilities/15-realtime-audio-websockets.md)
-      - [Realtime API via SIP](06-models/06.7-model-capabilities/16-realtime-audio-sip.md)
-      - [Realtime API migration from Preview to GA](06-models/06.7-model-capabilities/17-realtime-audio-preview-api-migration-guide.md)
-      - [GPT Realtime Translate](06-models/06.7-model-capabilities/18-gpt-realtime-translate.md)
-      - [GPT Realtime Transcribe](06-models/06.7-model-capabilities/19-gpt-realtime-whisper.md)
-  - **Fine-tuning**
-    - [When to use fine-tuning](06-models/06.8-fine-tuning/01-fine-tuning-considerations.md)
-    - **Fine-tune models**
-      - [When to fine-tune a model](06-models/06.8-fine-tuning/02-fine-tuning.md)
-      - **Healthcare models**
-        - [Fine-tune a healthcare AI premium model](06-models/06.8-fine-tuning/03-fine-tune-premium-healthcare-models.md)
-        - [Fine-tune MedImageInsight premium model](06-models/06.8-fine-tuning/04-fine-tune-medimageinsight-premium.md)
-        - [Fine-tune CXRReportGen premium model](06-models/06.8-fine-tuning/05-fine-tune-cxrreportgen-premium.md)
-    - [Deploy your fine-tuned model](06-models/06.8-fine-tuning/06-fine-tuning-deploy.md)
-    - [Fine-tune using Azure Developer CLI](06-models/06.8-fine-tuning/07-fine-tune-cli.md)
-    - [Synthetic data generation](06-models/06.8-fine-tuning/08-data-generation.md)
-    - **Advanced techniques**
-      - [Vision fine-tuning](06-models/06.8-fine-tuning/09-fine-tuning-vision.md)
-      - [Preference fine-tuning](06-models/06.8-fine-tuning/10-fine-tuning-direct-preference-optimization.md)
-      - [Reinforcement fine-tuning](06-models/06.8-fine-tuning/11-reinforcement-fine-tuning.md)
-      - [Tool calling](06-models/06.8-fine-tuning/12-fine-tuning-functions.md)
-    - [Safety evaluation](06-models/06.8-fine-tuning/13-fine-tuning-safety-evaluation.md)
-    - [Fine-tuning cost management](06-models/06.8-fine-tuning/14-fine-tuning-cost-management.md)
-  - **Development best practices**
-    - [Prompt engineering techniques](06-models/06.9-development-best-practices/01-prompt-engineering.md)
-    - [Get started with a DeepSeek reasoning model](06-models/06.9-development-best-practices/02-get-started-deepseek-r1.md)
-    - [System message design](06-models/06.9-development-best-practices/03-advanced-prompt-engineering.md)
-    - [Performance and latency](06-models/06.9-development-best-practices/04-latency.md)
-    - [Integrate with your applications](06-models/06.9-development-best-practices/05-integrate-with-other-apps.md)
-- **Agents**
-  - [Overview](07-agents/01-overview.md)
-  - **Concepts**
-    - [Agent development lifecycle](07-agents/07.1-concepts/01-development-lifecycle.md)
-    - [Agent identity](07-agents/07.1-concepts/02-agent-identity.md)
-    - **Agent 365**
-      - [Microsoft Agent 365 integration](07-agents/07.1-concepts/03-agent-365-integration.md)
-      - [Grant Agent 365 observability permissions](07-agents/07.1-concepts/04-grant-agent-365-permissions.md)
-    - [Routines](07-agents/07.1-concepts/05-routines.md)
-    - [Workflows](07-agents/07.1-concepts/06-workflow.md)
-  - **Prompt agents**
-    - **Text-based agents**
-      - **Quickstarts**
-        - [Create an agent](04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md)
-        - [Use the Responses API](07-agents/07.2-prompt-agents/01-responses-api.md)
-      - **Build**
-        - [Use connected Foundry models](07-agents/07.2-prompt-agents/02-connected-models.md)
-        - [Use structured inputs](07-agents/07.2-prompt-agents/03-structured-inputs.md)
-        - [Agent applications](07-agents/07.2-prompt-agents/04-agent-applications.md)
-        - [Configure an agent](07-agents/07.2-prompt-agents/05-configure-agent.md)
-        - [Best practices](07-agents/07.2-prompt-agents/06-tool-best-practice.md)
-        - [Agent optimizer overview](07-agents/07.2-prompt-agents/07-agent-optimizer-overview.md)
-        - [Understand optimizer costs and token usage](07-agents/07.2-prompt-agents/08-agent-optimizer-costs.md)
-        - [Optimize a prompt agent](07-agents/07.2-prompt-agents/09-quickstart-optimize-prompt-agent.md)
-      - **Deploy and share**
-        - [Enable incoming A2A (preview)](07-agents/07.2-prompt-agents/10-enable-agent-to-agent-endpoint.md)
-        - [Use routines (preview)](07-agents/07.2-prompt-agents/11-use-routines.md)
-      - **Migrate**
-        - [Migrate prompt agents to the new agent service](07-agents/07.2-prompt-agents/12-migrate.md)
-        - [Migrate from agent applications to the new agent model](07-agents/07.2-prompt-agents/13-migrate-agent-applications.md)
-        - [Disable creation of classic agents](07-agents/07.2-prompt-agents/14-disable-classic-agents.md)
-    - **Voice-first agents**
-      - **Quickstarts**
-        - [Create a voice agent](04-get-started/04.1-what-do-you-want-to-build/02-prompt-voice-agent.md)
-      - **Build**
-        - [Configure a voice agent](07-agents/07.2-prompt-agents/15-configure-voice-agent.md)
-        - [Use a hosted agent as the conversation engine](07-agents/07.2-prompt-agents/16-voice-first-with-hosted-agent.md)
-        - [Use a subagent](07-agents/07.2-prompt-agents/17-use-subagent-voice-first-agent.md)
-        - [Integrate a telephony channel](07-agents/07.2-prompt-agents/18-voice-agent-telephony-channels.md)
-        - [Best practices](07-agents/07.2-prompt-agents/19-voice-agent-best-practice.md)
-        - [Optimize a voice agent](07-agents/07.2-prompt-agents/20-optimize-voice-agent-instructions.md)
-        - [Tracing, monitoring, and evaluation](07-agents/07.2-prompt-agents/21-voice-agent-observability.md)
-        - [Pricing](07-agents/07.2-prompt-agents/22-voice-agent-pricing.md)
-      - [Deploy and share](07-agents/07.2-prompt-agents/23-voice-agent-channels-publish.md)
-  - **Hosted agents**
-    - **Concepts**
-      - [Overview](07-agents/07.3-hosted-agents/01-hosted-agents.md)
-      - [Runtime components](07-agents/07.3-hosted-agents/02-runtime-components.md)
-      - [Runtime contract](07-agents/07.3-hosted-agents/03-hosted-agent-contract.md)
-      - [Long-running agent resilience (preview)](07-agents/07.3-hosted-agents/04-long-running-agent-resilience.md)
-      - [Durable state store (preview)](07-agents/07.3-hosted-agents/05-agent-state-store.md)
-      - [Long-running agent API reference (preview)](07-agents/07.3-hosted-agents/06-long-running-agent-reference.md)
-    - **Quickstarts**
-      - [Deploy your first agent](07-agents/07.3-hosted-agents/07-quickstart-hosted-agent.md)
-      - [Build and use a toolbox](07-agents/07.3-hosted-agents/08-quickstart-toolbox-agent.md)
-      - [Add Foundry IQ with a toolbox](07-agents/07.3-hosted-agents/09-quickstart-foundry-iq-hosted-agent.md)
-      - [Add Browser Automation with a toolbox](07-agents/07.3-hosted-agents/10-browser-automation-hosted-agent-quickstart.md)
-      - [Add persistent memory](07-agents/07.3-hosted-agents/11-quickstart-memory-hosted-agent.md)
-      - [Evaluate an agent](07-agents/07.3-hosted-agents/12-quickstart-evaluate-hosted-agent.md)
-      - [Optimize a hosted agent](07-agents/07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md)
-      - [Trace an agent](07-agents/07.3-hosted-agents/14-quickstart-tracing-hosted-agent.md)
-      - [Deploy your own code](07-agents/07.3-hosted-agents/15-quickstart-deploy-own-code.md)
-      - [Continuous integration and deployment](07-agents/07.3-hosted-agents/16-set-up-cicd-hosted-agent.md)
-    - **Develop**
-      - [Set up a project](07-agents/07.3-hosted-agents/17-init-agent-project.md)
-      - [Author azure.yaml](07-agents/07.3-hosted-agents/18-author-azure-yaml.md)
-      - [Use a toolbox with a hosted agent](07-agents/07.3-hosted-agents/19-use-toolbox-hosted-agent.md)
-      - [Configure environment variables](07-agents/07.3-hosted-agents/20-configure-hosted-agent-env-variables.md)
-      - [Set the model](07-agents/07.3-hosted-agents/21-update-hosted-agent-model.md)
-      - [Add a protocol adapter](07-agents/07.3-hosted-agents/22-add-protocol-adapter.md)
-      - [Use on-behalf-of flow](07-agents/07.3-hosted-agents/23-use-on-behalf-of-flow.md)
-      - [Host Microsoft Agent Framework agents](07-agents/07.3-hosted-agents/24-framework-hosted-agents.md)
-      - [Host LangGraph agents](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/06-langchain-hosted-agents.md)
-      - [Use a toolbox](07-agents/07.3-hosted-agents/19-use-toolbox-hosted-agent.md)
-      - [Deploy from source code](04-get-started/04.1-what-do-you-want-to-build/04-deploy-hosted-agent-code.md)
-    - **Run, test, and debug**
-      - [Run locally](07-agents/07.3-hosted-agents/25-run-hosted-agent-locally.md)
-      - [Invoke](07-agents/07.3-hosted-agents/26-invoke-hosted-agent.md)
-      - [Inspect locally](07-agents/07.3-hosted-agents/27-agent-inspector.md)
-      - [Test](07-agents/07.3-hosted-agents/28-test-hosted-agent.md)
-      - [Debug](07-agents/07.3-hosted-agents/29-debug-hosted-agent.md)
-      - [Configure an agent](07-agents/07.2-prompt-agents/05-configure-agent.md)
-      - [Diagnose with agent doctor](07-agents/07.3-hosted-agents/30-agent-doctor.md)
-      - [View logs](07-agents/07.3-hosted-agents/31-monitor-hosted-agent-logs.md)
-      - [Export telemetry with OpenTelemetry](07-agents/07.3-hosted-agents/32-configure-hosted-agent-telemetry.md)
-      - [Monitor agents in the dashboard](07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md)
-      - [Isolate sessions per user](07-agents/07.3-hosted-agents/34-isolate-sessions-per-user.md)
-      - [Multiplex users in one session](07-agents/07.3-hosted-agents/35-multiplex-session-users.md)
-      - [Pass isolation keys (protocol 1.0.0)](07-agents/07.3-hosted-agents/36-pass-isolation-keys.md)
-      - [Make your agent optimizer-ready](07-agents/07.3-hosted-agents/37-make-agent-optimizer-ready.md)
-      - [Create an evaluation dataset](07-agents/07.3-hosted-agents/38-create-optimizer-dataset.md)
-      - [Optimize agent instructions, skills, tools, and models](07-agents/07.3-hosted-agents/39-optimize-agent-targets.md)
-      - [Optimize agent prompts](07-agents/07.3-hosted-agents/40-prompt-optimizer.md)
-    - **Build long-running agents (preview)**
-      - [Deploy a crash-resilient long-running agent (preview)](07-agents/07.3-hosted-agents/41-deploy-resilient-agent.md)
-      - [Deploy a steerable agent (preview)](07-agents/07.3-hosted-agents/42-deploy-steerable-agent.md)
-      - [Recover work after a crash](07-agents/07.3-hosted-agents/43-recover-long-running-work.md)
-      - [Steer an in-flight turn](07-agents/07.3-hosted-agents/44-steer-hosted-agent.md)
-      - [Cancel a hosted agent turn](07-agents/07.3-hosted-agents/45-cancel-hosted-agent-turn.md)
-      - [Add human-in-the-loop approval](07-agents/07.3-hosted-agents/46-add-human-in-the-loop.md)
-      - [Stream with reconnect](07-agents/07.3-hosted-agents/47-stream-with-reconnect.md)
-      - [Manage durable state](07-agents/07.3-hosted-agents/48-manage-task-state.md)
-    - **Deploy and operate**
-      - [Deploy](07-agents/07.3-hosted-agents/49-deploy-hosted-agent.md)
-      - [Deploy a voice agent (preview)](07-agents/07.3-hosted-agents/50-build-voice-agent.md)
-      - [Use a hosted agent as a voice agent's conversation engine (preview)](07-agents/07.2-prompt-agents/16-voice-first-with-hosted-agent.md)
-      - [Add hosted agent guardrails](07-agents/07.3-hosted-agents/51-add-hosted-agent-guardrails.md)
-      - [Manage lifecycle](07-agents/07.3-hosted-agents/52-manage-hosted-agent.md)
-      - [Sessions](07-agents/07.3-hosted-agents/53-manage-hosted-sessions.md)
-    - **Migrate**
-      - [Migrate from agent applications to the new agent model](07-agents/07.2-prompt-agents/13-migrate-agent-applications.md)
-      - [Disable creation of classic agents](07-agents/07.2-prompt-agents/14-disable-classic-agents.md)
-    - **Ship to production**
-      - [Set up CI/CD](07-agents/07.3-hosted-agents/54-set-up-ci-cd-cli.md)
-      - [Deploy with a private container registry (ACR)](07-agents/07.3-hosted-agents/55-deploy-hosted-agent-private-azure-container-registry.md)
-      - [Bring your own registry](07-agents/07.3-hosted-agents/56-private-registry-connections.md)
-      - [Update endpoint and card](07-agents/07.3-hosted-agents/57-update-agent-endpoint-cli.md)
-      - [Migrate to the latest version](07-agents/07.3-hosted-agents/58-migrate-hosted-agent-preview.md)
-    - **Reference**
-      - [Permissions](07-agents/07.3-hosted-agents/59-hosted-agent-permissions.md)
-      - [azure.yaml schema](07-agents/07.3-hosted-agents/60-azure-yaml-reference.md)
-      - [agent.yaml schema (legacy)](07-agents/07.3-hosted-agents/61-agent-yaml-reference.md)
-      - [Infrastructure (Bicep)](07-agents/07.3-hosted-agents/62-cli-infrastructure.md)
-  - **Autopilots**
-    - [What is an autopilot?](07-agents/07.4-autopilots/01-autopilot-overview.md)
-    - [Autopilot lifecycle](07-agents/07.4-autopilots/02-autopilot-lifecycle.md)
-    - [Build your first autopilot](07-agents/07.4-autopilots/03-agent-365.md)
-  - **Publish and share**
-    - [Publish agents to Microsoft Copilot and Microsoft Teams](07-agents/07.5-publish-and-share/01-publish-copilot.md)
-    - [Publish with a virtual network](07-agents/07.5-publish-and-share/02-publish-copilot-virtual-network.md)
-    - [Troubleshoot publishing to Microsoft Copilot and Teams](07-agents/07.5-publish-and-share/03-troubleshoot-publish-copilot.md)
-  - **Reference**
-    - [Quotas, limits, and region support](07-agents/07.6-reference/01-limits-quotas-regions.md)
-    - [Feature availability in Azure Government](07-agents/07.6-reference/02-azure-government.md)
-    - [Capability hosts](07-agents/07.6-reference/03-capability-hosts.md)
-    - [FAQ](07-agents/07.6-reference/04-faq.md)
-- **Toolboxes**
-  - [Overview](04-get-started/04.1-what-do-you-want-to-build/06-toolbox-overview.md)
-  - [Create and manage a toolbox](08-toolboxes/01-toolbox.md)
-  - **Add tools and skills**
-    - **MCP**
-      - [Connect to an MCP server](08-toolboxes/08.1-add-tools-and-skills/01-model-context-protocol.md)
-      - [Managed MCP servers (preview)](08-toolboxes/08.1-add-tools-and-skills/02-connectors.md)
-      - [MCP authentication](08-toolboxes/08.1-add-tools-and-skills/03-mcp-authentication.md)
-      - [Build your own MCP server](08-toolboxes/08.1-add-tools-and-skills/04-build-your-own-mcp-server.md)
-      - [Foundry MCP Server for coding agents (preview)](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/01-get-started.md)
-      - [Create a private tools catalog](08-toolboxes/08.1-add-tools-and-skills/05-private-tool-catalog.md)
-    - [Skills (preview)](08-toolboxes/08.1-add-tools-and-skills/06-skills.md)
-    - [Create a private skill catalog (preview)](08-toolboxes/08.1-add-tools-and-skills/07-private-skill-catalog.md)
-    - [OpenAPI](08-toolboxes/08.1-add-tools-and-skills/08-openapi.md)
-    - **A2A**
-      - [Overview](08-toolboxes/08.1-add-tools-and-skills/09-agent-to-agent.md)
-      - [Authentication](08-toolboxes/08.1-add-tools-and-skills/10-agent-to-agent-authentication.md)
-    - **Web and Bing tools**
-      - [Overview](08-toolboxes/08.1-add-tools-and-skills/11-web-overview.md)
-      - [Web search tool](08-toolboxes/08.1-add-tools-and-skills/12-web-search.md)
-      - [Grounding with Bing tools](08-toolboxes/08.1-add-tools-and-skills/13-bing-tools.md)
-    - **Microsoft IQ**
-      - **Foundry IQ**
-        - [Overview](08-toolboxes/08.1-add-tools-and-skills/14-what-is-foundry-iq.md)
-        - [FAQ](08-toolboxes/08.1-add-tools-and-skills/15-foundry-iq-faq.md)
-        - [Connect knowledge base to agents](08-toolboxes/08.1-add-tools-and-skills/16-foundry-iq-connect.md)
-        - **Tutorial: Deploy private agentic retrieval**
-          - [Overview](08-toolboxes/08.1-add-tools-and-skills/17-foundry-iq-tutorial-private-overview.md)
-          - [1 - Set up private inbound connectivity](08-toolboxes/08.1-add-tools-and-skills/18-foundry-iq-tutorial-private-inbound.md)
-          - [2 - Set up private outbound connectivity](08-toolboxes/08.1-add-tools-and-skills/19-foundry-iq-tutorial-private-outbound.md)
-          - [3 - Validate private agentic retrieval](08-toolboxes/08.1-add-tools-and-skills/20-foundry-iq-tutorial-private-retrieval.md)
-      - [Fabric IQ (preview)](08-toolboxes/08.1-add-tools-and-skills/21-fabric-iq.md)
-      - [Work IQ (preview)](08-toolboxes/08.1-add-tools-and-skills/22-work-iq.md)
-    - [File search](08-toolboxes/08.1-add-tools-and-skills/23-file-search.md)
-      - [Retrieval-augmented generation (RAG)](08-toolboxes/08.1-add-tools-and-skills/24-retrieval-augmented-generation.md)
-      - [Vector stores for file search](08-toolboxes/08.1-add-tools-and-skills/25-vector-stores.md)
-    - [Code interpreter](08-toolboxes/08.1-add-tools-and-skills/26-code-interpreter.md)
-      - [Custom code interpreter (preview)](08-toolboxes/08.1-add-tools-and-skills/27-custom-code-interpreter.md)
-    - [Azure AI Search](08-toolboxes/08.1-add-tools-and-skills/28-ai-search.md)
-    - **Other tools**
-      - [Function calling](08-toolboxes/08.1-add-tools-and-skills/29-function-calling.md)
-      - [Reminder tool (preview)](08-toolboxes/08.1-add-tools-and-skills/30-reminder-tool.md)
-      - **Browser automation (preview)**
-        - [Overview](08-toolboxes/08.1-add-tools-and-skills/31-browser-automation.md)
-        - [Quickstart](07-agents/07.3-hosted-agents/10-browser-automation-hosted-agent-quickstart.md)
-      - [Computer Use (preview)](08-toolboxes/08.1-add-tools-and-skills/32-computer-use.md)
-      - [Image generation (preview)](08-toolboxes/08.1-add-tools-and-skills/33-image-generation.md)
-      - [Fabric data agent (preview)](08-toolboxes/08.1-add-tools-and-skills/34-fabric.md)
-      - [SharePoint (preview)](08-toolboxes/08.1-add-tools-and-skills/35-sharepoint.md)
-      - [Azure Functions](08-toolboxes/08.1-add-tools-and-skills/36-azure-functions.md)
-      - **Foundry Tools**
-        - [Azure Speech](08-toolboxes/08.1-add-tools-and-skills/37-azure-ai-speech.md)
-        - **Azure Language**
-          - [Azure Language tools and agents](https://learn.microsoft.com/azure/ai-services/language-service/concepts/foundry-tools-agents?context=/azure/foundry/context/context) (not copied)
-          - [Try CLU multi-turn conversations](https://learn.microsoft.com/azure/ai-services/language-service/conversational-language-understanding/how-to/quickstart-multi-turn-conversations?context=/azure/foundry/context/context) (not copied)
-          - [Detect Personally Identifiable Information (PII)](https://learn.microsoft.com/azure/ai-services/language-service/personally-identifiable-information/quickstart?context=/azure/foundry/context/context) (not copied)
-          - [Try Azure Language detection](https://learn.microsoft.com/azure/ai-services/language-service/language-detection/quickstart?context=/azure/foundry/context/context) (not copied)
-        - **Azure Translator**
-          - [Azure text translation](https://learn.microsoft.com/azure/ai-services/translator/text-translation/overview?context=/azure/foundry/context/context) (not copied)
-          - [Azure document translation](https://learn.microsoft.com/azure/ai-services/translator/document-translation/overview?context=/azure/foundry/context/context) (not copied)
-      - **Voice**
-        - [Quickstart](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/voice-live-agents-quickstart) (not copied)
-        - [Enable voice for prompt agents](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-voice-agent-integration) (not copied)
-      - **Memory (preview)**
-        - [Overview](08-toolboxes/08.1-add-tools-and-skills/38-what-is-memory.md)
-        - [Create and use memory](08-toolboxes/08.1-add-tools-and-skills/39-memory-usage.md)
-  - [Tool search](08-toolboxes/02-tool-search.md)
-  - **Manage toolbox**
-    - [Add guardrail](08-toolboxes/01-toolbox.md)
-    - [Tool governance](08-toolboxes/08.2-manage-toolbox/01-governance.md)
-    - [Identity and authentication](08-toolboxes/08.2-manage-toolbox/02-tool-authentication.md)
-    - [Network isolation](08-toolboxes/08.2-manage-toolbox/03-toolbox-network-isolation.md)
-    - [Best practices](07-agents/07.2-prompt-agents/06-tool-best-practice.md)
-- **Observability**
-  - [Overview](09-observability/01-observability.md)
-  - **Monitoring**
-    - [Notification Center](09-observability/09.1-monitoring/01-concept-notification-center.md)
-    - [Monitor agents in the dashboard](07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md)
-    - [Use Insights in Foundry](09-observability/09.1-monitoring/02-agent-insights.md)
-    - [Log end user feedback](09-observability/09.1-monitoring/03-log-end-user-feedback.md)
-    - [Monitor model deployments](09-observability/09.1-monitoring/04-monitor-models.md)
-    - [Monitor model router](06-models/06.1-explore-foundry-models/22-monitor-model-router.md)
-  - **Tracing**
-    - [Overview](09-observability/09.2-tracing/01-trace-agent-concept.md)
-    - [Quickstart](07-agents/07.3-hosted-agents/14-quickstart-tracing-hosted-agent.md)
-    - [Set up tracing](09-observability/09.2-tracing/02-trace-agent-setup.md)
-    - [Entra authentication for trace ingestion](09-observability/09.2-tracing/03-trace-ingestion-entra-authentication.md)
-    - [Replay agent traces](09-observability/09.2-tracing/04-trace-agent-replay.md)
-    - [Add client-side tracing](09-observability/09.2-tracing/05-trace-agent-client-side.md)
-    - [Configure tracing for agent frameworks](09-observability/09.2-tracing/06-trace-agent-framework.md)
-    - [Register external agents (preview)](09-observability/09.2-tracing/07-register-external-agent.md)
-    - [Convert agent traces into evaluation datasets](09-observability/09.2-tracing/08-traces-to-dataset.md)
-    - [Annotate traces with human feedback](09-observability/09.2-tracing/09-trace-annotations.md)
-    - [Restrict access to sensitive content in traces](09-observability/09.2-tracing/10-traces-sensitive-content.md)
-    - [Tracing and data handling](09-observability/09.2-tracing/11-trace-data.md)
-  - [Troubleshooting](09-observability/02-troubleshooting.md)
-- **Evaluation**
-  - [Rate limits and regions](10-evaluation/01-evaluation-regions-limits-virtual-network.md)
-  - [Virtual network support](10-evaluation/02-evaluation-virtual-network.md)
-  - [Safety evaluations transparency note](10-evaluation/03-safety-evaluations-transparency-note.md)
-  - **Supported evaluators**
-    - [Overview](10-evaluation/10.1-supported-evaluators/01-built-in-evaluators.md)
-    - [General purpose evaluators](10-evaluation/10.1-supported-evaluators/02-general-purpose-evaluators.md)
-    - [Textual similarity evaluators](10-evaluation/10.1-supported-evaluators/03-textual-similarity-evaluators.md)
-    - [Retrieval Augmented Generation (RAG) evaluators](10-evaluation/10.1-supported-evaluators/04-rag-evaluators.md)
-    - [Risk and safety evaluators](10-evaluation/10.1-supported-evaluators/05-risk-safety-evaluators.md)
-    - [Agent evaluators](10-evaluation/10.1-supported-evaluators/06-agent-evaluators.md)
-    - [Azure OpenAI evaluators](10-evaluation/10.1-supported-evaluators/07-azure-openai-graders.md)
-    - [Rubric evaluators](10-evaluation/10.1-supported-evaluators/08-rubric-evaluators.md)
-    - [Custom evaluators](10-evaluation/10.1-supported-evaluators/09-custom-evaluators.md)
-  - **Evaluation datasets**
-    - [Overview](10-evaluation/10.2-evaluation-datasets/01-evaluation-datasets.md)
-    - [Dataset schema](10-evaluation/10.2-evaluation-datasets/02-evaluation-dataset-schema.md)
-    - [Generate a synthetic evaluation dataset](10-evaluation/10.2-evaluation-datasets/03-evaluation-dataset-synthetic.md)
-    - [Convert agent traces into evaluation datasets](09-observability/09.2-tracing/08-traces-to-dataset.md)
-  - **Run evaluations**
-    - [Quickstart](07-agents/07.3-hosted-agents/12-quickstart-evaluate-hosted-agent.md)
-    - [Evaluate agents](10-evaluation/10.3-run-evaluations/01-evaluate-agent.md)
-    - **Run evaluations with the SDK**
-      - [Introduction to cloud evaluation](10-evaluation/10.3-run-evaluations/02-cloud-evaluation.md)
-      - **Evaluate individual turns**
-        - [Evaluate query-response datasets](10-evaluation/10.3-run-evaluations/03-cloud-evaluation-datasets.md)
-        - [Evaluate model and agent responses](10-evaluation/10.3-run-evaluations/04-cloud-evaluation-targets.md)
-        - [Evaluate model and agent traces](10-evaluation/10.3-run-evaluations/05-cloud-evaluation-deployed-interactions.md)
-        - [Generate synthetic queries](10-evaluation/10.3-run-evaluations/06-cloud-evaluation-synthetic-data.md)
-      - **Evaluate complete conversations**
-        - [Evaluate conversation datasets](10-evaluation/10.3-run-evaluations/07-cloud-evaluation-conversations.md)
-        - [Evaluate model and agent traces](10-evaluation/10.3-run-evaluations/08-cloud-evaluation-deployed-conversations.md)
-        - [Simulate agent conversations](10-evaluation/10.3-run-evaluations/09-cloud-evaluation-simulate-conversations.md)
-      - [Get evaluation results](10-evaluation/10.3-run-evaluations/10-cloud-evaluation-results.md)
-      - [Use admin-connected models](10-evaluation/10.3-run-evaluations/11-evaluate-admin-connected-models.md)
-    - [Run evaluations from the portal](10-evaluation/10.3-run-evaluations/12-evaluate-generative-ai-app.md)
-    - [Run agent evaluations with the Azure Developer CLI](10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md)
-    - **Specialized evaluation workflows**
-      - [Continuous evaluation](07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md)
-      - [Run benchmark evaluations](06-models/06.1-explore-foundry-models/07-benchmark-evaluations.md)
-      - [Set up human evaluation](10-evaluation/10.3-run-evaluations/14-human-evaluation.md)
-    - **Review and analyze results**
-      - [View evaluation results in the portal](10-evaluation/10.3-run-evaluations/15-evaluate-results.md)
-      - [Analyze evaluation results](10-evaluation/10.3-run-evaluations/16-cluster-analysis.md)
-  - **AI red teaming**
-    - [Overview](10-evaluation/10.4-ai-red-teaming/01-ai-red-teaming-agent.md)
-    - [Run red teaming scans in the cloud](10-evaluation/10.4-ai-red-teaming/02-run-ai-red-teaming-cloud.md)
-    - [Run red teaming scans locally](10-evaluation/10.4-ai-red-teaming/03-run-scans-ai-red-teaming-agent.md)
-  - **Evaluations in CI/CD pipelines**
-    - [Run evaluations in GitHub Actions](10-evaluation/10.5-evaluations-in-ci-cd-pipelines/01-evaluation-github-action.md)
-    - [Run evaluations in Azure DevOps](10-evaluation/10.5-evaluations-in-ci-cd-pipelines/02-evaluation-azure-devops.md)
-- **Optimization**
-  - [Optimize agents overview (preview)](07-agents/07.2-prompt-agents/07-agent-optimizer-overview.md)
-  - [Understand optimizer costs and token usage](07-agents/07.2-prompt-agents/08-agent-optimizer-costs.md)
-  - **Run optimizations**
-    - **Prompt agents in the portal**
-      - [Optimize agent prompts](07-agents/07.3-hosted-agents/40-prompt-optimizer.md)
-      - [Optimize a prompt agent](07-agents/07.2-prompt-agents/09-quickstart-optimize-prompt-agent.md)
-    - **Hosted agents with SDKs, CLI and toolkit**
-      - [Quickstart](07-agents/07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md)
-      - [Make your agent optimization-ready](07-agents/07.3-hosted-agents/37-make-agent-optimizer-ready.md)
-      - [Create a custom evaluation dataset](07-agents/07.3-hosted-agents/38-create-optimizer-dataset.md)
-      - [Optimize agent instructions and skills](07-agents/07.3-hosted-agents/39-optimize-agent-targets.md)
-- **Trust and safety**
-  - **Guardrails and controls**
-    - [Overview](12-trust-and-safety/12.1-guardrails-and-controls/01-guardrails-overview.md)
-    - [Configure guardrails and controls](12-trust-and-safety/12.1-guardrails-and-controls/02-how-to-create-guardrails.md)
-    - **Risks**
-      - [Harm categories and severity levels](12-trust-and-safety/12.1-guardrails-and-controls/03-content-filter-severity-levels.md)
-      - [Prompt Shields](12-trust-and-safety/12.1-guardrails-and-controls/04-content-filter-prompt-shields.md)
-      - [Sensitive Data Leakage (PII)](12-trust-and-safety/12.1-guardrails-and-controls/05-content-filter-personal-information.md)
-      - [Groundedness detection](12-trust-and-safety/12.1-guardrails-and-controls/06-content-filter-groundedness.md)
-      - [Task adherence](12-trust-and-safety/12.1-guardrails-and-controls/07-task-adherence.md)
-      - [Protected material for code](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/quickstart-protected-material-code) (not copied)
-      - [Protected material for text](12-trust-and-safety/12.1-guardrails-and-controls/08-content-filter-protected-material.md)
-    - **Custom controls**
-      - [Block lists](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/quickstart-blocklist) (not copied)
-      - [Custom categories](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/custom-categories?context=/azure/foundry/context/context) (not copied)
-    - [Intervention points](12-trust-and-safety/12.1-guardrails-and-controls/09-intervention-points.md)
-    - [Content streaming](12-trust-and-safety/12.1-guardrails-and-controls/10-content-streaming.md)
-    - [Default safety policies](12-trust-and-safety/12.1-guardrails-and-controls/11-default-safety-policies.md)
-    - [Safety system messages](12-trust-and-safety/12.1-guardrails-and-controls/12-safety-system-message-templates.md)
-    - [Third-party guardrail integrations](12-trust-and-safety/12.1-guardrails-and-controls/13-third-party-integrations.md)
-    - [Guided Guardrail (preview)](12-trust-and-safety/12.1-guardrails-and-controls/14-guided-set-up.md)
-    - **Safety best practices**
-      - [Safety system message guidance](12-trust-and-safety/12.1-guardrails-and-controls/15-system-message.md)
-      - [Red teaming large language models (LLMs)](12-trust-and-safety/12.1-guardrails-and-controls/16-red-teaming.md)
-  - **Responsible AI**
-    - [Overview](12-trust-and-safety/12.2-responsible-ai/01-responsible-use-of-ai-overview.md)
-    - [Limited access](https://learn.microsoft.com/en-us/azure/ai-services/cognitive-services-limited-access?context=/azure/foundry/context/context) (not copied)
-    - [Content Provenance for Microsoft Foundry Models](12-trust-and-safety/12.2-responsible-ai/02-provenance-disclosure.md)
-    - **Azure OpenAI**
-      - [Overview](12-trust-and-safety/12.2-responsible-ai/03-overview.md)
-      - [Transparency note](12-trust-and-safety/12.2-responsible-ai/04-transparency-note.md)
-      - [Limited access](12-trust-and-safety/12.2-responsible-ai/05-limited-access.md)
-      - [Code of conduct](https://learn.microsoft.com/legal/ai-code-of-conduct) (not copied)
-      - [Data, privacy, and security](06-models/06.1-explore-foundry-models/18-data-privacy.md)
-      - [Customer Copyright Commitment](12-trust-and-safety/12.2-responsible-ai/06-customer-copyright-commitment.md)
-      - [Abuse monitoring](12-trust-and-safety/12.2-responsible-ai/07-abuse-monitoring.md)
-    - **Agents**
-      - [Transparency note](12-trust-and-safety/12.2-responsible-ai/08-transparency-note.md)
-      - [Data, privacy, and security for agents](12-trust-and-safety/12.2-responsible-ai/09-data-privacy-security.md)
-- **Manage and operate**
-  - **Set up and configure**
-    - [General availability overview](13-manage-and-operate/13.1-set-up-and-configure/01-general-availability.md)
-    - [Plan rollout](13-manage-and-operate/13.1-set-up-and-configure/02-planning.md)
-    - **Manage Foundry resources**
-      - [Create your first resource](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?context=/azure/foundry/context/context) (not copied)
-      - [Create resources using Bicep template](13-manage-and-operate/13.1-set-up-and-configure/03-create-resource-template.md)
-      - [Manage resources using Terraform](13-manage-and-operate/13.1-set-up-and-configure/04-create-resource-terraform.md)
-      - [Recover or purge deleted resources](https://learn.microsoft.com/en-us/azure/ai-services/recover-purge-resources?context=/azure/foundry/context/context) (not copied)
-      - [Upgrade from Azure OpenAI Service](13-manage-and-operate/13.1-set-up-and-configure/05-upgrade-azure-openai.md)
-      - [Migrate from Azure AI Inference SDK to OpenAI SDK](13-manage-and-operate/13.1-set-up-and-configure/06-model-inference-to-openai-migration.md)
-    - [Create and manage projects](13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md)
-    - **Agent configuration**
-      - [Set up your agent resources](13-manage-and-operate/13.1-set-up-and-configure/08-environment-setup.md)
-      - [Agent capability settings](13-manage-and-operate/13.1-set-up-and-configure/09-configure-capability-settings.md)
-      - [Standard agent setup](13-manage-and-operate/13.1-set-up-and-configure/10-standard-agent-setup.md)
-      - [Use your own Azure resources](13-manage-and-operate/13.1-set-up-and-configure/11-use-your-own-resources.md)
-      - [Virtual networks](13-manage-and-operate/13.1-set-up-and-configure/12-virtual-networks.md)
-      - [Networking deep dive](13-manage-and-operate/13.1-set-up-and-configure/13-agents-networking-deep-dive.md)
-      - [Bring your own models with AI gateways](13-manage-and-operate/13.1-set-up-and-configure/14-ai-gateway.md)
-    - **Connect services and tools**
-      - [Create a connection](13-manage-and-operate/13.1-set-up-and-configure/15-connections-add.md)
-      - [Connect to your own storage in Foundry](13-manage-and-operate/13.1-set-up-and-configure/16-bring-your-own-azure-storage-foundry.md)
-      - [Connect to your own storage for Speech/Language](13-manage-and-operate/13.1-set-up-and-configure/17-bring-your-own-azure-storage-speech-language-services.md)
-      - [Manage Grounding with Bing](13-manage-and-operate/13.1-set-up-and-configure/18-manage-grounding-with-bing.md)
-    - **Quota and service limits**
-      - [Manage quotas for Foundry resources](06-models/06.2-quota-limits-and-region-availability/02-quota.md)
-      - [Foundry Models quotas and limits](06-models/06.2-quota-limits-and-region-availability/05-quotas-limits.md)
-      - [Azure OpenAI quotas and limits](06-models/06.2-quota-limits-and-region-availability/06-quotas-limits.md)
-    - [Plan and manage costs](06-models/06.3-offers-deployment-types-and-pricing/16-manage-costs.md)
-    - [Consolidated view in Azure portal](13-manage-and-operate/13.1-set-up-and-configure/19-foundry-consolidated-view.md)
-    - [Claude consumption units billing](13-manage-and-operate/13.1-set-up-and-configure/20-claude-models-billing.md)
-  - **Govern at scale**
-    - [Overview](13-manage-and-operate/13.2-govern-at-scale/01-overview.md)
-    - **Govern tools**
-      - [Govern MCP tools with an AI gateway](08-toolboxes/08.2-manage-toolbox/01-governance.md)
-    - **Govern agents**
-      - [Monitor fleet health and performance](13-manage-and-operate/13.2-govern-at-scale/02-monitoring-across-fleet.md)
-      - [Manage agents at scale](13-manage-and-operate/13.2-govern-at-scale/03-how-to-manage-agents.md)
-      - [Register and manage custom agents](13-manage-and-operate/13.2-govern-at-scale/04-register-custom-agent.md)
-      - [Govern agent infrastructure (Entra admin)](13-manage-and-operate/13.2-govern-at-scale/05-govern-agent-infrastructure-entra-admin.md)
-    - **Govern models**
-      - [Enforce token limits](13-manage-and-operate/13.2-govern-at-scale/06-how-to-enforce-limits-models.md)
-      - [Apply a guardrail policy for models](13-manage-and-operate/13.2-govern-at-scale/07-quickstart-create-guardrail-policy.md)
-    - [Manage compliance and security](13-manage-and-operate/13.2-govern-at-scale/08-how-to-manage-compliance-security.md)
-    - [Configure an AI gateway](13-manage-and-operate/13.2-govern-at-scale/09-enable-ai-api-management-gateway-portal.md)
-  - **Security and governance**
-    - **Identity**
-      - [Authentication and authorization](13-manage-and-operate/13.3-security-and-governance/01-authentication-authorization-foundry.md)
-      - [Role-based access control](13-manage-and-operate/13.3-security-and-governance/02-rbac-foundry.md)
-      - [Elevated-role tasks](13-manage-and-operate/13.3-security-and-governance/03-administrator-guide.md)
-      - [Disable preview features](13-manage-and-operate/13.3-security-and-governance/04-disable-preview-features.md)
-      - [Configure keyless authentication](13-manage-and-operate/13.3-security-and-governance/05-configure-entra-id.md)
-    - **Network security**
-      - [Choose a networking option](13-manage-and-operate/13.3-security-and-governance/06-networking-options.md)
-      - [Configure network isolation](13-manage-and-operate/13.3-security-and-governance/07-configure-private-link.md)
-      - [Managed virtual network](13-manage-and-operate/13.3-security-and-governance/08-managed-virtual-network.md)
-      - [Access on-premises resources](13-manage-and-operate/13.3-security-and-governance/09-access-on-premises-resources.md)
-      - [Network security perimeter](13-manage-and-operate/13.3-security-and-governance/10-add-foundry-to-network-security-perimeter.md)
-    - **Data protection & encryption**
-      - [Understand customer-managed key encryption](13-manage-and-operate/13.3-security-and-governance/11-customer-managed-keys.md)
-      - [Configure customer-managed keys](13-manage-and-operate/13.3-security-and-governance/12-encryption-keys-portal.md)
-      - [Store secrets in your Azure Key Vault](13-manage-and-operate/13.3-security-and-governance/13-set-up-key-vault-connection.md)
-      - [Rotate API access keys](https://learn.microsoft.com/azure/ai-services/rotate-keys?context=/azure/foundry/context/context) (not copied)
-    - **Policy management**
-      - [Built-in policy definitions](https://learn.microsoft.com/en-us/azure/ai-services/policy-reference?context=/azure/foundry/context/context) (not copied)
-      - [Built-in policy for model deployment](13-manage-and-operate/13.3-security-and-governance/14-model-deployment-policy.md)
-      - [Create custom policy definitions](13-manage-and-operate/13.3-security-and-governance/15-custom-policy-definition.md)
-    - **Monitor**
-      - [Diagnostic logging](13-manage-and-operate/13.3-security-and-governance/16-diagnostic-logging.md)
-      - [Configure Agent 365 data collection](13-manage-and-operate/13.3-security-and-governance/17-configure-agent-365-data-collection.md)
-      - [Plan and manage costs](06-models/06.3-offers-deployment-types-and-pricing/16-manage-costs.md)
-    - **High availability and disaster recovery**
-      - [High availability and resiliency](13-manage-and-operate/13.3-security-and-governance/18-high-availability-resiliency.md)
-      - [Disaster recovery for agent services](13-manage-and-operate/13.3-security-and-governance/19-agent-service-disaster-recovery.md)
-      - [Disaster recovery from a platform outage](13-manage-and-operate/13.3-security-and-governance/20-agent-service-platform-disaster-recovery.md)
-      - [Disaster recovery from resource and data loss](13-manage-and-operate/13.3-security-and-governance/21-agent-service-operator-disaster-recovery.md)
-    - [Security baseline](https://learn.microsoft.com/security/benchmark/azure/baselines/azure-ai-foundry-security-baseline) (not copied)
-    - [Service architecture](13-manage-and-operate/13.3-security-and-governance/22-architecture.md)
-    - [Data, privacy, and security for Foundry Models sold by Azure](06-models/06.1-explore-foundry-models/18-data-privacy.md)
-    - [Data, privacy, and security for Claude models in Microsoft Foundry](13-manage-and-operate/13.3-security-and-governance/23-data-privacy.md)
-    - [Compare Azure-hosted and Anthropic-hosted Claude models](06-models/06.5-model-support/05-claude-models-hosting-comparison.md)
-  - **Operate and support**
-    - [What's new](13-manage-and-operate/13.4-operate-and-support/01-whats-new-foundry.md)
-    - [Service Health alerts](13-manage-and-operate/13.4-operate-and-support/02-stay-informed-service-health.md)
-    - [Use with a screen reader](13-manage-and-operate/13.4-operate-and-support/03-screen-reader.md)
-    - [Known issues](13-manage-and-operate/13.4-operate-and-support/04-foundry-known-issues.md)
-    - [Feature availability by region](06-models/06.2-quota-limits-and-region-availability/08-region-support.md)
-    - [Microsoft Foundry in Azure Government](13-manage-and-operate/13.4-operate-and-support/05-foundry-azure-government.md)
-    - [Foundry Agent Service feature availability in Azure Government](07-agents/07.6-reference/02-azure-government.md)
-    - [Region support](https://azure.microsoft.com/explore/global-infrastructure/products-by-region/) (not copied)
-    - [Foundry Models lifecycle and support policy](06-models/06.1-explore-foundry-models/13-model-retirements.md)
-    - [Foundry Models lifecycle and support policy (government)](06-models/06.1-explore-foundry-models/14-model-retirements-gov.md)
-    - [Code of conduct](https://learn.microsoft.com/legal/ai-code-of-conduct) (not copied)
-    - [Compliance](https://aka.ms/AzureCompliance) (not copied)
-    - [Service Level Agreement (SLA)](https://www.microsoft.com/licensing/docs/view/Service-Level-Agreements-SLA-for-Online-Services) (not copied)
-    - [Azure updates](https://azure.microsoft.com/updates/?filters=%5B%22Azure+AI+Foundry%22%5D#) (not copied)
-    - [Microsoft Foundry pricing](https://azure.microsoft.com/pricing/details/ai-foundry/) (not copied)
+- A page that appears in several places in the navigation is stored once, normally at its first entry. The other rows link to the same file and say `Synced — duplicate of <index>`. The 8 pages of section 11 (Optimization) are stored in the section 11 folders, although they also appear earlier under Agents, so the Agents rows are the duplicates.
+- A row with `Group — no page at the source` is a navigation heading without a page of its own. It keeps the numbering of the source.
+- Pages outside the Foundry documentation set (API references and other Azure services) and external sites are linked, not copied (`Not copied`).
+- The time of day of the first synchronization on 2026-09-29 was not recorded. Pages from that run show the date with the time `00:00:00Z`. Pages synchronized later show the exact time. The next full synchronization replaces the approximate values.
+- The licence terms of the source were not assessed. Check them before you publish this copy.
+
+## Index
+
+| Index | Name | Document | Reference Url | Last Synced On | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 1 | What is Microsoft Foundry? | [01-what-is-foundry.md](01-what-is-microsoft-foundry/01-what-is-foundry.md) | <https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry> | 2026-09-29T00:00:00Z | Synced |
+| 2 | Microsoft Foundry product and capability map | [01-capabilities.md](02-product-and-capability-map/01-capabilities.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/capabilities> | 2026-09-29T00:00:00Z | Synced |
+| 3 | Microsoft Foundry capability reference | [01-capability-reference.md](03-capability-reference/01-capability-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/capability-reference> | 2026-09-29T00:00:00Z | Synced |
+| 4 | Get started |  |  |  | Group — no page at the source |
+| 4.1 | Microsoft Foundry quickstarts | [01-quickstarts.md](04-get-started/01-quickstarts.md) | <https://learn.microsoft.com/en-us/azure/foundry/quickstarts/quickstarts> | 2026-09-29T00:00:00Z | Synced |
+| 4.2 | Quickstart: Set up Microsoft Foundry resources | [02-quickstart-create-foundry-resources.md](04-get-started/02-quickstart-create-foundry-resources.md) | <https://learn.microsoft.com/en-us/azure/foundry/tutorials/quickstart-create-foundry-resources> | 2026-09-29T00:00:00Z | Synced |
+| 4.3 | Tutorial: Idea to prototype - Build and evaluate an enterprise agent | [03-developer-journey-idea-to-prototype.md](04-get-started/03-developer-journey-idea-to-prototype.md) | <https://learn.microsoft.com/en-us/azure/foundry/tutorials/developer-journey-idea-to-prototype> | 2026-09-29T00:00:00Z | Synced |
+| 4.4 | What do you want to build? |  |  |  | Group — no page at the source |
+| 4.4.1 | Quickstart: Create a prompt agent | [01-prompt-agent.md](04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/prompt-agent> | 2026-09-29T00:00:00Z | Synced |
+| 4.4.2 | Quickstart: Create a voice-based prompt agent | [02-prompt-voice-agent.md](04-get-started/04.1-what-do-you-want-to-build/02-prompt-voice-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/prompt-voice-agent> | 2026-09-29T00:00:00Z | Synced |
+| 4.4.3 | Quickstart: Get started with Microsoft Foundry SDK | [03-get-started-code.md](04-get-started/04.1-what-do-you-want-to-build/03-get-started-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/quickstarts/get-started-code> | 2026-09-29T00:00:00Z | Synced |
+| 4.4.4 | Deploy a hosted agent from source code | [04-deploy-hosted-agent-code.md](04-get-started/04.1-what-do-you-want-to-build/04-deploy-hosted-agent-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent-code> | 2026-09-29T00:00:00Z | Synced |
+| 4.4.5 | Use the Microsoft Foundry Skill in coding agents | [05-use-microsoft-foundry-skill.md](04-get-started/04.1-what-do-you-want-to-build/05-use-microsoft-foundry-skill.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/use-microsoft-foundry-skill> | 2026-09-29T00:00:00Z | Synced |
+| 4.4.6 | What is Toolbox in Foundry? | [06-toolbox-overview.md](04-get-started/04.1-what-do-you-want-to-build/06-toolbox-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview> | 2026-09-29T00:00:00Z | Synced |
+| 4.4.7 | Get started with an AI template | [07-ai-template-get-started.md](04-get-started/04.1-what-do-you-want-to-build/07-ai-template-get-started.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/ai-template-get-started> | 2026-09-29T00:00:00Z | Synced |
+| 4.5 | Explore and migrate |  |  |  | Group — no page at the source |
+| 4.5.1 | Migrate from the Foundry (classic) portal | [01-navigate-from-classic.md](04-get-started/04.2-explore-and-migrate/01-navigate-from-classic.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/navigate-from-classic> | 2026-09-29T00:00:00Z | Synced |
+| 5 | Developer tools and integrations |  |  |  | Group — no page at the source |
+| 5.1 | Prepare your development environment | [01-install-cli-sdk.md](05-developer-tools-and-integrations/01-install-cli-sdk.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-cli-sdk> | 2026-09-29T00:00:00Z | Synced |
+| 5.2 | Microsoft Foundry Playgrounds | [02-concept-playgrounds.md](05-developer-tools-and-integrations/02-concept-playgrounds.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/concept-playgrounds> | 2026-09-29T00:00:00Z | Synced |
+| 5.3 | Azure Developer CLI |  |  |  | Group — no page at the source |
+| 5.3.1 | Agent development with the Azure Developer CLI | [01-cli-agent-development.md](05-developer-tools-and-integrations/05.1-azure-developer-cli/01-cli-agent-development.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/cli-agent-development> | 2026-09-29T00:00:00Z | Synced |
+| 5.3.2 | Install the Azure Developer CLI Foundry extensions | [02-install-cli-foundry-extensions.md](05-developer-tools-and-integrations/05.1-azure-developer-cli/02-install-cli-foundry-extensions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/install-cli-foundry-extensions> | 2026-09-29T00:00:00Z | Synced |
+| 5.3.3 | Set the Foundry project context for azd commands | [03-cli-project-context.md](05-developer-tools-and-integrations/05.1-azure-developer-cli/03-cli-project-context.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/cli-project-context> | 2026-09-29T00:00:00Z | Synced |
+| 5.4 | Foundry Toolkit for Visual Studio Code |  |  |  | Group — no page at the source |
+| 5.4.1 | Microsoft Foundry Toolkit for Visual Studio Code overview | [01-get-started-projects-visual-studio-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/01-get-started-projects-visual-studio-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/get-started-projects-visual-studio-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.4.2 | Install Microsoft Foundry Toolkit for Visual Studio Code | [02-install-foundry-toolkit-visual-studio-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/02-install-foundry-toolkit-visual-studio-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/install-foundry-toolkit-visual-studio-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.4.3 | Set up a Microsoft Foundry project in Visual Studio Code | [03-set-up-foundry-project-visual-studio-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/03-set-up-foundry-project-visual-studio-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/set-up-foundry-project-visual-studio-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.4.4 | Create an agent with Microsoft Foundry Toolkit for Visual Studio Code | [04-create-agent-visual-studio-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/04-create-agent-visual-studio-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/create-agent-visual-studio-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.4.5 | Create a prompt agent with Microsoft Foundry Toolkit for Visual Studio Code | [05-create-prompt-agent-visual-studio-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/05-create-prompt-agent-visual-studio-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/create-prompt-agent-visual-studio-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.4.6 | Create hosted agents with Microsoft Foundry Toolkit for Visual Studio Code | [06-vs-code-agents-workflow-pro-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/06-vs-code-agents-workflow-pro-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/vs-code-agents-workflow-pro-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.4.7 | Use and migrate declarative agent workflows with Microsoft Foundry Toolkit | [07-vs-code-agents-workflow-low-code.md](05-developer-tools-and-integrations/05.2-foundry-toolkit-for-visual-studio-code/07-vs-code-agents-workflow-low-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/vs-code-agents-workflow-low-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.5 | Coding agents |  |  |  | Group — no page at the source |
+| 5.5.1 | Use the Microsoft Foundry Skill in coding agents | [05-use-microsoft-foundry-skill.md](04-get-started/04.1-what-do-you-want-to-build/05-use-microsoft-foundry-skill.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/use-microsoft-foundry-skill> | 2026-09-29T00:00:00Z | Synced — duplicate of 4.4.5 |
+| 5.5.2 | Foundry Skills scenarios and example prompts | [01-foundry-skills-scenarios-example-prompts.md](05-developer-tools-and-integrations/05.3-coding-agents/01-foundry-skills-scenarios-example-prompts.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/foundry-skills-scenarios-example-prompts> | 2026-09-29T00:00:00Z | Synced |
+| 5.5.3 | Use azd ai with coding agents and scripts | [02-use-cli-with-coding-agents.md](05-developer-tools-and-integrations/05.3-coding-agents/02-use-cli-with-coding-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-cli-with-coding-agents> | 2026-09-29T00:00:00Z | Synced |
+| 5.5.4 | What is Microsoft Foundry Canvas? | [03-foundry-agent-canvas.md](05-developer-tools-and-integrations/05.3-coding-agents/03-foundry-agent-canvas.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/foundry-canvas> | 2026-09-29T00:00:00Z | Synced — redirected: real URL is /en-us/azure/foundry/agents/concepts/foundry-canvas |
+| 5.5.5 | Configure Claude Code for Microsoft Foundry | [04-configure-claude-code.md](05-developer-tools-and-integrations/05.3-coding-agents/04-configure-claude-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-claude-code> | 2026-09-29T00:00:00Z | Synced |
+| 5.5.6 | Configure Claude Desktop for Microsoft Foundry | [05-configure-claude-desktop.md](05-developer-tools-and-integrations/05.3-coding-agents/05-configure-claude-desktop.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-claude-desktop> | 2026-09-29T00:00:00Z | Synced |
+| 5.6 | SDKs and APIs |  |  |  | Group — no page at the source |
+| 5.6.1 | Foundry API Reference |  | <https://ai.azure.com/api-reference/> |  | Not copied — external site |
+| 5.6.2 | Microsoft Foundry SDKs and endpoints | [01-sdk-overview.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/01-sdk-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/sdk-overview> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.3 | Endpoints for Microsoft Foundry Models | [02-endpoints.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/02-endpoints.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/endpoints> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.4 | Auto and direct model routing with the Responses API | [03-responses-model-routing.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/03-responses-model-routing.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses-model-routing> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.5 | Foundry SDK Reference |  |  |  | Group — no page at the source |
+| 5.6.5.1 | Python |  | <https://learn.microsoft.com/python/api/overview/azure/ai-projects-readme?view=azure-python-latest&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.5.2 | C# |  | <https://learn.microsoft.com/dotnet/api/overview/azure/ai.projects-readme> |  | Not copied — outside the docset |
+| 5.6.5.3 | JavaScript |  | <https://learn.microsoft.com/javascript/api/overview/azure/ai-projects-readme?view=azure-node-latest&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.5.4 | Java |  | <https://learn.microsoft.com/java/api/overview/azure/ai-projects-readme?view=azure-java-latest&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6 | Azure OpenAI |  |  |  | Group — no page at the source |
+| 5.6.6.1 | Azure OpenAI in Microsoft Foundry Models v1 API | [04-api-version-lifecycle.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/04-api-version-lifecycle.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/api-version-lifecycle> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.6.2 | Azure OpenAI SDK language support | [05-supported-languages.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/05-supported-languages.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/supported-languages> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.6.3 | v1 API |  |  |  | Group — no page at the source |
+| 5.6.6.3.1 | v1 API |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.2 | Chat |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/chat?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.3 | Embeddings |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/embeddings?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.4 | Evals |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/evals?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.5 | Files |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/files?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.6 | Fine-tuning |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/fine-tuning?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.7 | Models |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/models?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.8 | Responses |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/responses?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.9 | Vector stores |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/vector_stores?view=rest-microsoft-foundry-v1&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.3.10 | Azure OpenAI image, audio, and video REST API reference (v1 preview) | [06-reference-preview-latest.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/06-reference-preview-latest.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/reference-preview-latest> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.6.4 | Previous versions |  |  |  | Group — no page at the source |
+| 5.6.6.4.1 | 2024-10-21 API reference |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/chat?view=rest-microsoft-foundry-2024-10-21&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.4.2 | Azure OpenAI image and audio REST API reference (2024-10-21) | [07-reference.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/07-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/reference> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.6.4.3 | Preview APIs |  |  |  | Group — no page at the source |
+| 5.6.6.4.3.1 | 2025-04-01-preview API reference |  | <https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/chat?view=rest-microsoft-foundry-2025-04-01-preview&preserve-view=true> |  | Not copied — outside the docset |
+| 5.6.6.4.3.2 | Azure OpenAI image and audio REST API reference (2025-04-01-preview) | [08-reference-preview.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/08-reference-preview.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/reference-preview> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.6.5 | REST API (resource creation and deployment) |  | <https://learn.microsoft.com/rest/api/aiservices/accountmanagement/deployments/create-or-update?tabs=HTTP> |  | Not copied — outside the docset |
+| 5.6.7 | Reference documentation |  |  |  | Group — no page at the source |
+| 5.6.7.1 | Azure OpenAI monitoring data reference | [09-monitor-openai-reference.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/09-monitor-openai-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/monitor-openai-reference> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.7.2 | Realtime API reference | [10-realtime-audio-reference.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/10-realtime-audio-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/realtime-audio-reference> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.7.3 | GPT-Live event API reference | [11-gpt-live-reference.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/11-gpt-live-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/gpt-live-reference> | 2026-09-29T00:00:00Z | Synced |
+| 5.6.8 | Foundry Tools SDKs |  | <https://learn.microsoft.com/en-us/azure/ai-services/reference/sdk-package-resources?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 5.6.9 | Foundry Tools REST APIs |  | <https://learn.microsoft.com/en-us/azure/ai-services/reference/rest-api-resources?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 5.6.10 | Resource Management |  |  |  | Group — no page at the source |
+| 5.6.10.1 | Azure Resource Manager/Bicep/Terraform |  | <https://learn.microsoft.com/azure/templates/microsoft.cognitiveservices/accounts?pivots=deployment-language-bicep> |  | Not copied — outside the docset |
+| 5.6.10.2 | Azure CLI |  | <https://learn.microsoft.com/cli/azure/cognitiveservices?view=azure-cli-latest&preserve-view=true> |  | Not copied — outside the docset |
+| 5.7 | Get started with an AI template | [07-ai-template-get-started.md](04-get-started/04.1-what-do-you-want-to-build/07-ai-template-get-started.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/ai-template-get-started> | 2026-09-29T00:00:00Z | Synced — duplicate of 4.4.7 |
+| 5.8 | Foundry samples on GitHub |  | <https://github.com/microsoft-foundry/foundry-samples> |  | Not copied — external site |
+| 5.9 | Develop with LangChain and LangGraph |  |  |  | Group — no page at the source |
+| 5.9.1 | Get started with LangChain and LangGraph with Foundry | [01-langchain.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/01-langchain.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.2 | Use LangChain with models in Microsoft Foundry | [02-langchain-models.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/02-langchain-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-models> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.3 | Use Foundry Content Safety middleware with LangChain | [03-langchain-middleware.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/03-langchain-middleware.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-middleware> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.4 | Use Foundry Agent Service with LangGraph | [04-langchain-agents.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/04-langchain-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-agents> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.5 | Use Foundry Toolbox with LangChain | [05-langchain-toolbox.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/05-langchain-toolbox.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-toolbox> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.6 | Host LangGraph agents as Foundry hosted agents | [06-langchain-hosted-agents.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/06-langchain-hosted-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-hosted-agents> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.7 | Use Foundry Memory with LangChain and LangGraph | [07-langchain-memory.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/07-langchain-memory.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-memory> | 2026-09-29T00:00:00Z | Synced |
+| 5.9.8 | Trace LangChain and LangGraph apps with Microsoft Foundry and Azure Monitor | [08-langchain-traces.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/08-langchain-traces.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-traces> | 2026-09-29T00:00:00Z | Synced |
+| 5.10 | Foundry MCP Server (preview) |  |  |  | Group — no page at the source |
+| 5.10.1 | Get started with Foundry MCP Server (preview) using Visual Studio Code | [01-get-started.md](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/01-get-started.md) | <https://learn.microsoft.com/en-us/azure/foundry/mcp/get-started> | 2026-09-29T00:00:00Z | Synced |
+| 5.10.2 | Foundry MCP Server best practices and security guidance | [02-security-best-practices.md](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/02-security-best-practices.md) | <https://learn.microsoft.com/en-us/azure/foundry/mcp/security-best-practices> | 2026-09-29T00:00:00Z | Synced |
+| 5.10.3 | Available tools and example prompts for Foundry MCP Server (preview) | [03-available-tools.md](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/03-available-tools.md) | <https://learn.microsoft.com/en-us/azure/foundry/mcp/available-tools> | 2026-09-29T00:00:00Z | Synced |
+| 5.11 | Fireworks on Foundry |  |  |  | Group — no page at the source |
+| 5.11.1 | Fireworks models on Microsoft Foundry | [01-enable-fireworks-models.md](05-developer-tools-and-integrations/05.7-fireworks-on-foundry/01-enable-fireworks-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/fireworks/enable-fireworks-models> | 2026-09-29T00:00:00Z | Synced |
+| 5.11.2 | Import custom models with Fireworks | [02-import-custom-models.md](05-developer-tools-and-integrations/05.7-fireworks-on-foundry/02-import-custom-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/fireworks/import-custom-models> | 2026-09-29T00:00:00Z | Synced |
+| 5.11.3 | Fireworks on Microsoft Foundry privacy and compliance FAQ | [03-privacy-compliance-faq.md](05-developer-tools-and-integrations/05.7-fireworks-on-foundry/03-privacy-compliance-faq.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/fireworks/privacy-compliance-faq> | 2026-09-29T00:00:00Z | Synced |
+| 6 | Models |  |  |  | Group — no page at the source |
+| 6.1 | Overview of Microsoft Foundry Models | [01-foundry-models-overview.md](06-models/01-foundry-models-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-models-overview> | 2026-09-29T00:00:00Z | Synced |
+| 6.2 | Explore Foundry Models |  |  |  | Group — no page at the source |
+| 6.2.1 | Foundry Models sold by Azure | [01-models-sold-directly-by-azure.md](06-models/06.1-explore-foundry-models/01-models-sold-directly-by-azure.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.2 | Foundry Models sold by Azure in Azure Government | [02-models-sold-directly-by-azure-gov.md](06-models/06.1-explore-foundry-models/02-models-sold-directly-by-azure-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.3 | Foundry Models from partners and community | [03-models-from-partners.md](06-models/06.1-explore-foundry-models/03-models-from-partners.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-from-partners> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.4 | Hugging Face models in Microsoft Foundry | [04-hugging-face-models.md](06-models/06.1-explore-foundry-models/04-hugging-face-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/hugging-face-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.5 | Benchmark models |  |  |  | Group — no page at the source |
+| 6.2.5.1 | Model leaderboards in Microsoft Foundry portal (preview) | [05-model-benchmarks.md](06-models/06.1-explore-foundry-models/05-model-benchmarks.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/model-benchmarks> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.5.2 | Compare models using the model leaderboard (preview) | [06-benchmark-model-in-catalog.md](06-models/06.1-explore-foundry-models/06-benchmark-model-in-catalog.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/benchmark-model-in-catalog> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.5.3 | Run benchmark evaluations in Microsoft Foundry (preview) | [07-benchmark-evaluations.md](06-models/06.1-explore-foundry-models/07-benchmark-evaluations.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/benchmark-evaluations> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.5.4 | GPT-5 vs GPT-4.1: choosing the right model for your use case | [08-model-choice-guide.md](06-models/06.1-explore-foundry-models/08-model-choice-guide.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/model-choice-guide> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.5.5 | Microsoft Foundry Playgrounds | [02-concept-playgrounds.md](05-developer-tools-and-integrations/02-concept-playgrounds.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/concept-playgrounds> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.2 |
+| 6.2.6 | Model versions and lifecycle |  |  |  | Group — no page at the source |
+| 6.2.6.1 | Model versions in Microsoft Foundry Models | [09-model-versions.md](06-models/06.1-explore-foundry-models/09-model-versions.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/model-versions> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.2 | Model versions in Microsoft Foundry Models in Azure Government | [10-model-versions-gov.md](06-models/06.1-explore-foundry-models/10-model-versions-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/model-versions-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.3 | Model migration process | [11-model-migration.md](06-models/06.1-explore-foundry-models/11-model-migration.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/model-migration> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.4 | Working with models | [12-working-with-models.md](06-models/06.1-explore-foundry-models/12-working-with-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/working-with-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.5 | Microsoft Foundry Models lifecycle and support policy | [13-model-retirements.md](06-models/06.1-explore-foundry-models/13-model-retirements.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirements> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.6 | Microsoft Foundry Models lifecycle and support policy in Azure Government | [14-model-retirements-gov.md](06-models/06.1-explore-foundry-models/14-model-retirements-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirements-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.7 | Model retirement schedule | [15-model-retirement-schedule.md](06-models/06.1-explore-foundry-models/15-model-retirement-schedule.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.8 | Model retirement schedule in Azure Government | [16-model-retirement-schedule-gov.md](06-models/06.1-explore-foundry-models/16-model-retirement-schedule-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirement-schedule-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.6.9 | Retired Foundry Models | [17-retired-models.md](06-models/06.1-explore-foundry-models/17-retired-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/retired-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.7 | Data, privacy, and security for Models sold by Azure in Microsoft Foundry | [18-data-privacy.md](06-models/06.1-explore-foundry-models/18-data-privacy.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8 | Model Router |  |  |  | Group — no page at the source |
+| 6.2.8.1 | Model router for Microsoft Foundry | [19-model-router.md](06-models/06.1-explore-foundry-models/19-model-router.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-router> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.2 | What's new in model router in Microsoft Foundry Models | [20-whats-new-model-router.md](06-models/06.1-explore-foundry-models/20-whats-new-model-router.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/whats-new-model-router> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.3 | Use model router for Microsoft Foundry | [21-model-router.md](06-models/06.1-explore-foundry-models/21-model-router.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/model-router> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.4 | Monitor model router in Microsoft Foundry | [22-monitor-model-router.md](06-models/06.1-explore-foundry-models/22-monitor-model-router.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/monitor-model-router> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.5 | Evaluate model router for your workload | [23-evaluate-model-router.md](06-models/06.1-explore-foundry-models/23-evaluate-model-router.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/evaluate-model-router> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.6 | Govern model router deployments with Azure Policy | [24-model-router-policy.md](06-models/06.1-explore-foundry-models/24-model-router-policy.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/model-router-policy> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.7 | Use model router with Foundry agents | [25-model-router-agents.md](06-models/06.1-explore-foundry-models/25-model-router-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/model-router-agents> | 2026-09-29T00:00:00Z | Synced |
+| 6.2.8.8 | Auto and direct model routing with the Responses API | [03-responses-model-routing.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/03-responses-model-routing.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses-model-routing> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.6.4 |
+| 6.2.8.9 | How model router works in Microsoft Foundry | [26-model-router-how-it-works.md](06-models/06.1-explore-foundry-models/26-model-router-how-it-works.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-router-how-it-works> | 2026-09-29T00:00:00Z | Synced |
+| 6.3 | Quota limits and region availability |  |  |  | Group — no page at the source |
+| 6.3.1 | Region availability for Foundry Models sold by Azure | [01-models-sold-directly-by-azure-region-availability.md](06-models/06.2-quota-limits-and-region-availability/01-models-sold-directly-by-azure-region-availability.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.2 | Manage and increase quotas for resources with Microsoft Foundry (Foundry projects) | [02-quota.md](06-models/06.2-quota-limits-and-region-availability/02-quota.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/quota> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.3 | Manage Azure OpenAI in Microsoft Foundry Models quota | [03-quota.md](06-models/06.2-quota-limits-and-region-availability/03-quota.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/quota> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.4 | Automate Azure OpenAI deployments with quota in Microsoft Foundry | [04-automate-quota-deployments.md](06-models/06.2-quota-limits-and-region-availability/04-automate-quota-deployments.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/automate-quota-deployments> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.5 | Microsoft Foundry Models quotas and limits | [05-quotas-limits.md](06-models/06.2-quota-limits-and-region-availability/05-quotas-limits.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/quotas-limits> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.6 | Azure OpenAI in Microsoft Foundry Models quotas and limits | [06-quotas-limits.md](06-models/06.2-quota-limits-and-region-availability/06-quotas-limits.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/quotas-limits> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.7 | Azure OpenAI in Microsoft Foundry Models quotas and limits in Azure Government | [07-quotas-limits-gov.md](06-models/06.2-quota-limits-and-region-availability/07-quotas-limits-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/quotas-limits-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.3.8 | Microsoft Foundry feature availability across cloud regions | [08-region-support.md](06-models/06.2-quota-limits-and-region-availability/08-region-support.md) | <https://learn.microsoft.com/en-us/azure/foundry/reference/region-support> | 2026-09-29T00:00:00Z | Synced |
+| 6.4 | Offers, deployment types, and pricing |  |  |  | Group — no page at the source |
+| 6.4.1 | Deployment overview for Microsoft Foundry Models | [01-deployments-overview.md](06-models/06.3-offers-deployment-types-and-pricing/01-deployments-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/deployments-overview> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.2 | Instant access to models in Microsoft Foundry (preview) | [02-instant-models.md](06-models/06.3-offers-deployment-types-and-pricing/02-instant-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/instant-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.3 | Managed compute in Microsoft Foundry (Preview) | [03-managed-compute-overview.md](06-models/06.3-offers-deployment-types-and-pricing/03-managed-compute-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/managed-compute-overview> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.4 | Deployment types for Microsoft Foundry Models | [04-deployment-types.md](06-models/06.3-offers-deployment-types-and-pricing/04-deployment-types.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.5 | Deployment types for Microsoft Foundry Models in Azure Government | [05-deployment-types-gov.md](06-models/06.3-offers-deployment-types-and-pricing/05-deployment-types-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/deployment-types-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.6 | Getting started with Azure OpenAI batch deployments | [06-batch.md](06-models/06.3-offers-deployment-types-and-pricing/06-batch.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/batch> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.7 | Use Flex processing with Azure OpenAI in Microsoft Foundry Models (preview) | [07-flex-processing.md](06-models/06.3-offers-deployment-types-and-pricing/07-flex-processing.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/flex-processing> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.8 | Enable priority processing for Microsoft Foundry models | [08-priority-processing.md](06-models/06.3-offers-deployment-types-and-pricing/08-priority-processing.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/priority-processing> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9 | Provisioned throughput |  |  |  | Group — no page at the source |
+| 6.4.9.1 | What is provisioned throughput for Foundry Models? | [09-provisioned-throughput.md](06-models/06.3-offers-deployment-types-and-pricing/09-provisioned-throughput.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/provisioned-throughput> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9.2 | Provisioned throughput for Foundry Models in Azure Government | [10-provisioned-throughput-gov.md](06-models/06.3-offers-deployment-types-and-pricing/10-provisioned-throughput-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/provisioned-throughput-gov> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9.3 | Quickstart: Create a provisioned throughput deployment | [11-provisioned-quickstart.md](06-models/06.3-offers-deployment-types-and-pricing/11-provisioned-quickstart.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/provisioned-quickstart> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9.4 | Determine PTU sizing for a workload | [12-provisioned-throughput-sizing.md](06-models/06.3-offers-deployment-types-and-pricing/12-provisioned-throughput-sizing.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/provisioned-throughput-sizing> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9.5 | Provisioned throughput billing and cost management | [13-provisioned-throughput-billing.md](06-models/06.3-offers-deployment-types-and-pricing/13-provisioned-throughput-billing.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/provisioned-throughput-billing> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9.6 | Operate provisioned deployments in production | [14-provisioned-get-started.md](06-models/06.3-offers-deployment-types-and-pricing/14-provisioned-get-started.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/provisioned-get-started> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.9.7 | Manage traffic with spillover for provisioned deployments | [15-spillover-traffic-management.md](06-models/06.3-offers-deployment-types-and-pricing/15-spillover-traffic-management.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/spillover-traffic-management> | 2026-09-29T00:00:00Z | Synced |
+| 6.4.10 | Plan and manage costs for Microsoft Foundry | [16-manage-costs.md](06-models/06.3-offers-deployment-types-and-pricing/16-manage-costs.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/manage-costs> | 2026-09-29T00:00:00Z | Synced |
+| 6.5 | Model deployment |  |  |  | Group — no page at the source |
+| 6.5.1 | Deploy Microsoft Foundry Models in the Foundry portal | [01-deploy-foundry-models.md](06-models/06.4-model-deployment/01-deploy-foundry-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/deploy-foundry-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.5.2 | Deploy models using Azure CLI and Bicep | [02-create-model-deployments.md](06-models/06.4-model-deployment/02-create-model-deployments.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/create-model-deployments> | 2026-09-29T00:00:00Z | Synced |
+| 6.5.3 | Migrate from GitHub Models to Microsoft Foundry Models | [03-quickstart-github-models.md](06-models/06.4-model-deployment/03-quickstart-github-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/quickstart-github-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.5.4 | Deploy open-source models with managed compute (Preview) | [04-deploy-models-managed.md](06-models/06.4-model-deployment/04-deploy-models-managed.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/deploy-models-managed> | 2026-09-29T00:00:00Z | Synced |
+| 6.5.5 | Troubleshoot deployments |  | <https://learn.microsoft.com/en-us/azure/foundry-classic/how-to/troubleshoot-deploy-and-monitor?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.5.6 | Troubleshoot common HTTP errors for Azure OpenAI | [05-troubleshoot-errors.md](06-models/06.4-model-deployment/05-troubleshoot-errors.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/troubleshoot-errors> | 2026-09-29T00:00:00Z | Synced |
+| 6.6 | Model support |  |  |  | Group — no page at the source |
+| 6.6.1 | Azure OpenAI SDK language support | [05-supported-languages.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/05-supported-languages.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/supported-languages> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.6.6.2 |
+| 6.6.2 | Microsoft AI (MAI) |  |  |  | Group — no page at the source |
+| 6.6.2.1 | Deploy and use MAI image models in Microsoft Foundry (preview) | [01-use-foundry-models-mai-image.md](06-models/06.5-model-support/01-use-foundry-models-mai-image.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-mai-image> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.2.2 | Deploy and use MAI-Thinking-1 in Microsoft Foundry (preview) | [02-use-foundry-models-mai-thinking.md](06-models/06.5-model-support/02-use-foundry-models-mai-thinking.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-mai-thinking> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.2.3 | MAI-Voice models |  | <https://learn.microsoft.com/azure/ai-services/speech-service/mai-voices?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.6.2.4 | MAI-Transcribe models |  | <https://learn.microsoft.com/azure/ai-services/speech-service/mai-transcribe?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.6.3 | Anthropic |  |  |  | Group — no page at the source |
+| 6.6.3.1 | Claude models in Microsoft Foundry | [03-claude-models.md](06-models/06.5-model-support/03-claude-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.3.2 | Claude model quotas and rate limits | [04-claude-models-quotas-limits.md](06-models/06.5-model-support/04-claude-models-quotas-limits.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models-quotas-limits> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.3.3 | Compare hosting options for Claude models in Microsoft Foundry | [05-claude-models-hosting-comparison.md](06-models/06.5-model-support/05-claude-models-hosting-comparison.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models-hosting-comparison> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.3.4 | Deploy and use Claude models in Microsoft Foundry | [06-use-foundry-models-claude.md](06-models/06.5-model-support/06-use-foundry-models-claude.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.3.5 | Deploy Claude with Bicep or Terraform |  | <https://learn.microsoft.com/azure/developer/ai/how-to/deploy-claude-foundry?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.6.4 | Deploy and use FLUX models in Microsoft Foundry | [07-use-foundry-models-flux.md](06-models/06.5-model-support/07-use-foundry-models-flux.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-flux> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.5 | Deploy and use Grok models in Microsoft Foundry | [08-use-foundry-models-grok.md](06-models/06.5-model-support/08-use-foundry-models-grok.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-grok> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.6 | Healthcare AI models |  |  |  | Group — no page at the source |
+| 6.6.6.1 | Foundation models for healthcare AI | [09-healthcare-ai-models.md](06-models/06.5-model-support/09-healthcare-ai-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/healthcare-ai/healthcare-ai-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.6.2 | Deploy and use MedImageInsight Premium (preview) | [10-deploy-medimageinsight-premium.md](06-models/06.5-model-support/10-deploy-medimageinsight-premium.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/healthcare-ai/deploy-medimageinsight-premium> | 2026-09-29T00:00:00Z | Synced |
+| 6.6.6.3 | Deploy and use CxrReportGen Premium (preview) | [11-deploy-cxrreportgen-premium.md](06-models/06.5-model-support/11-deploy-cxrreportgen-premium.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/healthcare-ai/deploy-cxrreportgen-premium> | 2026-09-29T00:00:00Z | Synced |
+| 6.7 | Develop with AI models |  |  |  | Group — no page at the source |
+| 6.7.1 | Endpoints for Microsoft Foundry Models | [02-endpoints.md](05-developer-tools-and-integrations/05.4-sdks-and-apis/02-endpoints.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/endpoints> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.6.3 |
+| 6.7.2 | Chat completions and Responses APIs |  |  |  | Group — no page at the source |
+| 6.7.2.1 | Work with chat completion models | [01-chatgpt.md](06-models/06.6-develop-with-ai-models/01-chatgpt.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/chatgpt> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2 | Responses API |  |  |  | Group — no page at the source |
+| 6.7.2.2.1 | Use the Azure OpenAI Responses API | [02-responses.md](06-models/06.6-develop-with-ai-models/02-responses.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.2 | Migrate from Chat Completions to Responses API |  | <https://learn.microsoft.com/azure/developer/ai/how-to/azure-openai-to-responses?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.7.2.2.3 | How to generate text responses with Microsoft Foundry Models | [03-generate-responses.md](06-models/06.6-develop-with-ai-models/03-generate-responses.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/generate-responses> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.4 | How to use function calling with Microsoft Foundry Models | [04-function-calling.md](06-models/06.6-develop-with-ai-models/04-function-calling.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/function-calling> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.5 | Use multi-agent orchestration with the Azure OpenAI Responses API | [05-responses-multi-agent.md](06-models/06.6-develop-with-ai-models/05-responses-multi-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses-multi-agent> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.6 | Structured outputs | [06-structured-outputs.md](06-models/06.6-develop-with-ai-models/06-structured-outputs.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/structured-outputs> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.7 | Learn how to use JSON mode | [07-json-mode.md](06-models/06.6-develop-with-ai-models/07-json-mode.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/json-mode> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.8 | Deep research | [08-deep-research.md](06-models/06.6-develop-with-ai-models/08-deep-research.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/deep-research> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.9 | Use tool search with the Azure OpenAI Responses API | [09-tool-search.md](06-models/06.6-develop-with-ai-models/09-tool-search.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/tool-search> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.10 | Web search | [10-web-search.md](06-models/06.6-develop-with-ai-models/10-web-search.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/web-search> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.11 | Use the Responses API in WebSocket mode | [11-websockets.md](06-models/06.6-develop-with-ai-models/11-websockets.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/websockets> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.12 | Use the shell tool with the Azure OpenAI Responses API | [12-shells.md](06-models/06.6-develop-with-ai-models/12-shells.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/shells> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.2.13 | Use skills with the Azure OpenAI Responses API | [13-skills.md](06-models/06.6-develop-with-ai-models/13-skills.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/skills> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.3 | Predicted outputs (preview) | [14-predicted-outputs.md](06-models/06.6-develop-with-ai-models/14-predicted-outputs.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/predicted-outputs> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.4 | Prompt caching | [15-prompt-caching.md](06-models/06.6-develop-with-ai-models/15-prompt-caching.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/prompt-caching> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.5 | Azure OpenAI reasoning models | [16-reasoning.md](06-models/06.6-develop-with-ai-models/16-reasoning.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/reasoning> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.2.6 | Use reasoning models with Microsoft Foundry Models | [17-use-chat-reasoning.md](06-models/06.6-develop-with-ai-models/17-use-chat-reasoning.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-chat-reasoning> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.3 | Embeddings |  |  |  | Group — no page at the source |
+| 6.7.3.1 | Generate embeddings with Azure OpenAI | [18-embeddings.md](06-models/06.6-develop-with-ai-models/18-embeddings.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/embeddings> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.3.2 | Tutorial: Explore Azure OpenAI in Microsoft Foundry Models embeddings and document search | [19-embeddings.md](06-models/06.6-develop-with-ai-models/19-embeddings.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/tutorials/embeddings> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.4 | Codex with Azure OpenAI in Microsoft Foundry Models | [20-codex.md](06-models/06.6-develop-with-ai-models/20-codex.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/codex> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.5 | Azure OpenAI in Foundry Models webhooks | [21-webhooks.md](06-models/06.6-develop-with-ai-models/21-webhooks.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/webhooks> | 2026-09-29T00:00:00Z | Synced |
+| 6.7.6 | Configure Claude Code for Microsoft Foundry | [04-configure-claude-code.md](05-developer-tools-and-integrations/05.3-coding-agents/04-configure-claude-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-claude-code> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.5.5 |
+| 6.7.7 | Configure Claude Desktop for Microsoft Foundry | [05-configure-claude-desktop.md](05-developer-tools-and-integrations/05.3-coding-agents/05-configure-claude-desktop.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-claude-desktop> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.5.6 |
+| 6.8 | Model capabilities |  |  |  | Group — no page at the source |
+| 6.8.1 | Image and video |  |  |  | Group — no page at the source |
+| 6.8.1.1 | Azure OpenAI image generation models | [01-dall-e.md](06-models/06.7-model-capabilities/01-dall-e.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/dall-e> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.1.2 | Image prompt engineering techniques | [02-gpt-4-v-prompt-engineering.md](06-models/06.7-model-capabilities/02-gpt-4-v-prompt-engineering.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/gpt-4-v-prompt-engineering> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.1.3 | Prompt transformation | [03-prompt-transformation.md](06-models/06.7-model-capabilities/03-prompt-transformation.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/prompt-transformation> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.1.4 | Video generation with Sora 2 (preview) | [04-video-generation.md](06-models/06.7-model-capabilities/04-video-generation.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/video-generation> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.1.5 | Use vision-enabled chat models | [05-gpt-with-vision.md](06-models/06.7-model-capabilities/05-gpt-with-vision.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/gpt-with-vision> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.1.6 | Video translation |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/video-translation-get-started?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.8.2 | Audio and speech |  |  |  | Group — no page at the source |
+| 6.8.2.1 | GPT-Live |  |  |  | Group — no page at the source |
+| 6.8.2.1.1 | What is GPT-Live? | [06-gpt-live.md](06-models/06.7-model-capabilities/06-gpt-live.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/gpt-live> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.2.1.2 | Use GPT-Live for real-time voice | [07-gpt-live.md](06-models/06.7-model-capabilities/07-gpt-live.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/gpt-live> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.2.1.3 | Use GPT-Live via WebRTC | [08-gpt-live-webrtc.md](06-models/06.7-model-capabilities/08-gpt-live-webrtc.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/gpt-live-webrtc> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.2.1.4 | Delegate work in GPT-Live | [09-gpt-live-delegation.md](06-models/06.7-model-capabilities/09-gpt-live-delegation.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/gpt-live-delegation> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.2.2 | Quickstart: Get started with Azure OpenAI audio generation | [10-audio-completions-quickstart.md](06-models/06.7-model-capabilities/10-audio-completions-quickstart.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/audio-completions-quickstart> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.2.3 | Speech to text |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-speech-to-text?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.8.2.4 | Quickstart: Speech to text with Azure OpenAI transcription models | [11-whisper-quickstart.md](06-models/06.7-model-capabilities/11-whisper-quickstart.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/whisper-quickstart> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.2.5 | Text to speech |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-text-to-speech?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.8.2.6 | Text to speech avatar |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/text-to-speech-avatar/batch-synthesis-avatar?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.8.2.7 | Voice Live |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/voice-live-quickstart?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 6.8.3 | Realtime API |  |  |  | Group — no page at the source |
+| 6.8.3.1 | GPT Realtime 2.x overview | [12-realtime-2.md](06-models/06.7-model-capabilities/12-realtime-2.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/realtime-2> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.2 | Use the GPT Realtime API for speech and audio | [13-realtime-audio.md](06-models/06.7-model-capabilities/13-realtime-audio.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/realtime-audio> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.3 | Use the GPT Realtime API via WebRTC | [14-realtime-audio-webrtc.md](06-models/06.7-model-capabilities/14-realtime-audio-webrtc.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/realtime-audio-webrtc> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.4 | Use the GPT Realtime API via WebSockets | [15-realtime-audio-websockets.md](06-models/06.7-model-capabilities/15-realtime-audio-websockets.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/realtime-audio-websockets> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.5 | Use the GPT Realtime API via SIP | [16-realtime-audio-sip.md](06-models/06.7-model-capabilities/16-realtime-audio-sip.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/realtime-audio-sip> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.6 | Migration from Preview to GA version of Realtime API | [17-realtime-audio-preview-api-migration-guide.md](06-models/06.7-model-capabilities/17-realtime-audio-preview-api-migration-guide.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/realtime-audio-preview-api-migration-guide> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.7 | GPT Realtime Translate overview | [18-gpt-realtime-translate.md](06-models/06.7-model-capabilities/18-gpt-realtime-translate.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/gpt-realtime-translate> | 2026-09-29T00:00:00Z | Synced |
+| 6.8.3.8 | GPT Realtime Transcribe overview | [19-gpt-realtime-whisper.md](06-models/06.7-model-capabilities/19-gpt-realtime-whisper.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/gpt-realtime-whisper> | 2026-09-29T00:00:00Z | Synced |
+| 6.9 | Fine-tuning |  |  |  | Group — no page at the source |
+| 6.9.1 | Microsoft Foundry fine-tuning considerations | [01-fine-tuning-considerations.md](06-models/06.8-fine-tuning/01-fine-tuning-considerations.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/fine-tuning-considerations> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.2 | Fine-tune models |  |  |  | Group — no page at the source |
+| 6.9.2.1 | Customize a model with fine-tuning | [02-fine-tuning.md](06-models/06.8-fine-tuning/02-fine-tuning.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.2.2 | Healthcare models |  |  |  | Group — no page at the source |
+| 6.9.2.2.1 | Customize a premium healthcare AI model with fine-tuning | [03-fine-tune-premium-healthcare-models.md](06-models/06.8-fine-tuning/03-fine-tune-premium-healthcare-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/healthcare-ai/fine-tune-premium-healthcare-models> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.2.2.2 | Fine-tune MedImageInsight Premium (preview) | [04-fine-tune-medimageinsight-premium.md](06-models/06.8-fine-tuning/04-fine-tune-medimageinsight-premium.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/healthcare-ai/fine-tune-medimageinsight-premium> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.2.2.3 | Fine-tune CxrReportGen Premium (preview) | [05-fine-tune-cxrreportgen-premium.md](06-models/06.8-fine-tuning/05-fine-tune-cxrreportgen-premium.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/healthcare-ai/fine-tune-cxrreportgen-premium> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.3 | Deploy a fine-tuned model for inferencing | [06-fine-tuning-deploy.md](06-models/06.8-fine-tuning/06-fine-tuning-deploy.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-deploy> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.4 | Fine-tune AI models in Microsoft Foundry with the Azure Developer CLI fine-tuning extension | [07-fine-tune-cli.md](06-models/06.8-fine-tuning/07-fine-tune-cli.md) | <https://learn.microsoft.com/en-us/azure/foundry/fine-tuning/fine-tune-cli> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.5 | Generate synthetic data for fine-tuning in Microsoft Foundry (Preview) | [08-data-generation.md](06-models/06.8-fine-tuning/08-data-generation.md) | <https://learn.microsoft.com/en-us/azure/foundry/fine-tuning/data-generation> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.6 | Advanced techniques |  |  |  | Group — no page at the source |
+| 6.9.6.1 | Vision fine-tuning | [09-fine-tuning-vision.md](06-models/06.8-fine-tuning/09-fine-tuning-vision.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-vision> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.6.2 | Direct preference optimization (preview) | [10-fine-tuning-direct-preference-optimization.md](06-models/06.8-fine-tuning/10-fine-tuning-direct-preference-optimization.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-direct-preference-optimization> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.6.3 | Reinforcement fine-tuning | [11-reinforcement-fine-tuning.md](06-models/06.8-fine-tuning/11-reinforcement-fine-tuning.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/reinforcement-fine-tuning> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.6.4 | Fine-tuning and tool calling | [12-fine-tuning-functions.md](06-models/06.8-fine-tuning/12-fine-tuning-functions.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-functions> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.7 | Safety evaluation for fine-tuning (preview) | [13-fine-tuning-safety-evaluation.md](06-models/06.8-fine-tuning/13-fine-tuning-safety-evaluation.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-safety-evaluation> | 2026-09-29T00:00:00Z | Synced |
+| 6.9.8 | Cost management for fine-tuning | [14-fine-tuning-cost-management.md](06-models/06.8-fine-tuning/14-fine-tuning-cost-management.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-cost-management> | 2026-09-29T00:00:00Z | Synced |
+| 6.10 | Development best practices |  |  |  | Group — no page at the source |
+| 6.10.1 | Prompt engineering techniques | [01-prompt-engineering.md](06-models/06.9-development-best-practices/01-prompt-engineering.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/prompt-engineering> | 2026-09-29T00:00:00Z | Synced |
+| 6.10.2 | Tutorial: Get started with a DeepSeek reasoning model in Microsoft Foundry Models | [02-get-started-deepseek-r1.md](06-models/06.9-development-best-practices/02-get-started-deepseek-r1.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/tutorials/get-started-deepseek-r1> | 2026-09-29T00:00:00Z | Synced |
+| 6.10.3 | System message design | [03-advanced-prompt-engineering.md](06-models/06.9-development-best-practices/03-advanced-prompt-engineering.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/advanced-prompt-engineering> | 2026-09-29T00:00:00Z | Synced |
+| 6.10.4 | Performance and latency | [04-latency.md](06-models/06.9-development-best-practices/04-latency.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/latency> | 2026-09-29T00:00:00Z | Synced |
+| 6.10.5 | Integrate Microsoft Foundry with your applications (Microsoft or third-party services) | [05-integrate-with-other-apps.md](06-models/06.9-development-best-practices/05-integrate-with-other-apps.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/integrate-with-other-apps> | 2026-09-29T00:00:00Z | Synced |
+| 7 | Agents |  |  |  | Group — no page at the source |
+| 7.1 | Agents in Microsoft Foundry | [01-overview.md](07-agents/01-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/overview> | 2026-09-29T00:00:00Z | Synced |
+| 7.2 | Concepts |  |  |  | Group — no page at the source |
+| 7.2.1 | Agent development lifecycle | [01-development-lifecycle.md](07-agents/07.1-concepts/01-development-lifecycle.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/development-lifecycle> | 2026-09-29T00:00:00Z | Synced |
+| 7.2.2 | Agent identity concepts in Microsoft Foundry | [02-agent-identity.md](07-agents/07.1-concepts/02-agent-identity.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-identity> | 2026-09-29T00:00:00Z | Synced |
+| 7.2.3 | Agent 365 |  |  |  | Group — no page at the source |
+| 7.2.3.1 | Microsoft Agent 365 integration with Foundry | [03-agent-365-integration.md](07-agents/07.1-concepts/03-agent-365-integration.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-365-integration> | 2026-09-29T00:00:00Z | Synced |
+| 7.2.3.2 | Grant Agent 365 observability permissions | [04-grant-agent-365-permissions.md](07-agents/07.1-concepts/04-grant-agent-365-permissions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/grant-agent-365-permissions> | 2026-09-29T00:00:00Z | Synced |
+| 7.2.4 | Routines in Foundry Agent Service | [05-routines.md](07-agents/07.1-concepts/05-routines.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/routines> | 2026-09-29T00:00:00Z | Synced |
+| 7.2.5 | Build a workflow in Microsoft Foundry (Preview) | [06-workflow.md](07-agents/07.1-concepts/06-workflow.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/workflow> | 2026-09-29T00:00:00Z | Synced |
+| 7.3 | Prompt agents |  |  |  | Group — no page at the source |
+| 7.3.1 | Text-based agents |  |  |  | Group — no page at the source |
+| 7.3.1.1 | Quickstarts |  |  |  | Group — no page at the source |
+| 7.3.1.1.1 | Quickstart: Create a prompt agent | [01-prompt-agent.md](04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/prompt-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 4.4.1 |
+| 7.3.1.1.2 | Quickstart: Build agents using the Responses API | [01-responses-api.md](07-agents/07.2-prompt-agents/01-responses-api.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/responses-api> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.2 | Build |  |  |  | Group — no page at the source |
+| 7.3.1.2.1 | Use connected Foundry models in Foundry Agent Service | [02-connected-models.md](07-agents/07.2-prompt-agents/02-connected-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/connected-models> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.2.2 | Customize agent behavior at runtime with structured inputs | [03-structured-inputs.md](07-agents/07.2-prompt-agents/03-structured-inputs.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/structured-inputs> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.2.3 | Publish your agent as an Agent Application | [04-agent-applications.md](07-agents/07.2-prompt-agents/04-agent-applications.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/agent-applications> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.2.4 | Configure and share your agent | [05-configure-agent.md](07-agents/07.2-prompt-agents/05-configure-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.2.5 | Tool best practices for Microsoft Foundry Agent Service | [06-tool-best-practice.md](07-agents/07.2-prompt-agents/06-tool-best-practice.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/tool-best-practice> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.2.6 | What is the agent optimizer? (preview) | [01-agent-optimizer-overview.md](11-optimization/01-agent-optimizer-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-optimizer-overview> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.1 |
+| 7.3.1.2.7 | Agent optimizer cost and token usage overview | [02-agent-optimizer-costs.md](11-optimization/02-agent-optimizer-costs.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-optimizer-costs> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.2 |
+| 7.3.1.2.8 | Quickstart: Optimize a prompt agent (preview) | [02-quickstart-optimize-prompt-agent.md](11-optimization/11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-optimize-prompt-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.3.1.2 |
+| 7.3.1.3 | Deploy and share |  |  |  | Group — no page at the source |
+| 7.3.1.3.1 | Enable incoming A2A on a Foundry agent | [10-enable-agent-to-agent-endpoint.md](07-agents/07.2-prompt-agents/10-enable-agent-to-agent-endpoint.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/enable-agent-to-agent-endpoint> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.3.2 | Automate agents with routines | [11-use-routines.md](07-agents/07.2-prompt-agents/11-use-routines.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-routines> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.4 | Migrate |  |  |  | Group — no page at the source |
+| 7.3.1.4.1 | Migrate to the new agents developer experience | [12-migrate.md](07-agents/07.2-prompt-agents/12-migrate.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/migrate> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.4.2 | Migrate from agent applications to the new agent endpoint and publishing experience | [13-migrate-agent-applications.md](07-agents/07.2-prompt-agents/13-migrate-agent-applications.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/migrate-agent-applications> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.1.4.3 | Disable creation of classic agents and assistants | [14-disable-classic-agents.md](07-agents/07.2-prompt-agents/14-disable-classic-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/disable-classic-agents> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2 | Voice-first agents |  |  |  | Group — no page at the source |
+| 7.3.2.1 | Quickstarts |  |  |  | Group — no page at the source |
+| 7.3.2.1.1 | Quickstart: Create a voice-based prompt agent | [02-prompt-voice-agent.md](04-get-started/04.1-what-do-you-want-to-build/02-prompt-voice-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/prompt-voice-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 4.4.2 |
+| 7.3.2.2 | Build |  |  |  | Group — no page at the source |
+| 7.3.2.2.1 | Configure a voice agent | [15-configure-voice-agent.md](07-agents/07.2-prompt-agents/15-configure-voice-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-voice-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.2 | Use a hosted agent as the conversation engine in a voice-based agent | [16-voice-first-with-hosted-agent.md](07-agents/07.2-prompt-agents/16-voice-first-with-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/voice-first-with-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.3 | Use a subagent in a Voice-based agent | [17-use-subagent-voice-first-agent.md](07-agents/07.2-prompt-agents/17-use-subagent-voice-first-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-subagent-voice-first-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.4 | Integrate telephony channels with a voice agent | [18-voice-agent-telephony-channels.md](07-agents/07.2-prompt-agents/18-voice-agent-telephony-channels.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/voice-agent-telephony-channels> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.5 | Best practices for voice-based agents | [19-voice-agent-best-practice.md](07-agents/07.2-prompt-agents/19-voice-agent-best-practice.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/voice-agent-best-practice> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.6 | Optimize instructions for voice agents | [20-optimize-voice-agent-instructions.md](07-agents/07.2-prompt-agents/20-optimize-voice-agent-instructions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/optimize-voice-agent-instructions> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.7 | Voice agent tracing, monitoring, and evaluation | [21-voice-agent-observability.md](07-agents/07.2-prompt-agents/21-voice-agent-observability.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/voice-agent-observability> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.2.8 | Pricing for voice-based agents | [22-voice-agent-pricing.md](07-agents/07.2-prompt-agents/22-voice-agent-pricing.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/voice-agent-pricing> | 2026-09-29T00:00:00Z | Synced |
+| 7.3.2.3 | Publish and share a voice-based agent | [23-voice-agent-channels-publish.md](07-agents/07.2-prompt-agents/23-voice-agent-channels-publish.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/voice-agent-channels-publish> | 2026-09-29T00:00:00Z | Synced |
+| 7.4 | Hosted agents |  |  |  | Group — no page at the source |
+| 7.4.1 | Concepts |  |  |  | Group — no page at the source |
+| 7.4.1.1 | What are hosted agents? | [01-hosted-agents.md](07-agents/07.3-hosted-agents/01-hosted-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/hosted-agents> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.1.2 | Build with agents, conversations, and responses | [02-runtime-components.md](07-agents/07.3-hosted-agents/02-runtime-components.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/runtime-components> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.1.3 | Hosted agent runtime contract | [03-hosted-agent-contract.md](07-agents/07.3-hosted-agents/03-hosted-agent-contract.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/hosted-agent-contract> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.1.4 | Resilience for long-running Microsoft Foundry hosted agents (preview) | [04-long-running-agent-resilience.md](07-agents/07.3-hosted-agents/04-long-running-agent-resilience.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/long-running-agent-resilience> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.1.5 | Durable state store for Microsoft Foundry hosted agents (preview) | [05-agent-state-store.md](07-agents/07.3-hosted-agents/05-agent-state-store.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-state-store> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.1.6 | Long-running agent API reference (preview) | [06-long-running-agent-reference.md](07-agents/07.3-hosted-agents/06-long-running-agent-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/long-running-agent-reference> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2 | Quickstarts |  |  |  | Group — no page at the source |
+| 7.4.2.1 | Quickstart: Deploy your first hosted agent | [07-quickstart-hosted-agent.md](07-agents/07.3-hosted-agents/07-quickstart-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.2 | Quickstart: Build a toolbox and use it with a hosted agent | [08-quickstart-toolbox-agent.md](07-agents/07.3-hosted-agents/08-quickstart-toolbox-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-toolbox-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.3 | Quickstart: Add a Foundry IQ knowledge base to a hosted agent with a toolbox | [09-quickstart-foundry-iq-hosted-agent.md](07-agents/07.3-hosted-agents/09-quickstart-foundry-iq-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-foundry-iq-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.4 | Getting started with Browser automation tool (preview) in Hosted agents | [10-browser-automation-hosted-agent-quickstart.md](07-agents/07.3-hosted-agents/10-browser-automation-hosted-agent-quickstart.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/browser-automation-hosted-agent-quickstart> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.5 | Quickstart: Give a hosted agent persistent memory | [11-quickstart-memory-hosted-agent.md](07-agents/07.3-hosted-agents/11-quickstart-memory-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-memory-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.6 | Quickstart: Evaluate your hosted agent | [12-quickstart-evaluate-hosted-agent.md](07-agents/07.3-hosted-agents/12-quickstart-evaluate-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/quickstarts/quickstart-evaluate-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.7 | Quickstart: Optimize a hosted agent (preview) | [03-quickstart-optimize-hosted-agent.md](11-optimization/11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-optimize-hosted-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.3.2.1 |
+| 7.4.2.8 | Quickstart: Trace your hosted agent | [14-quickstart-tracing-hosted-agent.md](07-agents/07.3-hosted-agents/14-quickstart-tracing-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/quickstarts/quickstart-tracing-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.9 | Quickstart: Deploy your own code as a hosted agent | [15-quickstart-deploy-own-code.md](07-agents/07.3-hosted-agents/15-quickstart-deploy-own-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-deploy-own-code> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.2.10 | Quickstart: Hosted agent CI/CD templates | [16-set-up-cicd-hosted-agent.md](07-agents/07.3-hosted-agents/16-set-up-cicd-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/set-up-cicd-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3 | Develop |  |  |  | Group — no page at the source |
+| 7.4.3.1 | Initialize a hosted agent project with the Azure Developer CLI | [17-init-agent-project.md](07-agents/07.3-hosted-agents/17-init-agent-project.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/init-agent-project> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.2 | Author azure.yaml for hosted agents | [18-author-azure-yaml.md](07-agents/07.3-hosted-agents/18-author-azure-yaml.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/author-azure-yaml> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.3 | Use a toolbox with a hosted agent | [19-use-toolbox-hosted-agent.md](07-agents/07.3-hosted-agents/19-use-toolbox-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.4 | Configure environment variables for a hosted agent | [20-configure-hosted-agent-env-variables.md](07-agents/07.3-hosted-agents/20-configure-hosted-agent-env-variables.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-hosted-agent-env-variables> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.5 | Update the model for a hosted agent | [21-update-hosted-agent-model.md](07-agents/07.3-hosted-agents/21-update-hosted-agent-model.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/update-hosted-agent-model> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.6 | Add a protocol adapter to your hosted agent | [22-add-protocol-adapter.md](07-agents/07.3-hosted-agents/22-add-protocol-adapter.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/add-protocol-adapter> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.7 | Use on-behalf-of flow with hosted agents in Microsoft Foundry | [23-use-on-behalf-of-flow.md](07-agents/07.3-hosted-agents/23-use-on-behalf-of-flow.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-on-behalf-of-flow> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.8 | Host Microsoft Agent Framework agents as Foundry hosted agents | [24-framework-hosted-agents.md](07-agents/07.3-hosted-agents/24-framework-hosted-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/framework-hosted-agents> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.3.9 | Host LangGraph agents as Foundry hosted agents | [06-langchain-hosted-agents.md](05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/06-langchain-hosted-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain-hosted-agents> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.9.6 |
+| 7.4.3.10 | Use a toolbox with a hosted agent | [19-use-toolbox-hosted-agent.md](07-agents/07.3-hosted-agents/19-use-toolbox-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.4.3.3 |
+| 7.4.3.11 | Deploy a hosted agent from source code | [04-deploy-hosted-agent-code.md](04-get-started/04.1-what-do-you-want-to-build/04-deploy-hosted-agent-code.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent-code> | 2026-09-29T00:00:00Z | Synced — duplicate of 4.4.4 |
+| 7.4.4 | Run, test, and debug |  |  |  | Group — no page at the source |
+| 7.4.4.1 | Run a hosted agent locally with the Azure Developer CLI | [25-run-hosted-agent-locally.md](07-agents/07.3-hosted-agents/25-run-hosted-agent-locally.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/run-hosted-agent-locally> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.2 | Invoke a hosted agent with the Azure Developer CLI | [26-invoke-hosted-agent.md](07-agents/07.3-hosted-agents/26-invoke-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/invoke-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.3 | Inspect a local agent with the Agent Inspector | [27-agent-inspector.md](07-agents/07.3-hosted-agents/27-agent-inspector.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/agent-inspector> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.4 | Test a hosted agent | [28-test-hosted-agent.md](07-agents/07.3-hosted-agents/28-test-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/test-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.5 | Debug a hosted agent | [29-debug-hosted-agent.md](07-agents/07.3-hosted-agents/29-debug-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/debug-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.6 | Configure and share your agent | [05-configure-agent.md](07-agents/07.2-prompt-agents/05-configure-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.3.1.2.4 |
+| 7.4.4.7 | Diagnose a project with agent doctor | [30-agent-doctor.md](07-agents/07.3-hosted-agents/30-agent-doctor.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/agent-doctor> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.8 | Monitor hosted agent logs with the Azure Developer CLI | [31-monitor-hosted-agent-logs.md](07-agents/07.3-hosted-agents/31-monitor-hosted-agent-logs.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/monitor-hosted-agent-logs> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.9 | Export hosted agent telemetry by using OpenTelemetry | [32-configure-hosted-agent-telemetry.md](07-agents/07.3-hosted-agents/32-configure-hosted-agent-telemetry.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-hosted-agent-telemetry> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.10 | Monitor agents with the Agent Monitoring Dashboard | [33-how-to-monitor-agents-dashboard.md](07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.11 | Isolate hosted agent sessions per user | [34-isolate-sessions-per-user.md](07-agents/07.3-hosted-agents/34-isolate-sessions-per-user.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/isolate-sessions-per-user> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.12 | Multiplex multiple users in one hosted agent session | [35-multiplex-session-users.md](07-agents/07.3-hosted-agents/35-multiplex-session-users.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/multiplex-session-users> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.13 | Pass isolation keys to a hosted agent | [36-pass-isolation-keys.md](07-agents/07.3-hosted-agents/36-pass-isolation-keys.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/pass-isolation-keys> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.4.14 | Make your agent optimizer-ready (preview) | [04-make-agent-optimizer-ready.md](11-optimization/11.1-run-optimizations/04-make-agent-optimizer-ready.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/make-agent-optimizer-ready> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.3.2.2 |
+| 7.4.4.15 | Create an evaluation dataset and evaluators (preview) | [05-create-optimizer-dataset.md](11-optimization/11.1-run-optimizations/05-create-optimizer-dataset.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/create-optimizer-dataset> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.3.2.3 |
+| 7.4.4.16 | Optimize agent instructions, skills, tools, and models (preview) | [06-optimize-agent-targets.md](11-optimization/11.1-run-optimizations/06-optimize-agent-targets.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/optimize-agent-targets> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.3.2.4 |
+| 7.4.4.17 | Optimize agent prompts by using Prompt Optimizer (preview) | [01-prompt-optimizer.md](11-optimization/11.1-run-optimizations/01-prompt-optimizer.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/prompt-optimizer> | 2026-09-29T00:00:00Z | Synced — duplicate of 11.3.1.1 |
+| 7.4.5 | Build long-running agents (preview) |  |  |  | Group — no page at the source |
+| 7.4.5.1 | Deploy a crash-resilient long-running agent (preview) | [41-deploy-resilient-agent.md](07-agents/07.3-hosted-agents/41-deploy-resilient-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-resilient-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.2 | Deploy a steerable agent (preview) | [42-deploy-steerable-agent.md](07-agents/07.3-hosted-agents/42-deploy-steerable-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-steerable-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.3 | Recover long-running work after a crash (preview) | [43-recover-long-running-work.md](07-agents/07.3-hosted-agents/43-recover-long-running-work.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/recover-long-running-work> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.4 | Steer an in-flight agent turn (preview) | [44-steer-hosted-agent.md](07-agents/07.3-hosted-agents/44-steer-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/steer-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.5 | Cancel a hosted agent turn (preview) | [45-cancel-hosted-agent-turn.md](07-agents/07.3-hosted-agents/45-cancel-hosted-agent-turn.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/cancel-hosted-agent-turn> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.6 | Add a human-in-the-loop approval step (preview) | [46-add-human-in-the-loop.md](07-agents/07.3-hosted-agents/46-add-human-in-the-loop.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/add-human-in-the-loop> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.7 | Stream long-running agent output with reconnect (preview) | [47-stream-with-reconnect.md](07-agents/07.3-hosted-agents/47-stream-with-reconnect.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/stream-with-reconnect> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.5.8 | Manage state for long-running agents (preview) | [48-manage-task-state.md](07-agents/07.3-hosted-agents/48-manage-task-state.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/manage-task-state> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.6 | Deploy and operate |  |  |  | Group — no page at the source |
+| 7.4.6.1 | Deploy a hosted agent | [49-deploy-hosted-agent.md](07-agents/07.3-hosted-agents/49-deploy-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.6.2 | Build a voice agent with hosted agents | [50-build-voice-agent.md](07-agents/07.3-hosted-agents/50-build-voice-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/build-voice-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.6.3 | Use a hosted agent as the conversation engine in a voice-based agent | [16-voice-first-with-hosted-agent.md](07-agents/07.2-prompt-agents/16-voice-first-with-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/voice-first-with-hosted-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.3.2.2.2 |
+| 7.4.6.4 | Add guardrails to a hosted agent | [51-add-hosted-agent-guardrails.md](07-agents/07.3-hosted-agents/51-add-hosted-agent-guardrails.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/add-hosted-agent-guardrails> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.6.5 | Manage hosted agents | [52-manage-hosted-agent.md](07-agents/07.3-hosted-agents/52-manage-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/manage-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.6.6 | Manage hosted agent sessions | [53-manage-hosted-sessions.md](07-agents/07.3-hosted-agents/53-manage-hosted-sessions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/manage-hosted-sessions> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.7 | Migrate |  |  |  | Group — no page at the source |
+| 7.4.7.1 | Migrate from agent applications to the new agent endpoint and publishing experience | [13-migrate-agent-applications.md](07-agents/07.2-prompt-agents/13-migrate-agent-applications.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/migrate-agent-applications> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.3.1.4.2 |
+| 7.4.7.2 | Disable creation of classic agents and assistants | [14-disable-classic-agents.md](07-agents/07.2-prompt-agents/14-disable-classic-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/disable-classic-agents> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.3.1.4.3 |
+| 7.4.8 | Ship to production |  |  |  | Group — no page at the source |
+| 7.4.8.1 | Set up CI/CD for hosted agents with the Azure Developer CLI | [54-set-up-ci-cd-cli.md](07-agents/07.3-hosted-agents/54-set-up-ci-cd-cli.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/set-up-ci-cd-cli> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.8.2 | Promote hosted agents to production with the Azure Developer CLI | [63-deploy-hosted-agent-production.md](07-agents/07.3-hosted-agents/63-deploy-hosted-agent-production.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent-production> | 2026-09-30T07:28:53Z | Synced |
+| 7.4.8.3 | Deploy a hosted agent with a private Azure Container Registry | [55-deploy-hosted-agent-private-azure-container-registry.md](07-agents/07.3-hosted-agents/55-deploy-hosted-agent-private-azure-container-registry.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.8.4 | Bring your own registry for hosted agents | [56-private-registry-connections.md](07-agents/07.3-hosted-agents/56-private-registry-connections.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/private-registry-connections> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.8.5 | Update a hosted agent endpoint and agent card | [57-update-agent-endpoint-cli.md](07-agents/07.3-hosted-agents/57-update-agent-endpoint-cli.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/update-agent-endpoint-cli> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.8.6 | Migrate hosted agents to the latest version | [58-migrate-hosted-agent-preview.md](07-agents/07.3-hosted-agents/58-migrate-hosted-agent-preview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/migrate-hosted-agent-preview> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.9 | Reference |  |  |  | Group — no page at the source |
+| 7.4.9.1 | Hosted agent permissions reference | [59-hosted-agent-permissions.md](07-agents/07.3-hosted-agents/59-hosted-agent-permissions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/hosted-agent-permissions> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.9.2 | azure.yaml reference for hosted agents | [60-azure-yaml-reference.md](07-agents/07.3-hosted-agents/60-azure-yaml-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/azure-yaml-reference> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.9.3 | agent.yaml schema reference | [61-agent-yaml-reference.md](07-agents/07.3-hosted-agents/61-agent-yaml-reference.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-yaml-reference> | 2026-09-29T00:00:00Z | Synced |
+| 7.4.9.4 | Hosted agent infrastructure with the Azure Developer CLI | [62-cli-infrastructure.md](07-agents/07.3-hosted-agents/62-cli-infrastructure.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/cli-infrastructure> | 2026-09-29T00:00:00Z | Synced |
+| 7.5 | Autopilots |  |  |  | Group — no page at the source |
+| 7.5.1 | What is an autopilot in Microsoft Foundry? | [01-autopilot-overview.md](07-agents/07.4-autopilots/01-autopilot-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/autopilot-overview> | 2026-09-29T00:00:00Z | Synced |
+| 7.5.2 | Autopilot lifecycle in Microsoft Foundry | [02-autopilot-lifecycle.md](07-agents/07.4-autopilots/02-autopilot-lifecycle.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/autopilot-lifecycle> | 2026-09-29T00:00:00Z | Synced |
+| 7.5.3 | Quickstart: Build your first autopilot | [03-agent-365.md](07-agents/07.4-autopilots/03-agent-365.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/agent-365> | 2026-09-29T00:00:00Z | Synced |
+| 7.6 | Publish and share |  |  |  | Group — no page at the source |
+| 7.6.1 | Publish agents to Microsoft Copilot and Microsoft Teams in the Foundry portal | [01-publish-copilot.md](07-agents/07.5-publish-and-share/01-publish-copilot.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/publish-copilot> | 2026-09-29T00:00:00Z | Synced |
+| 7.6.2 | Publish agents to Microsoft Copilot and Microsoft Teams by using the REST API | [02-publish-copilot-virtual-network.md](07-agents/07.5-publish-and-share/02-publish-copilot-virtual-network.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/publish-copilot-virtual-network> | 2026-09-29T00:00:00Z | Synced |
+| 7.6.3 | Troubleshooting |  |  |  | Group — no page at the source |
+| 7.6.3.1 | Troubleshoot publishing agents to Microsoft Copilot and Microsoft Teams | [03-troubleshoot-publish-copilot.md](07-agents/07.5-publish-and-share/03-troubleshoot-publish-copilot.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/troubleshoot-publish-copilot> | 2026-09-29T00:00:00Z | Synced |
+| 7.6.3.2 | Troubleshoot authorization errors for agents published to Microsoft Copilot and Teams | [04-troubleshoot-publish-copilot-authorization.md](07-agents/07.5-publish-and-share/04-troubleshoot-publish-copilot-authorization.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization> | 2026-09-30T07:28:53Z | Synced |
+| 7.7 | Reference |  |  |  | Group — no page at the source |
+| 7.7.1 | Foundry Agent Service limits, quotas, and regional support | [01-limits-quotas-regions.md](07-agents/07.6-reference/01-limits-quotas-regions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/limits-quotas-regions> | 2026-09-29T00:00:00Z | Synced |
+| 7.7.2 | Foundry Agent Service feature availability in Azure Government | [02-azure-government.md](07-agents/07.6-reference/02-azure-government.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/azure-government> | 2026-09-29T00:00:00Z | Synced |
+| 7.7.3 | Capability hosts | [03-capability-hosts.md](07-agents/07.6-reference/03-capability-hosts.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/capability-hosts> | 2026-09-29T00:00:00Z | Synced |
+| 7.7.4 | Foundry Agent Service frequently asked questions | [04-faq.md](07-agents/07.6-reference/04-faq.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/faq> | 2026-09-29T00:00:00Z | Synced |
+| 8 | Toolboxes |  |  |  | Group — no page at the source |
+| 8.1 | What is Toolbox in Foundry? | [06-toolbox-overview.md](04-get-started/04.1-what-do-you-want-to-build/06-toolbox-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/toolbox-overview> | 2026-09-29T00:00:00Z | Synced — duplicate of 4.4.6 |
+| 8.2 | Create and manage a toolbox in Foundry | [01-toolbox.md](08-toolboxes/01-toolbox.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/toolbox> | 2026-09-29T00:00:00Z | Synced |
+| 8.3 | Add tools and skills |  |  |  | Group — no page at the source |
+| 8.3.1 | MCP |  |  |  | Group — no page at the source |
+| 8.3.1.1 | Connect agents to Model Context Protocol servers | [01-model-context-protocol.md](08-toolboxes/08.1-add-tools-and-skills/01-model-context-protocol.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.1.2 | Add managed MCP servers powered by connector namespaces (preview) | [02-connectors.md](08-toolboxes/08.1-add-tools-and-skills/02-connectors.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/connectors> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.1.3 | Set up authentication for Model Context Protocol (MCP) tools | [03-mcp-authentication.md](08-toolboxes/08.1-add-tools-and-skills/03-mcp-authentication.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/mcp-authentication> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.1.4 | Build and register a Model Context Protocol (MCP) server | [04-build-your-own-mcp-server.md](08-toolboxes/08.1-add-tools-and-skills/04-build-your-own-mcp-server.md) | <https://learn.microsoft.com/en-us/azure/foundry/mcp/build-your-own-mcp-server> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.1.5 | Get started with Foundry MCP Server (preview) using Visual Studio Code | [01-get-started.md](05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/01-get-started.md) | <https://learn.microsoft.com/en-us/azure/foundry/mcp/get-started> | 2026-09-29T00:00:00Z | Synced — duplicate of 5.10.1 |
+| 8.3.1.6 | Create a private tool catalog (preview) | [05-private-tool-catalog.md](08-toolboxes/08.1-add-tools-and-skills/05-private-tool-catalog.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/private-tool-catalog> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.2 | Use skills in Foundry (preview) | [06-skills.md](08-toolboxes/08.1-add-tools-and-skills/06-skills.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/skills> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.3 | Create a private skill catalog (preview) | [07-private-skill-catalog.md](08-toolboxes/08.1-add-tools-and-skills/07-private-skill-catalog.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/private-skill-catalog> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.4 | Connect agents to OpenAPI tools | [08-openapi.md](08-toolboxes/08.1-add-tools-and-skills/08-openapi.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/openapi> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.5 | A2A |  |  |  | Group — no page at the source |
+| 8.3.5.1 | Connect to an A2A agent endpoint from Foundry Agent Service | [09-agent-to-agent.md](08-toolboxes/08.1-add-tools-and-skills/09-agent-to-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/agent-to-agent> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.5.2 | Agent2Agent (A2A) authentication | [10-agent-to-agent-authentication.md](08-toolboxes/08.1-add-tools-and-skills/10-agent-to-agent-authentication.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-to-agent-authentication> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.6 | Web and Bing tools |  |  |  | Group — no page at the source |
+| 8.3.6.1 | Web grounding tools overview | [11-web-overview.md](08-toolboxes/08.1-add-tools-and-skills/11-web-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/web-overview> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.6.2 | Web search tool | [12-web-search.md](08-toolboxes/08.1-add-tools-and-skills/12-web-search.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/web-search> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.6.3 | Grounding agents with Bing Search tools | [13-bing-tools.md](08-toolboxes/08.1-add-tools-and-skills/13-bing-tools.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/bing-tools> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7 | Microsoft IQ |  |  |  | Group — no page at the source |
+| 8.3.7.1 | Foundry IQ |  |  |  | Group — no page at the source |
+| 8.3.7.1.1 | What is Foundry IQ? | [14-what-is-foundry-iq.md](08-toolboxes/08.1-add-tools-and-skills/14-what-is-foundry-iq.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.1.2 | Foundry IQ frequently asked questions | [15-foundry-iq-faq.md](08-toolboxes/08.1-add-tools-and-skills/15-foundry-iq-faq.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/foundry-iq-faq> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.1.3 | Connect a Foundry IQ knowledge base to Foundry Agent Service | [16-foundry-iq-connect.md](08-toolboxes/08.1-add-tools-and-skills/16-foundry-iq-connect.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-connect> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.1.4 | Tutorial: Deploy private agentic retrieval |  |  |  | Group — no page at the source |
+| 8.3.7.1.4.1 | Tutorial: Deploy private agentic retrieval for Foundry IQ | [17-foundry-iq-tutorial-private-overview.md](08-toolboxes/08.1-add-tools-and-skills/17-foundry-iq-tutorial-private-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-tutorial-private-overview> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.1.4.2 | Set up private inbound connectivity | [18-foundry-iq-tutorial-private-inbound.md](08-toolboxes/08.1-add-tools-and-skills/18-foundry-iq-tutorial-private-inbound.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-tutorial-private-inbound> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.1.4.3 | Set up private outbound connectivity | [19-foundry-iq-tutorial-private-outbound.md](08-toolboxes/08.1-add-tools-and-skills/19-foundry-iq-tutorial-private-outbound.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-tutorial-private-outbound> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.1.4.4 | Validate end-to-end private agentic retrieval | [20-foundry-iq-tutorial-private-retrieval.md](08-toolboxes/08.1-add-tools-and-skills/20-foundry-iq-tutorial-private-retrieval.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-tutorial-private-retrieval> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.2 | Connect agents to Microsoft Fabric with Fabric IQ (preview) | [21-fabric-iq.md](08-toolboxes/08.1-add-tools-and-skills/21-fabric-iq.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/fabric-iq> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.7.3 | Connect agents to Microsoft 365 with Work IQ (preview) | [22-work-iq.md](08-toolboxes/08.1-add-tools-and-skills/22-work-iq.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/work-iq> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.8 | File search tool for agents | [23-file-search.md](08-toolboxes/08.1-add-tools-and-skills/23-file-search.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/file-search> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.8.1 | Retrieval augmented generation (RAG) and indexes | [24-retrieval-augmented-generation.md](08-toolboxes/08.1-add-tools-and-skills/24-retrieval-augmented-generation.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/retrieval-augmented-generation> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.8.2 | Vector stores for file search | [25-vector-stores.md](08-toolboxes/08.1-add-tools-and-skills/25-vector-stores.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/vector-stores> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.9 | Code Interpreter tool for Microsoft Foundry agents | [26-code-interpreter.md](08-toolboxes/08.1-add-tools-and-skills/26-code-interpreter.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/code-interpreter> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.9.1 | Custom code interpreter tool for agents (preview) | [27-custom-code-interpreter.md](08-toolboxes/08.1-add-tools-and-skills/27-custom-code-interpreter.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/custom-code-interpreter> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.10 | Connect an Azure AI Search index to Foundry agents | [28-ai-search.md](08-toolboxes/08.1-add-tools-and-skills/28-ai-search.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/ai-search> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11 | Other tools |  |  |  | Group — no page at the source |
+| 8.3.11.1 | Use function calling with Microsoft Foundry agents | [29-function-calling.md](08-toolboxes/08.1-add-tools-and-skills/29-function-calling.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/function-calling> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.2 | Reminder tool for self-scheduling agents | [30-reminder-tool.md](08-toolboxes/08.1-add-tools-and-skills/30-reminder-tool.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/reminder-tool> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.3 | Browser automation (preview) |  |  |  | Group — no page at the source |
+| 8.3.11.3.1 | Automate browser tasks with the Browser Automation tool (preview) | [31-browser-automation.md](08-toolboxes/08.1-add-tools-and-skills/31-browser-automation.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/browser-automation> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.3.2 | Getting started with Browser automation tool (preview) in Hosted agents | [10-browser-automation-hosted-agent-quickstart.md](07-agents/07.3-hosted-agents/10-browser-automation-hosted-agent-quickstart.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/browser-automation-hosted-agent-quickstart> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.4.2.4 |
+| 8.3.11.4 | Use the computer use tool for agents (preview) | [32-computer-use.md](08-toolboxes/08.1-add-tools-and-skills/32-computer-use.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/computer-use> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.5 | Use the image generation tool (preview) | [33-image-generation.md](08-toolboxes/08.1-add-tools-and-skills/33-image-generation.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/image-generation> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.6 | Use the Microsoft Fabric data agent (preview) | [34-fabric.md](08-toolboxes/08.1-add-tools-and-skills/34-fabric.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/fabric> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.7 | Use SharePoint tool with the agent API (preview) | [35-sharepoint.md](08-toolboxes/08.1-add-tools-and-skills/35-sharepoint.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/sharepoint> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.8 | Use Azure Functions with Foundry Agent Service | [36-azure-functions.md](08-toolboxes/08.1-add-tools-and-skills/36-azure-functions.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/azure-functions> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.9 | Foundry Tools |  |  |  | Group — no page at the source |
+| 8.3.11.9.1 | Connect Azure Speech in Foundry Tools to an agent | [37-azure-ai-speech.md](08-toolboxes/08.1-add-tools-and-skills/37-azure-ai-speech.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/azure-ai-speech> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.9.2 | Azure Language |  |  |  | Group — no page at the source |
+| 8.3.11.9.2.1 | Azure Language tools and agents |  | <https://learn.microsoft.com/azure/ai-services/language-service/concepts/foundry-tools-agents?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 8.3.11.9.2.2 | Try CLU multi-turn conversations |  | <https://learn.microsoft.com/azure/ai-services/language-service/conversational-language-understanding/how-to/quickstart-multi-turn-conversations?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 8.3.11.9.2.3 | Detect Personally Identifiable Information (PII) |  | <https://learn.microsoft.com/azure/ai-services/language-service/personally-identifiable-information/quickstart?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 8.3.11.9.2.4 | Try Azure Language detection |  | <https://learn.microsoft.com/azure/ai-services/language-service/language-detection/quickstart?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 8.3.11.9.3 | Azure Translator |  |  |  | Group — no page at the source |
+| 8.3.11.9.3.1 | Azure text translation |  | <https://learn.microsoft.com/azure/ai-services/translator/text-translation/overview?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 8.3.11.9.3.2 | Azure document translation |  | <https://learn.microsoft.com/azure/ai-services/translator/document-translation/overview?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 8.3.11.10 | Voice |  |  |  | Group — no page at the source |
+| 8.3.11.10.1 | Quickstart |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/voice-live-agents-quickstart> |  | Not copied — outside the docset |
+| 8.3.11.10.2 | Enable voice for prompt agents |  | <https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-voice-agent-integration> |  | Not copied — outside the docset |
+| 8.3.11.11 | Memory (preview) |  |  |  | Group — no page at the source |
+| 8.3.11.11.1 | Memory in Microsoft Foundry Agent Service (preview) | [38-what-is-memory.md](08-toolboxes/08.1-add-tools-and-skills/38-what-is-memory.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-memory> | 2026-09-29T00:00:00Z | Synced |
+| 8.3.11.11.2 | Create and use memory in Foundry Agent Service (preview) | [39-memory-usage.md](08-toolboxes/08.1-add-tools-and-skills/39-memory-usage.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/memory-usage> | 2026-09-29T00:00:00Z | Synced |
+| 8.4 | Enable tool search in a toolbox | [02-tool-search.md](08-toolboxes/02-tool-search.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/tool-search> | 2026-09-29T00:00:00Z | Synced |
+| 8.5 | Manage toolbox |  |  |  | Group — no page at the source |
+| 8.5.1 | Create and manage a toolbox in Foundry | [01-toolbox.md](08-toolboxes/01-toolbox.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/toolbox> | 2026-09-29T00:00:00Z | Synced — duplicate of 8.2 |
+| 8.5.2 | Govern MCP tools by using an AI gateway (preview) | [01-governance.md](08-toolboxes/08.2-manage-toolbox/01-governance.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/governance> | 2026-09-29T00:00:00Z | Synced |
+| 8.5.3 | How toolbox authentication works in Microsoft Foundry | [02-tool-authentication.md](08-toolboxes/08.2-manage-toolbox/02-tool-authentication.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/tool-authentication> | 2026-09-29T00:00:00Z | Synced |
+| 8.5.4 | Network isolation for a toolbox in Microsoft Foundry | [03-toolbox-network-isolation.md](08-toolboxes/08.2-manage-toolbox/03-toolbox-network-isolation.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/toolbox-network-isolation> | 2026-09-29T00:00:00Z | Synced |
+| 8.5.5 | Tool best practices for Microsoft Foundry Agent Service | [06-tool-best-practice.md](07-agents/07.2-prompt-agents/06-tool-best-practice.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/tool-best-practice> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.3.1.2.5 |
+| 9 | Observability |  |  |  | Group — no page at the source |
+| 9.1 | Observability in generative AI | [01-observability.md](09-observability/01-observability.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/observability> | 2026-09-29T00:00:00Z | Synced |
+| 9.2 | Monitoring |  |  |  | Group — no page at the source |
+| 9.2.1 | Microsoft Foundry Notification Center | [01-concept-notification-center.md](09-observability/09.1-monitoring/01-concept-notification-center.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/concept-notification-center> | 2026-09-29T00:00:00Z | Synced |
+| 9.2.2 | Monitor agents with the Agent Monitoring Dashboard | [33-how-to-monitor-agents-dashboard.md](07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.4.4.10 |
+| 9.2.3 | Use Insights in Foundry (preview) | [02-agent-insights.md](09-observability/09.1-monitoring/02-agent-insights.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/agent-insights> | 2026-09-29T00:00:00Z | Synced |
+| 9.2.4 | Log end user feedback (preview) | [03-log-end-user-feedback.md](09-observability/09.1-monitoring/03-log-end-user-feedback.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/log-end-user-feedback> | 2026-09-29T00:00:00Z | Synced |
+| 9.2.5 | Monitor model deployments in Microsoft Foundry Models | [04-monitor-models.md](09-observability/09.1-monitoring/04-monitor-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/monitor-models> | 2026-09-29T00:00:00Z | Synced |
+| 9.2.6 | Monitor model router in Microsoft Foundry | [22-monitor-model-router.md](06-models/06.1-explore-foundry-models/22-monitor-model-router.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/monitor-model-router> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.2.8.4 |
+| 9.3 | Tracing |  |  |  | Group — no page at the source |
+| 9.3.1 | Agent tracing overview | [01-trace-agent-concept.md](09-observability/09.2-tracing/01-trace-agent-concept.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-agent-concept> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.2 | Quickstart: Trace your hosted agent | [14-quickstart-tracing-hosted-agent.md](07-agents/07.3-hosted-agents/14-quickstart-tracing-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/quickstarts/quickstart-tracing-hosted-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.4.2.8 |
+| 9.3.3 | Set up tracing in Microsoft Foundry | [02-trace-agent-setup.md](09-observability/09.2-tracing/02-trace-agent-setup.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/trace-agent-setup> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.4 | Configure Microsoft Entra authentication for Foundry agent trace ingestion (preview) | [03-trace-ingestion-entra-authentication.md](09-observability/09.2-tracing/03-trace-ingestion-entra-authentication.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/trace-ingestion-entra-authentication> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.5 | Review agent interactions with Trace Replay (preview) | [04-trace-agent-replay.md](09-observability/09.2-tracing/04-trace-agent-replay.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/trace-agent-replay> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.6 | Add client-side tracing to Foundry agents (preview) | [05-trace-agent-client-side.md](09-observability/09.2-tracing/05-trace-agent-client-side.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/trace-agent-client-side> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.7 | Configure tracing for AI agent frameworks (preview) | [06-trace-agent-framework.md](09-observability/09.2-tracing/06-trace-agent-framework.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/trace-agent-framework> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.8 | Register external agents for observability and evaluation (preview) | [07-register-external-agent.md](09-observability/09.2-tracing/07-register-external-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/register-external-agent> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.9 | Convert agent traces into evaluation datasets (preview) | [08-traces-to-dataset.md](09-observability/09.2-tracing/08-traces-to-dataset.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/traces-to-dataset> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.10 | Annotate traces with human feedback (preview) | [09-trace-annotations.md](09-observability/09.2-tracing/09-trace-annotations.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/trace-annotations> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.11 | Restrict access to sensitive content in Microsoft Foundry traces (preview) | [10-traces-sensitive-content.md](09-observability/09.2-tracing/10-traces-sensitive-content.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/traces-sensitive-content> | 2026-09-29T00:00:00Z | Synced |
+| 9.3.12 | Tracing and data handling | [11-trace-data.md](09-observability/09.2-tracing/11-trace-data.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-data> | 2026-09-29T00:00:00Z | Synced |
+| 9.4 | Troubleshoot evaluation and observability issues | [02-troubleshooting.md](09-observability/02-troubleshooting.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/troubleshooting> | 2026-09-29T00:00:00Z | Synced |
+| 10 | Evaluation |  |  |  | Group — no page at the source |
+| 10.1 | Set up permissions for Microsoft Foundry evaluation workflows | [04-evaluation-permissions.md](10-evaluation/04-evaluation-permissions.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-permissions> | 2026-09-30T07:28:53Z | Synced |
+| 10.2 | Rate limits, region support, and enterprise features for evaluation | [01-evaluation-regions-limits-virtual-network.md](10-evaluation/01-evaluation-regions-limits-virtual-network.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-regions-limits-virtual-network> | 2026-09-29T00:00:00Z | Synced |
+| 10.3 | Configure virtual network support for evaluation in Microsoft Foundry | [02-evaluation-virtual-network.md](10-evaluation/02-evaluation-virtual-network.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-virtual-network> | 2026-09-29T00:00:00Z | Synced |
+| 10.4 | Microsoft Foundry risk and safety evaluations Transparency Note | [03-safety-evaluations-transparency-note.md](10-evaluation/03-safety-evaluations-transparency-note.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/safety-evaluations-transparency-note> | 2026-09-29T00:00:00Z | Synced |
+| 10.5 | Supported evaluators |  |  |  | Group — no page at the source |
+| 10.5.1 | Built-in evaluators reference | [01-built-in-evaluators.md](10-evaluation/10.1-supported-evaluators/01-built-in-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/built-in-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.2 | General purpose evaluators | [02-general-purpose-evaluators.md](10-evaluation/10.1-supported-evaluators/02-general-purpose-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/general-purpose-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.3 | Textual similarity evaluators | [03-textual-similarity-evaluators.md](10-evaluation/10.1-supported-evaluators/03-textual-similarity-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/textual-similarity-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.4 | Retrieval-Augmented Generation (RAG) evaluators | [04-rag-evaluators.md](10-evaluation/10.1-supported-evaluators/04-rag-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/rag-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.5 | Risk and safety evaluators | [05-risk-safety-evaluators.md](10-evaluation/10.1-supported-evaluators/05-risk-safety-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/risk-safety-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.6 | Agent evaluators | [06-agent-evaluators.md](10-evaluation/10.1-supported-evaluators/06-agent-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/agent-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.7 | Azure OpenAI graders | [07-azure-openai-graders.md](10-evaluation/10.1-supported-evaluators/07-azure-openai-graders.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/azure-openai-graders> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.8 | Rubric evaluators (preview) | [08-rubric-evaluators.md](10-evaluation/10.1-supported-evaluators/08-rubric-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/rubric-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.5.9 | Custom evaluators (preview) | [09-custom-evaluators.md](10-evaluation/10.1-supported-evaluators/09-custom-evaluators.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/custom-evaluators> | 2026-09-29T00:00:00Z | Synced |
+| 10.6 | Evaluation datasets |  |  |  | Group — no page at the source |
+| 10.6.1 | Evaluation datasets in Microsoft Foundry | [01-evaluation-datasets.md](10-evaluation/10.2-evaluation-datasets/01-evaluation-datasets.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-datasets> | 2026-09-29T00:00:00Z | Synced |
+| 10.6.2 | Evaluation dataset schema in Microsoft Foundry | [02-evaluation-dataset-schema.md](10-evaluation/10.2-evaluation-datasets/02-evaluation-dataset-schema.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-dataset-schema> | 2026-09-29T00:00:00Z | Synced |
+| 10.6.3 | Generate a synthetic evaluation dataset (preview) | [03-evaluation-dataset-synthetic.md](10-evaluation/10.2-evaluation-datasets/03-evaluation-dataset-synthetic.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluation-dataset-synthetic> | 2026-09-29T00:00:00Z | Synced |
+| 10.6.4 | Convert agent traces into evaluation datasets (preview) | [08-traces-to-dataset.md](09-observability/09.2-tracing/08-traces-to-dataset.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/traces-to-dataset> | 2026-09-29T00:00:00Z | Synced — duplicate of 9.3.9 |
+| 10.7 | Run evaluations |  |  |  | Group — no page at the source |
+| 10.7.1 | Quickstart: Evaluate your hosted agent | [12-quickstart-evaluate-hosted-agent.md](07-agents/07.3-hosted-agents/12-quickstart-evaluate-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/quickstarts/quickstart-evaluate-hosted-agent> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.4.2.6 |
+| 10.7.2 | Evaluate your AI agents | [01-evaluate-agent.md](10-evaluation/10.3-run-evaluations/01-evaluate-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluate-agent> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3 | Run evaluations with the SDK |  |  |  | Group — no page at the source |
+| 10.7.3.1 | Introduction to cloud evaluation with Microsoft Foundry SDK | [02-cloud-evaluation.md](10-evaluation/10.3-run-evaluations/02-cloud-evaluation.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.2 | Evaluate individual turns |  |  |  | Group — no page at the source |
+| 10.7.3.2.1 | Evaluate existing datasets with Microsoft Foundry SDK | [03-cloud-evaluation-datasets.md](10-evaluation/10.3-run-evaluations/03-cloud-evaluation-datasets.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-datasets> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.2.2 | Evaluate model and agent targets with Microsoft Foundry SDK | [04-cloud-evaluation-targets.md](10-evaluation/10.3-run-evaluations/04-cloud-evaluation-targets.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-targets> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.2.3 | Evaluate individual interactions from deployed models and agents with Microsoft Foundry SDK | [05-cloud-evaluation-deployed-interactions.md](10-evaluation/10.3-run-evaluations/05-cloud-evaluation-deployed-interactions.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-deployed-interactions> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.2.4 | Generate synthetic evaluation data with Microsoft Foundry SDK (preview) | [06-cloud-evaluation-synthetic-data.md](10-evaluation/10.3-run-evaluations/06-cloud-evaluation-synthetic-data.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-synthetic-data> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.3 | Evaluate complete conversations |  |  |  | Group — no page at the source |
+| 10.7.3.3.1 | Evaluate conversation datasets with Microsoft Foundry SDK (preview) | [07-cloud-evaluation-conversations.md](10-evaluation/10.3-run-evaluations/07-cloud-evaluation-conversations.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-conversations> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.3.2 | Evaluate deployed model and agent conversations with Microsoft Foundry SDK (preview) | [08-cloud-evaluation-deployed-conversations.md](10-evaluation/10.3-run-evaluations/08-cloud-evaluation-deployed-conversations.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-deployed-conversations> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.3.3 | Simulate conversations with the Microsoft Foundry SDK (preview) | [09-cloud-evaluation-simulate-conversations.md](10-evaluation/10.3-run-evaluations/09-cloud-evaluation-simulate-conversations.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-simulate-conversations> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.4 | Get evaluation results with Microsoft Foundry SDK | [10-cloud-evaluation-results.md](10-evaluation/10.3-run-evaluations/10-cloud-evaluation-results.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cloud-evaluation-results> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.3.5 | Use admin-connected models in cloud evaluations | [11-evaluate-admin-connected-models.md](10-evaluation/10.3-run-evaluations/11-evaluate-admin-connected-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/evaluate-admin-connected-models> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.4 | Run evaluations from the Microsoft Foundry portal | [12-evaluate-generative-ai-app.md](10-evaluation/10.3-run-evaluations/12-evaluate-generative-ai-app.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/evaluate-generative-ai-app> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.5 | Run agent evaluations with the azd CLI (preview) | [13-azure-developer-cli-evaluation.md](10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/azure-developer-cli-evaluation> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.6 | Specialized evaluation workflows |  |  |  | Group — no page at the source |
+| 10.7.6.1 | Monitor agents with the Agent Monitoring Dashboard | [33-how-to-monitor-agents-dashboard.md](07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.4.4.10 |
+| 10.7.6.2 | Run benchmark evaluations in Microsoft Foundry (preview) | [07-benchmark-evaluations.md](06-models/06.1-explore-foundry-models/07-benchmark-evaluations.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/benchmark-evaluations> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.2.5.3 |
+| 10.7.6.3 | Set up human evaluation for your agents (preview) | [14-human-evaluation.md](10-evaluation/10.3-run-evaluations/14-human-evaluation.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/human-evaluation> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.7 | Review and analyze results |  |  |  | Group — no page at the source |
+| 10.7.7.1 | View evaluation results in the Microsoft Foundry portal | [15-evaluate-results.md](10-evaluation/10.3-run-evaluations/15-evaluate-results.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/evaluate-results> | 2026-09-29T00:00:00Z | Synced |
+| 10.7.7.2 | Analyze evaluation results with cluster analysis (preview) | [16-cluster-analysis.md](10-evaluation/10.3-run-evaluations/16-cluster-analysis.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cluster-analysis> | 2026-09-29T00:00:00Z | Synced |
+| 10.8 | AI red teaming |  |  |  | Group — no page at the source |
+| 10.8.1 | AI Red Teaming Agent | [01-ai-red-teaming-agent.md](10-evaluation/10.4-ai-red-teaming/01-ai-red-teaming-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent> | 2026-09-29T00:00:00Z | Synced |
+| 10.8.2 | Run AI Red Teaming Agent in the cloud | [02-run-ai-red-teaming-cloud.md](10-evaluation/10.4-ai-red-teaming/02-run-ai-red-teaming-cloud.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/run-ai-red-teaming-cloud> | 2026-09-29T00:00:00Z | Synced |
+| 10.8.3 | Run AI Red Teaming Agent locally (preview) | [03-run-scans-ai-red-teaming-agent.md](10-evaluation/10.4-ai-red-teaming/03-run-scans-ai-red-teaming-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent> | 2026-09-29T00:00:00Z | Synced |
+| 10.9 | Evaluations in CI/CD pipelines |  |  |  | Group — no page at the source |
+| 10.9.1 | How to run an evaluation in GitHub Action (preview) | [01-evaluation-github-action.md](10-evaluation/10.5-evaluations-in-ci-cd-pipelines/01-evaluation-github-action.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/evaluation-github-action> | 2026-09-29T00:00:00Z | Synced |
+| 10.9.2 | How to run an evaluation in Azure DevOps (preview) | [02-evaluation-azure-devops.md](10-evaluation/10.5-evaluations-in-ci-cd-pipelines/02-evaluation-azure-devops.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/evaluation-azure-devops> | 2026-09-29T00:00:00Z | Synced |
+| 11 | Optimization |  |  |  | Group — no page at the source |
+| 11.1 | What is the agent optimizer? (preview) | [01-agent-optimizer-overview.md](11-optimization/01-agent-optimizer-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-optimizer-overview> | 2026-09-29T00:00:00Z | Synced |
+| 11.2 | Agent optimizer cost and token usage overview | [02-agent-optimizer-costs.md](11-optimization/02-agent-optimizer-costs.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-optimizer-costs> | 2026-09-29T00:00:00Z | Synced |
+| 11.3 | Run optimizations |  |  |  | Group — no page at the source |
+| 11.3.1 | Prompt agents in the portal |  |  |  | Group — no page at the source |
+| 11.3.1.1 | Optimize agent prompts by using Prompt Optimizer (preview) | [01-prompt-optimizer.md](11-optimization/11.1-run-optimizations/01-prompt-optimizer.md) | <https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/prompt-optimizer> | 2026-09-29T00:00:00Z | Synced |
+| 11.3.1.2 | Quickstart: Optimize a prompt agent (preview) | [02-quickstart-optimize-prompt-agent.md](11-optimization/11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-optimize-prompt-agent> | 2026-09-29T00:00:00Z | Synced |
+| 11.3.2 | Hosted agents with SDKs, CLI and toolkit |  |  |  | Group — no page at the source |
+| 11.3.2.1 | Quickstart: Optimize a hosted agent (preview) | [03-quickstart-optimize-hosted-agent.md](11-optimization/11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-optimize-hosted-agent> | 2026-09-29T00:00:00Z | Synced |
+| 11.3.2.2 | Make your agent optimizer-ready (preview) | [04-make-agent-optimizer-ready.md](11-optimization/11.1-run-optimizations/04-make-agent-optimizer-ready.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/make-agent-optimizer-ready> | 2026-09-29T00:00:00Z | Synced |
+| 11.3.2.3 | Create an evaluation dataset and evaluators (preview) | [05-create-optimizer-dataset.md](11-optimization/11.1-run-optimizations/05-create-optimizer-dataset.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/create-optimizer-dataset> | 2026-09-29T00:00:00Z | Synced |
+| 11.3.2.4 | Optimize agent instructions, skills, tools, and models (preview) | [06-optimize-agent-targets.md](11-optimization/11.1-run-optimizations/06-optimize-agent-targets.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/optimize-agent-targets> | 2026-09-29T00:00:00Z | Synced |
+| 12 | Trust and safety |  |  |  | Group — no page at the source |
+| 12.1 | Guardrails and controls |  |  |  | Group — no page at the source |
+| 12.1.1 | Guardrails and controls overview in Microsoft Foundry | [01-guardrails-overview.md](12-trust-and-safety/12.1-guardrails-and-controls/01-guardrails-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/guardrails/guardrails-overview> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.2 | How to configure guardrails and controls in Microsoft Foundry | [02-how-to-create-guardrails.md](12-trust-and-safety/12.1-guardrails-and-controls/02-how-to-create-guardrails.md) | <https://learn.microsoft.com/en-us/azure/foundry/guardrails/how-to-create-guardrails> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.3 | Risks |  |  |  | Group — no page at the source |
+| 12.1.3.1 | Harm categories and severity levels in Microsoft Foundry | [03-content-filter-severity-levels.md](12-trust-and-safety/12.1-guardrails-and-controls/03-content-filter-severity-levels.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-severity-levels> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.3.2 | Prompt Shields in Microsoft Foundry | [04-content-filter-prompt-shields.md](12-trust-and-safety/12.1-guardrails-and-controls/04-content-filter-prompt-shields.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-prompt-shields> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.3.3 | Personally identifiable information (PII) filter | [05-content-filter-personal-information.md](12-trust-and-safety/12.1-guardrails-and-controls/05-content-filter-personal-information.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-personal-information> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.3.4 | Groundedness detection filter | [06-content-filter-groundedness.md](12-trust-and-safety/12.1-guardrails-and-controls/06-content-filter-groundedness.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-groundedness> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.3.5 | Agentic Workflows: Task Adherence (preview) | [07-task-adherence.md](12-trust-and-safety/12.1-guardrails-and-controls/07-task-adherence.md) | <https://learn.microsoft.com/en-us/azure/foundry/guardrails/task-adherence> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.3.6 | Protected material for code |  | <https://learn.microsoft.com/en-us/azure/ai-services/content-safety/quickstart-protected-material-code> |  | Not copied — outside the docset |
+| 12.1.3.7 | Protected material detection filter | [08-content-filter-protected-material.md](12-trust-and-safety/12.1-guardrails-and-controls/08-content-filter-protected-material.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-filter-protected-material> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.4 | Custom controls |  |  |  | Group — no page at the source |
+| 12.1.4.1 | Block lists |  | <https://learn.microsoft.com/en-us/azure/ai-services/content-safety/quickstart-blocklist> |  | Not copied — outside the docset |
+| 12.1.4.2 | Custom categories |  | <https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/custom-categories?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 12.1.5 | Intervention points | [09-intervention-points.md](12-trust-and-safety/12.1-guardrails-and-controls/09-intervention-points.md) | <https://learn.microsoft.com/en-us/azure/foundry/guardrails/intervention-points> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.6 | Content streaming | [10-content-streaming.md](12-trust-and-safety/12.1-guardrails-and-controls/10-content-streaming.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/content-streaming> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.7 | Default Guardrail policies for Azure OpenAI | [11-default-safety-policies.md](12-trust-and-safety/12.1-guardrails-and-controls/11-default-safety-policies.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/default-safety-policies> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.8 | Safety system message templates | [12-safety-system-message-templates.md](12-trust-and-safety/12.1-guardrails-and-controls/12-safety-system-message-templates.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/safety-system-message-templates> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.9 | Integrate third-party guardrails | [13-third-party-integrations.md](12-trust-and-safety/12.1-guardrails-and-controls/13-third-party-integrations.md) | <https://learn.microsoft.com/en-us/azure/foundry/guardrails/third-party-integrations> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.10 | Configure guided guardrail set-up for an agent (preview) | [14-guided-set-up.md](12-trust-and-safety/12.1-guardrails-and-controls/14-guided-set-up.md) | <https://learn.microsoft.com/en-us/azure/foundry/guardrails/guided-set-up> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.11 | Safety best practices |  |  |  | Group — no page at the source |
+| 12.1.11.1 | Safety system messages | [15-system-message.md](12-trust-and-safety/12.1-guardrails-and-controls/15-system-message.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/system-message> | 2026-09-29T00:00:00Z | Synced |
+| 12.1.11.2 | Planning red teaming for large language models (LLMs) and their applications | [16-red-teaming.md](12-trust-and-safety/12.1-guardrails-and-controls/16-red-teaming.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/red-teaming> | 2026-09-29T00:00:00Z | Synced |
+| 12.2 | Responsible AI |  |  |  | Group — no page at the source |
+| 12.2.1 | Responsible AI for Microsoft Foundry | [01-responsible-use-of-ai-overview.md](12-trust-and-safety/12.2-responsible-ai/01-responsible-use-of-ai-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-use-of-ai-overview> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.2 | Limited access |  | <https://learn.microsoft.com/en-us/azure/ai-services/cognitive-services-limited-access?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 12.2.3 | Content provenance for Foundry models | [02-provenance-disclosure.md](12-trust-and-safety/12.2-responsible-ai/02-provenance-disclosure.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/content-safety/provenance-disclosure> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.4 | Azure OpenAI |  |  |  | Group — no page at the source |
+| 12.2.4.1 | Overview of responsible AI practices for Azure OpenAI models | [03-overview.md](12-trust-and-safety/12.2-responsible-ai/03-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/overview> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.4.2 | Transparency note for Azure OpenAI | [04-transparency-note.md](12-trust-and-safety/12.2-responsible-ai/04-transparency-note.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/transparency-note> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.4.3 | Limited access for Foundry Models sold by Azure | [05-limited-access.md](12-trust-and-safety/12.2-responsible-ai/05-limited-access.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/limited-access> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.4.4 | Code of conduct |  | <https://learn.microsoft.com/legal/ai-code-of-conduct> |  | Not copied — outside the docset |
+| 12.2.4.5 | Data, privacy, and security for Models sold by Azure in Microsoft Foundry | [18-data-privacy.md](06-models/06.1-explore-foundry-models/18-data-privacy.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.2.7 |
+| 12.2.4.6 | Customer Copyright Commitment Required Mitigations | [06-customer-copyright-commitment.md](12-trust-and-safety/12.2-responsible-ai/06-customer-copyright-commitment.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/customer-copyright-commitment> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.4.7 | Abuse monitoring | [07-abuse-monitoring.md](12-trust-and-safety/12.2-responsible-ai/07-abuse-monitoring.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/abuse-monitoring> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.5 | Agents |  |  |  | Group — no page at the source |
+| 12.2.5.1 | Transparency Note for Foundry Agent Service | [08-transparency-note.md](12-trust-and-safety/12.2-responsible-ai/08-transparency-note.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/agents/transparency-note> | 2026-09-29T00:00:00Z | Synced |
+| 12.2.5.2 | Data, privacy, and security for Foundry Agent Service | [09-data-privacy-security.md](12-trust-and-safety/12.2-responsible-ai/09-data-privacy-security.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/agents/data-privacy-security> | 2026-09-29T00:00:00Z | Synced |
+| 13 | Manage and operate |  |  |  | Group — no page at the source |
+| 13.1 | Set up and configure |  |  |  | Group — no page at the source |
+| 13.1.1 | Microsoft Foundry portal general availability overview | [01-general-availability.md](13-manage-and-operate/13.1-set-up-and-configure/01-general-availability.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/general-availability> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.2 | Microsoft Foundry rollout across my organization | [02-planning.md](13-manage-and-operate/13.1-set-up-and-configure/02-planning.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/planning> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.3 | Manage Foundry resources |  |  |  | Group — no page at the source |
+| 13.1.3.1 | Create your first resource |  | <https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 13.1.3.2 | Quickstart: Deploy a Microsoft Foundry resource by using a Bicep file | [03-create-resource-template.md](13-manage-and-operate/13.1-set-up-and-configure/03-create-resource-template.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/create-resource-template> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.3.3 | Use Terraform to manage Microsoft Foundry resources | [04-create-resource-terraform.md](13-manage-and-operate/13.1-set-up-and-configure/04-create-resource-terraform.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/create-resource-terraform> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.3.4 | Recover or purge deleted resources |  | <https://learn.microsoft.com/en-us/azure/ai-services/recover-purge-resources?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 13.1.3.5 | Upgrade from Azure OpenAI to Microsoft Foundry | [05-upgrade-azure-openai.md](13-manage-and-operate/13.1-set-up-and-configure/05-upgrade-azure-openai.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/upgrade-azure-openai> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.3.6 | Migrate from Azure AI Inference SDK to OpenAI SDK | [06-model-inference-to-openai-migration.md](13-manage-and-operate/13.1-set-up-and-configure/06-model-inference-to-openai-migration.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/model-inference-to-openai-migration> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.4 | Create a project for Microsoft Foundry | [07-create-projects.md](13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/create-projects> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5 | Agent configuration |  |  |  | Group — no page at the source |
+| 13.1.5.1 | Set up your environment | [08-environment-setup.md](13-manage-and-operate/13.1-set-up-and-configure/08-environment-setup.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/environment-setup> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5.2 | Configure agent capability settings (preview) | [09-configure-capability-settings.md](13-manage-and-operate/13.1-set-up-and-configure/09-configure-capability-settings.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/configure-capability-settings> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5.3 | Set up standard agent resources | [10-standard-agent-setup.md](13-manage-and-operate/13.1-set-up-and-configure/10-standard-agent-setup.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/standard-agent-setup> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5.4 | Use your own resources | [11-use-your-own-resources.md](13-manage-and-operate/13.1-set-up-and-configure/11-use-your-own-resources.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/use-your-own-resources> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5.5 | Set up private networking for Foundry Agent Service | [12-virtual-networks.md](13-manage-and-operate/13.1-set-up-and-configure/12-virtual-networks.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/virtual-networks> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5.6 | Deep dive into Foundry Agent Service networking | [13-agents-networking-deep-dive.md](13-manage-and-operate/13.1-set-up-and-configure/13-agents-networking-deep-dive.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agents-networking-deep-dive> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.5.7 | Bring your own model to Foundry Agent Service | [14-ai-gateway.md](13-manage-and-operate/13.1-set-up-and-configure/14-ai-gateway.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/ai-gateway> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.6 | Connect services and tools |  |  |  | Group — no page at the source |
+| 13.1.6.1 | Add a new connection to your project | [15-connections-add.md](13-manage-and-operate/13.1-set-up-and-configure/15-connections-add.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/connections-add> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.6.2 | Connect to your own storage | [16-bring-your-own-azure-storage-foundry.md](13-manage-and-operate/13.1-set-up-and-configure/16-bring-your-own-azure-storage-foundry.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/bring-your-own-azure-storage-foundry> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.6.3 | Connect your own storage for Speech and Language services (Preview) | [17-bring-your-own-azure-storage-speech-language-services.md](13-manage-and-operate/13.1-set-up-and-configure/17-bring-your-own-azure-storage-speech-language-services.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/bring-your-own-azure-storage-speech-language-services> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.6.4 | Manage Grounding with Bing in Microsoft Foundry and Azure | [18-manage-grounding-with-bing.md](13-manage-and-operate/13.1-set-up-and-configure/18-manage-grounding-with-bing.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/manage-grounding-with-bing> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.7 | Quota and service limits |  |  |  | Group — no page at the source |
+| 13.1.7.1 | Manage and increase quotas for resources with Microsoft Foundry (Foundry projects) | [02-quota.md](06-models/06.2-quota-limits-and-region-availability/02-quota.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/quota> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.3.2 |
+| 13.1.7.2 | Microsoft Foundry Models quotas and limits | [05-quotas-limits.md](06-models/06.2-quota-limits-and-region-availability/05-quotas-limits.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/quotas-limits> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.3.5 |
+| 13.1.7.3 | Azure OpenAI in Microsoft Foundry Models quotas and limits | [06-quotas-limits.md](06-models/06.2-quota-limits-and-region-availability/06-quotas-limits.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/quotas-limits> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.3.6 |
+| 13.1.8 | Plan and manage costs for Microsoft Foundry | [16-manage-costs.md](06-models/06.3-offers-deployment-types-and-pricing/16-manage-costs.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/manage-costs> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.4.10 |
+| 13.1.9 | Consolidated view for Foundry Tools in the Azure portal | [19-foundry-consolidated-view.md](13-manage-and-operate/13.1-set-up-and-configure/19-foundry-consolidated-view.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-consolidated-view> | 2026-09-29T00:00:00Z | Synced |
+| 13.1.10 | Claude Consumption Units (CCU) billing in Microsoft Foundry | [20-claude-models-billing.md](13-manage-and-operate/13.1-set-up-and-configure/20-claude-models-billing.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models-billing> | 2026-09-29T00:00:00Z | Synced |
+| 13.2 | Govern at scale |  |  |  | Group — no page at the source |
+| 13.2.1 | What is Microsoft Foundry Control Plane? | [01-overview.md](13-manage-and-operate/13.2-govern-at-scale/01-overview.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/overview> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.2 | Govern tools |  |  |  | Group — no page at the source |
+| 13.2.2.1 | Govern MCP tools by using an AI gateway (preview) | [01-governance.md](08-toolboxes/08.2-manage-toolbox/01-governance.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/governance> | 2026-09-29T00:00:00Z | Synced — duplicate of 8.5.2 |
+| 13.2.3 | Govern agents |  |  |  | Group — no page at the source |
+| 13.2.3.1 | Monitor agent health and performance across your fleet | [02-monitoring-across-fleet.md](13-manage-and-operate/13.2-govern-at-scale/02-monitoring-across-fleet.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/monitoring-across-fleet> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.3.2 | Manage agents at scale in Microsoft Foundry Control Plane | [03-how-to-manage-agents.md](13-manage-and-operate/13.2-govern-at-scale/03-how-to-manage-agents.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/how-to-manage-agents> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.3.3 | Register and manage custom agents | [04-register-custom-agent.md](13-manage-and-operate/13.2-govern-at-scale/04-register-custom-agent.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/register-custom-agent> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.3.4 | Govern agent infrastructure as a Microsoft Entra administrator | [05-govern-agent-infrastructure-entra-admin.md](13-manage-and-operate/13.2-govern-at-scale/05-govern-agent-infrastructure-entra-admin.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/govern-agent-infrastructure-entra-admin> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.4 | Govern models |  |  |  | Group — no page at the source |
+| 13.2.4.1 | Enforce token limits for models | [06-how-to-enforce-limits-models.md](13-manage-and-operate/13.2-govern-at-scale/06-how-to-enforce-limits-models.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/how-to-enforce-limits-models> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.4.2 | Quickstart: Create a guardrail policy | [07-quickstart-create-guardrail-policy.md](13-manage-and-operate/13.2-govern-at-scale/07-quickstart-create-guardrail-policy.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/quickstart-create-guardrail-policy> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.5 | Manage compliance and security in Microsoft Foundry | [08-how-to-manage-compliance-security.md](13-manage-and-operate/13.2-govern-at-scale/08-how-to-manage-compliance-security.md) | <https://learn.microsoft.com/en-us/azure/foundry/control-plane/how-to-manage-compliance-security> | 2026-09-29T00:00:00Z | Synced |
+| 13.2.6 | Configure AI Gateway in your Foundry resources | [09-enable-ai-api-management-gateway-portal.md](13-manage-and-operate/13.2-govern-at-scale/09-enable-ai-api-management-gateway-portal.md) | <https://learn.microsoft.com/en-us/azure/foundry/configuration/enable-ai-api-management-gateway-portal> | 2026-09-29T00:00:00Z | Synced |
+| 13.3 | Security and governance |  |  |  | Group — no page at the source |
+| 13.3.1 | Identity |  |  |  | Group — no page at the source |
+| 13.3.1.1 | Authentication and authorization in Microsoft Foundry | [01-authentication-authorization-foundry.md](13-manage-and-operate/13.3-security-and-governance/01-authentication-authorization-foundry.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/authentication-authorization-foundry> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.1.2 | Role-based access control for Microsoft Foundry | [02-rbac-foundry.md](13-manage-and-operate/13.3-security-and-governance/02-rbac-foundry.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.1.3 | Elevated-role tasks in Microsoft Foundry | [03-administrator-guide.md](13-manage-and-operate/13.3-security-and-governance/03-administrator-guide.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/administrator-guide> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.1.4 | Disable preview features in Microsoft Foundry | [04-disable-preview-features.md](13-manage-and-operate/13.3-security-and-governance/04-disable-preview-features.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/disable-preview-features> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.1.5 | Configure keyless authentication with Microsoft Entra ID | [05-configure-entra-id.md](13-manage-and-operate/13.3-security-and-governance/05-configure-entra-id.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/configure-entra-id> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.2 | Network security |  |  |  | Group — no page at the source |
+| 13.3.2.1 | Networking options for Foundry Agent Service | [06-networking-options.md](13-manage-and-operate/13.3-security-and-governance/06-networking-options.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/networking-options> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.2.2 | How to configure network isolation for Microsoft Foundry | [07-configure-private-link.md](13-manage-and-operate/13.3-security-and-governance/07-configure-private-link.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/configure-private-link> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.2.3 | Configure managed virtual network for Microsoft Foundry projects | [08-managed-virtual-network.md](13-manage-and-operate/13.3-security-and-governance/08-managed-virtual-network.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/managed-virtual-network> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.2.4 | Access on-premises resources from your Microsoft Foundry managed network | [09-access-on-premises-resources.md](13-manage-and-operate/13.3-security-and-governance/09-access-on-premises-resources.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/access-on-premises-resources> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.2.5 | Add Microsoft Foundry to a network security perimeter | [10-add-foundry-to-network-security-perimeter.md](13-manage-and-operate/13.3-security-and-governance/10-add-foundry-to-network-security-perimeter.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/add-foundry-to-network-security-perimeter> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.3 | Data protection & encryption |  |  |  | Group — no page at the source |
+| 13.3.3.1 | Customer-managed key encryption in Microsoft Foundry | [11-customer-managed-keys.md](13-manage-and-operate/13.3-security-and-governance/11-customer-managed-keys.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/customer-managed-keys> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.3.2 | Configure customer-managed keys for Microsoft Foundry | [12-encryption-keys-portal.md](13-manage-and-operate/13.3-security-and-governance/12-encryption-keys-portal.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/encryption-keys-portal> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.3.3 | Set up an Azure Key Vault connection in Microsoft Foundry | [13-set-up-key-vault-connection.md](13-manage-and-operate/13.3-security-and-governance/13-set-up-key-vault-connection.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/set-up-key-vault-connection> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.3.4 | Rotate API access keys |  | <https://learn.microsoft.com/azure/ai-services/rotate-keys?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 13.3.4 | Policy management |  |  |  | Group — no page at the source |
+| 13.3.4.1 | Built-in policy definitions |  | <https://learn.microsoft.com/en-us/azure/ai-services/policy-reference?context=/azure/foundry/context/context> |  | Not copied — outside the docset |
+| 13.3.4.2 | Built-in policies for model deployment in Microsoft Foundry portal | [14-model-deployment-policy.md](13-manage-and-operate/13.3-security-and-governance/14-model-deployment-policy.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/model-deployment-policy> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.4.3 | Create custom policies for Microsoft Foundry | [15-custom-policy-definition.md](13-manage-and-operate/13.3-security-and-governance/15-custom-policy-definition.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/custom-policy-definition> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.5 | Monitor |  |  |  | Group — no page at the source |
+| 13.3.5.1 | Enable diagnostic logging for Microsoft Foundry | [16-diagnostic-logging.md](13-manage-and-operate/13.3-security-and-governance/16-diagnostic-logging.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/diagnostic-logging> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.5.2 | Configure Agent 365 data collection for Microsoft Foundry | [17-configure-agent-365-data-collection.md](13-manage-and-operate/13.3-security-and-governance/17-configure-agent-365-data-collection.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/configure-agent-365-data-collection> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.5.3 | Plan and manage costs for Microsoft Foundry | [16-manage-costs.md](06-models/06.3-offers-deployment-types-and-pricing/16-manage-costs.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/manage-costs> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.4.10 |
+| 13.3.6 | High availability and disaster recovery |  |  |  | Group — no page at the source |
+| 13.3.6.1 | High availability and resiliency for Microsoft Foundry projects and Agent Services | [18-high-availability-resiliency.md](13-manage-and-operate/13.3-security-and-governance/18-high-availability-resiliency.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/high-availability-resiliency> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.6.2 | Foundry Agent Service disaster recovery | [19-agent-service-disaster-recovery.md](13-manage-and-operate/13.3-security-and-governance/19-agent-service-disaster-recovery.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/agent-service-disaster-recovery> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.6.3 | Foundry Agent Service platform outage recovery | [20-agent-service-platform-disaster-recovery.md](13-manage-and-operate/13.3-security-and-governance/20-agent-service-platform-disaster-recovery.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/agent-service-platform-disaster-recovery> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.6.4 | Foundry Agent Service resource and data loss recovery | [21-agent-service-operator-disaster-recovery.md](13-manage-and-operate/13.3-security-and-governance/21-agent-service-operator-disaster-recovery.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/agent-service-operator-disaster-recovery> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.7 | Security baseline |  | <https://learn.microsoft.com/security/benchmark/azure/baselines/azure-ai-foundry-security-baseline> |  | Not copied — outside the docset |
+| 13.3.8 | Microsoft Foundry architecture | [22-architecture.md](13-manage-and-operate/13.3-security-and-governance/22-architecture.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/architecture> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.9 | Data, privacy, and security for Models sold by Azure in Microsoft Foundry | [18-data-privacy.md](06-models/06.1-explore-foundry-models/18-data-privacy.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.2.7 |
+| 13.3.10 | Data, privacy, and security for Claude models in Microsoft Foundry | [23-data-privacy.md](13-manage-and-operate/13.3-security-and-governance/23-data-privacy.md) | <https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/claude-models/data-privacy> | 2026-09-29T00:00:00Z | Synced |
+| 13.3.11 | Compare hosting options for Claude models in Microsoft Foundry | [05-claude-models-hosting-comparison.md](06-models/06.5-model-support/05-claude-models-hosting-comparison.md) | <https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models-hosting-comparison> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.6.3.3 |
+| 13.4 | Operate and support |  |  |  | Group — no page at the source |
+| 13.4.1 | What's new in Microsoft Foundry? | [01-whats-new-foundry.md](13-manage-and-operate/13.4-operate-and-support/01-whats-new-foundry.md) | <https://learn.microsoft.com/en-us/azure/foundry/whats-new-foundry> | 2026-09-29T00:00:00Z | Synced |
+| 13.4.2 | Stay informed about service health regressions | [02-stay-informed-service-health.md](13-manage-and-operate/13.4-operate-and-support/02-stay-informed-service-health.md) | <https://learn.microsoft.com/en-us/azure/foundry/how-to/stay-informed-service-health> | 2026-09-29T00:00:00Z | Synced |
+| 13.4.3 | Use a screen reader with Microsoft Foundry | [03-screen-reader.md](13-manage-and-operate/13.4-operate-and-support/03-screen-reader.md) | <https://learn.microsoft.com/en-us/azure/foundry/tutorials/screen-reader> | 2026-09-29T00:00:00Z | Synced |
+| 13.4.4 | Known issues - Microsoft Foundry | [04-foundry-known-issues.md](13-manage-and-operate/13.4-operate-and-support/04-foundry-known-issues.md) | <https://learn.microsoft.com/en-us/azure/foundry/reference/foundry-known-issues> | 2026-09-29T00:00:00Z | Synced |
+| 13.4.5 | Microsoft Foundry feature availability across cloud regions | [08-region-support.md](06-models/06.2-quota-limits-and-region-availability/08-region-support.md) | <https://learn.microsoft.com/en-us/azure/foundry/reference/region-support> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.3.8 |
+| 13.4.6 | Microsoft Foundry in Azure Government | [05-foundry-azure-government.md](13-manage-and-operate/13.4-operate-and-support/05-foundry-azure-government.md) | <https://learn.microsoft.com/en-us/azure/foundry/concepts/foundry-azure-government> | 2026-09-29T00:00:00Z | Synced |
+| 13.4.7 | Foundry Agent Service feature availability in Azure Government | [02-azure-government.md](07-agents/07.6-reference/02-azure-government.md) | <https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/azure-government> | 2026-09-29T00:00:00Z | Synced — duplicate of 7.7.2 |
+| 13.4.8 | Region support |  | <https://azure.microsoft.com/explore/global-infrastructure/products-by-region/> |  | Not copied — external site |
+| 13.4.9 | Microsoft Foundry Models lifecycle and support policy | [13-model-retirements.md](06-models/06.1-explore-foundry-models/13-model-retirements.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirements> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.2.6.5 |
+| 13.4.10 | Microsoft Foundry Models lifecycle and support policy in Azure Government | [14-model-retirements-gov.md](06-models/06.1-explore-foundry-models/14-model-retirements-gov.md) | <https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-retirements-gov> | 2026-09-29T00:00:00Z | Synced — duplicate of 6.2.6.6 |
+| 13.4.11 | Code of conduct |  | <https://learn.microsoft.com/legal/ai-code-of-conduct> |  | Not copied — outside the docset |
+| 13.4.12 | Compliance |  | <https://aka.ms/AzureCompliance> |  | Not copied — external site |
+| 13.4.13 | Service Level Agreement (SLA) |  | <https://www.microsoft.com/licensing/docs/view/Service-Level-Agreements-SLA-for-Online-Services> |  | Not copied — external site |
+| 13.4.14 | Azure updates |  | <https://azure.microsoft.com/updates/?filters=%5B%22Azure+AI+Foundry%22%5D#> |  | Not copied — external site |
+| 13.4.15 | Microsoft Foundry pricing |  | <https://azure.microsoft.com/pricing/details/ai-foundry/> |  | Not copied — external site |
 
 ## Related documents
 
+- [Research Document Style](../../templates/RESEARCH_DOCUMENT_STYLE.md)
 - [Documentation index](../../index.md)

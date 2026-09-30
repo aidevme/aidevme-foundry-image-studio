@@ -5,7 +5,7 @@
 | **Document Title** | Microsoft Foundry capability reference |
 | **Document Location** | `docs/research-docs/azure-foundry/03-capability-reference/01-capability-reference.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Microsoft Foundry capability reference". Reference list of Microsoft Foundry capabilities by area, including models, agents, tools, knowledge, observability, evaluation, guardrails, and governance. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/concepts/capability-reference). Article date: 2026-08-12. Page updated: 2026-09-24. Retrieved: 2026-09-29. Navigation: Capability reference.
@@ -138,8 +138,8 @@ Measure and improve quality, safety, and cost.
 | [Continuous evaluation](../10-evaluation/10.3-run-evaluations/02-cloud-evaluation.md) | Evaluate production traffic on an ongoing basis. |
 | [Evaluation datasets](../10-evaluation/10.2-evaluation-datasets/03-evaluation-dataset-synthetic.md) | Generate synthetic test data or build datasets from agent traces when you don't have labeled examples. |
 | [Human evaluation](../10-evaluation/10.3-run-evaluations/14-human-evaluation.md) | Collect structured human judgments and annotate traces. |
-| [Prompt optimizer](../07-agents/07.3-hosted-agents/40-prompt-optimizer.md) | Improve agent instructions automatically from evaluation results. |
-| [Agent optimizer](../07-agents/07.2-prompt-agents/07-agent-optimizer-overview.md) (preview) | Tune hosted agent instructions and skills against a target dataset. |
+| [Prompt optimizer](../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md) | Improve agent instructions automatically from evaluation results. |
+| [Agent optimizer](../11-optimization/01-agent-optimizer-overview.md) (preview) | Tune hosted agent instructions and skills against a target dataset. |
 | [AI red teaming](../10-evaluation/10.4-ai-red-teaming/01-ai-red-teaming-agent.md) | Run automated adversarial scans locally or in the cloud. |
 | [Evaluations in CI/CD](../10-evaluation/10.5-evaluations-in-ci-cd-pipelines/01-evaluation-github-action.md) | Gate releases with evaluations in GitHub Actions or Azure DevOps. |
 

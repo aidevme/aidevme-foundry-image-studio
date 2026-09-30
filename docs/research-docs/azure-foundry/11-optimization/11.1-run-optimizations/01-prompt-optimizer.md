@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | Optimize agent prompts by using Prompt Optimizer (preview) |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/40-prompt-optimizer.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/11.1-run-optimizations/01-prompt-optimizer.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Optimize agent prompts by using Prompt Optimizer (preview)". Learn how to use Prompt Optimizer in Microsoft Foundry to automatically improve your agent's system instructions using AI-driven prompt engineering best practices. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/prompt-optimizer). Article date: 2026-08-28. Page updated: 2026-08-28. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Run, test, and debug > Optimize agent prompts.
@@ -22,7 +22,7 @@ This article covers how to use Prompt Optimizer in the Foundry portal playground
 
 ## Prerequisites
 
-- A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md) with at least one [prompt agent or workflow agent](../01-overview.md).
+- A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md) with at least one [prompt agent or workflow agent](../../07-agents/01-overview.md).
 - A model deployment in a [supported region](#supported-regions). The region of your Foundry project determines feature availability.
 - Access to the agent configuration panel in the Foundry portal.
 
@@ -143,6 +143,6 @@ In unsupported regions, the **Optimize** button doesn't appear.
 ## Related content
 
 - [Evaluate your AI agents](../../10-evaluation/10.3-run-evaluations/01-evaluate-agent.md)
-- [Agents overview](../01-overview.md)
+- [Agents overview](../../07-agents/01-overview.md)
 - [Prompt engineering techniques](../../06-models/06.9-development-best-practices/01-prompt-engineering.md)
-- [Monitor agents with the Agent Monitoring Dashboard](33-how-to-monitor-agents-dashboard.md)
+- [Monitor agents with the Agent Monitoring Dashboard](../../07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md)

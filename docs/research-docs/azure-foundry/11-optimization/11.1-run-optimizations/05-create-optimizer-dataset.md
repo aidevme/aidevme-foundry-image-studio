@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | Create an evaluation dataset and evaluators (preview) |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/38-create-optimizer-dataset.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/11.1-run-optimizations/05-create-optimizer-dataset.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Create an evaluation dataset and evaluators (preview)". Generate or manually define evaluation datasets and evaluators used by the agent optimizer to evaluate and improve your hosted agent in Foundry Agent Service. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/create-optimizer-dataset). Article date: 2026-05-18. Page updated: 2026-09-04. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Run, test, and debug > Create an evaluation dataset.
@@ -20,12 +20,12 @@ The agent optimizer evaluates your agent against a *dataset* - a collection of t
 
 Both parts are essential to good optimization: the dataset defines *what* to test, and the evaluators define *how* to judge each response. Weak evaluators produce noisy scores that lead to poor optimization, so invest in strong evaluators as much as representative tasks.
 
-Creating these assets is the second step in the [optimization workflow](../07.2-prompt-agents/07-agent-optimizer-overview.md#the-optimization-workflow), after you [make your agent optimizer-ready](37-make-agent-optimizer-ready.md). The optimizer uses them to score your baseline and rank candidates.
+Creating these assets is the second step in the [optimization workflow](../01-agent-optimizer-overview.md#the-optimization-workflow), after you [make your agent optimizer-ready](04-make-agent-optimizer-ready.md). The optimizer uses them to score your baseline and rank candidates.
 
 ## Prerequisites
 
 - A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md) with a deployed hosted agent
-- The `azure.ai.agents` CLI extension installed (see [Quickstart: Optimize a hosted agent](13-quickstart-optimize-hosted-agent.md))
+- The `azure.ai.agents` CLI extension installed (see [Quickstart: Optimize a hosted agent](03-quickstart-optimize-hosted-agent.md))
 
 ## Generate a dataset and evaluators (recommended)
 
@@ -49,7 +49,7 @@ After generation, `azd ai agent optimize` auto-detects `eval.yaml`:
 azd ai agent optimize
 ```
 
-To customize the generated assets, see [Customize evaluators](#customize-evaluators-advanced) and [Create a custom dataset](#create-a-custom-dataset-advanced). To change run options, edit `eval.yaml`; see [Configure the optimization run](39-optimize-agent-targets.md#configure-the-optimization-run).
+To customize the generated assets, see [Customize evaluators](#customize-evaluators-advanced) and [Create a custom dataset](#create-a-custom-dataset-advanced). To change run options, edit `eval.yaml`; see [Configure the optimization run](06-optimize-agent-targets.md#configure-the-optimization-run).
 
 ## Customize evaluators (advanced)
 
@@ -60,7 +60,7 @@ Evaluators score each agent response. The optimizer supports two kinds:
 
 For most agents, the generated rubric evaluator gives the most meaningful scores because it's tailored to your domain. Edit the generated `rubric_dimensions.json` to refine dimensions, then run `azd ai agent eval update` to register the changes as a new version. For details on generating, editing, and versioning evaluators, see [Initialize evaluation assets](../../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md#initialize-evaluation-assets).
 
-To wire evaluators into your run configuration, see [Configure the optimization run](39-optimize-agent-targets.md#configure-the-optimization-run).
+To wire evaluators into your run configuration, see [Configure the optimization run](06-optimize-agent-targets.md#configure-the-optimization-run).
 
 ## Create a custom dataset (advanced)
 
@@ -73,7 +73,7 @@ A dataset can come from either of two sources:
 - **Foundry dataset** — a dataset already registered in your Foundry project. Reference it in `eval.yaml` by `name` and `version`.
 - **Local dataset** — a JSONL file you author and keep in your project. Reference it in `eval.yaml` by `local_uri`.
 
-Both sources use the same task schema described in the next section. For the `eval.yaml` wiring, see [Configure the optimization run](39-optimize-agent-targets.md#configure-the-optimization-run).
+Both sources use the same task schema described in the next section. For the `eval.yaml` wiring, see [Configure the optimization run](06-optimize-agent-targets.md#configure-the-optimization-run).
 
 ### Dataset schema
 
@@ -174,8 +174,8 @@ Good:
 
 ## Related content
 
-- [Agent optimizer overview](../07.2-prompt-agents/07-agent-optimizer-overview.md)
-- [Make your agent optimizer-ready](37-make-agent-optimizer-ready.md)
-- [Optimize agent instructions, skills, tools, and models](39-optimize-agent-targets.md)
-- [Quickstart: Optimize a hosted agent](13-quickstart-optimize-hosted-agent.md)
+- [Agent optimizer overview](../01-agent-optimizer-overview.md)
+- [Make your agent optimizer-ready](04-make-agent-optimizer-ready.md)
+- [Optimize agent instructions, skills, tools, and models](06-optimize-agent-targets.md)
+- [Quickstart: Optimize a hosted agent](03-quickstart-optimize-hosted-agent.md)
 - [Run agent evaluations with the azd CLI](../../10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md)

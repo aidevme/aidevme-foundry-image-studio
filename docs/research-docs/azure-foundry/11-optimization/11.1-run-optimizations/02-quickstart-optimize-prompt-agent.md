@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | Quickstart: Optimize a prompt agent (preview) |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.2-prompt-agents/09-quickstart-optimize-prompt-agent.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Quickstart: Optimize a prompt agent (preview)". Optimize a prompt agent's instructions, function-calling tool descriptions, and model selection in the Foundry portal. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/quickstarts/quickstart-optimize-prompt-agent). Article date: 2026-08-07. Page updated: 2026-08-19. Retrieved: 2026-09-29. Navigation: Agents > Prompt agents > Text-based agents > Build > Optimize a prompt agent.
@@ -25,7 +25,7 @@ If you don't have an Azure subscription, create a [free account](https://azure.m
 Before you begin, you need:
 
 - A Microsoft Foundry project with a deployed prompt agent. To create one, see [Quickstart: Create a prompt agent](../../04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md).
-- An evaluation model and a supported optimization model deployed in the project. For supported models, see [Models](07-agent-optimizer-overview.md#models).
+- An evaluation model and a supported optimization model deployed in the project. For supported models, see [Models](../01-agent-optimizer-overview.md#models).
 - A dataset source: agent traces, an evaluation dataset registered in the project, or a JSONL dataset to upload. The dataset must use the column names required by the selected evaluators because the wizard doesn't support column mapping.
 
 ## Open the optimization wizard
@@ -86,7 +86,7 @@ Evaluators define how the optimizer scores each response.
 
    > **Note**
    >
-   > The estimated cost is a modeled range, not a spending limit or final charge. Review the calculation inputs, pricing assumptions, and exclusions before you submit the job. For details, see [Agent optimizer cost estimates and token usage](08-agent-optimizer-costs.md).
+   > The estimated cost is a modeled range, not a spending limit or final charge. Review the calculation inputs, pricing assumptions, and exclusions before you submit the job. For details, see [Agent optimizer cost estimates and token usage](../02-agent-optimizer-costs.md).
 
    The summary shows **Minimum**, **Estimated**, and **Maximum** values. Expand **Cost breakdown (estimated)** to review the estimated calls and cost for **Running your agent**, **Scoring responses**, and **Generating improvements**.
 2. Select **Submit**.
@@ -102,7 +102,7 @@ Run time depends on the dataset size, number of candidates, and selected models.
 4. Inspect the per-evaluator scores and, if you selected multiple models, compare the results for each model.
 5. Select the candidate that provides a meaningful quality improvement without an unacceptable increase in token usage or cost.
 
-The completed run's **Token usage** view groups measured input, output, and total tokens by phase and model. It reports token counts rather than a final currency charge. A missing model or usage value means that the usage wasn't attributed or measured, not that it was free. For details, see [Post-run measured token usage](08-agent-optimizer-costs.md#post-run-measured-token-usage).
+The completed run's **Token usage** view groups measured input, output, and total tokens by phase and model. It reports token counts rather than a final currency charge. A missing model or usage value means that the usage wasn't attributed or measured, not that it was free. For details, see [Post-run measured token usage](../02-agent-optimizer-costs.md#post-run-measured-token-usage).
 
 If every candidate scores lower than the baseline, keep the current agent. Revise the dataset, evaluators, or optimization settings before you run the optimizer again.
 
@@ -128,7 +128,7 @@ In this quickstart, you:
 
 ## Related content
 
-- [Agent optimizer overview](07-agent-optimizer-overview.md)
-- [Agent optimizer cost estimates and token usage](08-agent-optimizer-costs.md)
-- [Quickstart: Optimize a hosted agent](../07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md)
+- [Agent optimizer overview](../01-agent-optimizer-overview.md)
+- [Agent optimizer cost estimates and token usage](../02-agent-optimizer-costs.md)
+- [Quickstart: Optimize a hosted agent](03-quickstart-optimize-hosted-agent.md)
 - [Convert agent traces into evaluation datasets](../../09-observability/09.2-tracing/08-traces-to-dataset.md)

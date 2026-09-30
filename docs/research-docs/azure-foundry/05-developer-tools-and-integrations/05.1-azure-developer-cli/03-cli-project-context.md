@@ -5,7 +5,7 @@
 | **Document Title** | Set the Foundry project context for azd commands |
 | **Document Location** | `docs/research-docs/azure-foundry/05-developer-tools-and-integrations/05.1-azure-developer-cli/03-cli-project-context.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Set the Foundry project context for azd commands". Run azd ai commands inside or outside an azd project. Set, inspect, and clear the active Microsoft Foundry project endpoint for standalone and scripted use. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/cli-project-context). Article date: 2026-08-25. Page updated: 2026-08-26. Retrieved: 2026-09-29. Navigation: Developer tools and integrations > Azure Developer CLI > Set the project context.
@@ -126,4 +126,4 @@ This behavior is intentional. Project-level environment values are part of the t
 - [Quickstart: Deploy your first hosted agent](../../07-agents/07.3-hosted-agents/07-quickstart-hosted-agent.md)
 - [Install the Azure Developer CLI Foundry extensions](02-install-cli-foundry-extensions.md)
 - [Initialize a hosted agent project with the Azure Developer CLI](../../07-agents/07.3-hosted-agents/17-init-agent-project.md)
-- [Optimize an existing agent without AZD project files](../../07-agents/07.3-hosted-agents/39-optimize-agent-targets.md#optimize-an-existing-agent-without-azd-project-files)
+- [Optimize an existing agent without AZD project files](../../11-optimization/11.1-run-optimizations/06-optimize-agent-targets.md#optimize-an-existing-agent-without-azd-project-files)

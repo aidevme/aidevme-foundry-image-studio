@@ -5,7 +5,7 @@
 | **Document Title** | Microsoft Foundry portal general availability overview |
 | **Document Location** | `docs/research-docs/azure-foundry/13-manage-and-operate/13.1-set-up-and-configure/01-general-availability.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Microsoft Foundry portal general availability overview". Learn what general availability means for Microsoft Foundry, including GA scope, supported scenarios, feature readiness, and migration guidance. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/concepts/general-availability). Article date: 2026-08-14. Page updated: 2026-09-23. Retrieved: 2026-09-29. Navigation: Manage and operate > Set up and configure > General availability overview.
@@ -92,7 +92,7 @@ Statuses describe the named portal experience. Check each linked feature article
 | Build | Agents — traces in agent builder | Preview |
 | Build | [Publish agents to Microsoft Copilot and Teams](../../07-agents/07.5-publish-and-share/01-publish-copilot.md) | GA |
 | Build | [Routines](../../07-agents/07.1-concepts/05-routines.md) | GA |
-| Build | [Agent optimizer](../../07-agents/07.2-prompt-agents/07-agent-optimizer-overview.md) | Limited preview |
+| Build | [Agent optimizer](../../11-optimization/01-agent-optimizer-overview.md) | Limited preview |
 | Build | [Workflows](../../07-agents/07.1-concepts/06-workflow.md) | Preview. Foundry is retiring workflows on December 1, 2026. Use Microsoft Agent Framework for new development. |
 | Build | [Models](../../06-models/01-foundry-models-overview.md) | GA (managed compute is a Preview deployment type; see [Managed compute in Microsoft Foundry](../../06-models/06.3-offers-deployment-types-and-pricing/03-managed-compute-overview.md)) |
 | Build | [Tracing](../../09-observability/09.2-tracing/01-trace-agent-concept.md) (including Trace Replay) | GA for prompt and hosted agents; Preview for workflow and external agents. |

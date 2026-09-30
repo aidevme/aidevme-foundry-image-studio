@@ -5,7 +5,7 @@
 | **Document Title** | Run agent evaluations with the azd CLI (preview) |
 | **Document Location** | `docs/research-docs/azure-foundry/10-evaluation/10.3-run-evaluations/13-azure-developer-cli-evaluation.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Run agent evaluations with the azd CLI (preview)". Learn how to initialize evaluation assets, run an evaluation, and inspect results for a Microsoft Foundry agent by using the Azure Developer (azd) CLI. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/azure-developer-cli-evaluation). Article date: 2026-06-02. Page updated: 2026-09-04. Retrieved: 2026-09-29. Navigation: Evaluation > Run evaluations > Run agent evaluations with the Azure Developer CLI.
@@ -378,7 +378,7 @@ Before starting optimization, confirm that:
 - The agent target is ready for optimization. For hosted agents, the agent is deployed and invokable.
 - `eval.yaml` references the intended agent, dataset, evaluator versions, and thresholds.
 - At least one evaluation run completed successfully.
-- The agent preparation required by the optimizer is complete. For optimizer prerequisites and agent preparation requirements, see [Optimize agent prompts with Prompt Optimizer](../../07-agents/07.3-hosted-agents/40-prompt-optimizer.md).
+- The agent preparation required by the optimizer is complete. For optimizer prerequisites and agent preparation requirements, see [Optimize agent prompts with Prompt Optimizer](../../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md).
 
 Then run:
 
@@ -411,7 +411,7 @@ The optimize command reads the agent target, dataset, evaluators, and thresholds
 - [Evaluate your AI agents](01-evaluate-agent.md)
 - [Human evaluation for Microsoft Foundry agents](14-human-evaluation.md)
 - [Evaluation cluster analysis](16-cluster-analysis.md)
-- [Optimize agent prompts with Prompt Optimizer](../../07-agents/07.3-hosted-agents/40-prompt-optimizer.md)
+- [Optimize agent prompts with Prompt Optimizer](../../11-optimization/11.1-run-optimizations/01-prompt-optimizer.md)
 - [Set up tracing for AI agents in Microsoft Foundry](../../09-observability/09.2-tracing/02-trace-agent-setup.md)
 - [Monitor agents with the Agent Monitoring Dashboard](../../07-agents/07.3-hosted-agents/33-how-to-monitor-agents-dashboard.md)
 - [Hosted agents in Foundry Agent Service](../../07-agents/07.3-hosted-agents/01-hosted-agents.md)

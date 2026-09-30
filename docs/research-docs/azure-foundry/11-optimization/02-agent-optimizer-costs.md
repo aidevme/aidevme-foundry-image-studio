@@ -3,9 +3,9 @@
 | Field | Value |
 | --- | --- |
 | **Document Title** | Agent optimizer cost and token usage overview |
-| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.2-prompt-agents/08-agent-optimizer-costs.md` |
+| **Document Location** | `docs/research-docs/azure-foundry/11-optimization/02-agent-optimizer-costs.md` |
 | **Document Description** | Reference copy of the Microsoft Learn article "Agent optimizer cost and token usage overview". Understand how the agent optimizer estimates cost before a run and reports measured token usage after the run. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 > **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/agent-optimizer-costs). Article date: 2026-08-07. Page updated: 2026-08-19. Retrieved: 2026-09-29. Navigation: Agents > Prompt agents > Text-based agents > Build > Understand optimizer costs and token usage.
@@ -182,6 +182,6 @@ Use the rates that apply to your subscription, region, deployment type, and bill
 
 ## Related content
 
-- [Agent optimizer overview](07-agent-optimizer-overview.md)
-- [Quickstart: Optimize a prompt agent](09-quickstart-optimize-prompt-agent.md)
-- [Quickstart: Optimize a hosted agent](../07.3-hosted-agents/13-quickstart-optimize-hosted-agent.md)
+- [Agent optimizer overview](01-agent-optimizer-overview.md)
+- [Quickstart: Optimize a prompt agent](11.1-run-optimizations/02-quickstart-optimize-prompt-agent.md)
+- [Quickstart: Optimize a hosted agent](11.1-run-optimizations/03-quickstart-optimize-hosted-agent.md)

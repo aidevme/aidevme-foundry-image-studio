@@ -5,7 +5,7 @@
 | **Document Title** | Agent memory overview |
 | **Document Location** | `docs/project-docs/claude/agent-memory/index.md` |
 | **Document Description** | Explains the concepts that all Claude Code subagent memories in aidevme-foundry-image-studio share: scope, storage layout, version control, and how to review or reset a memory. It is intended for contributors who use or maintain the subagents. |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Last Updated On** | 2026-09-30 |
 
 ## Introduction
@@ -14,7 +14,7 @@ Each custom subagent in this repository has a persistent memory. The memory lets
 
 ## Scope and storage
 
-Every agent definition in [.claude/agents/](../../../../.claude/agents/) sets `memory: project`. The `project` scope stores the memory inside the repository instead of in a user profile.
+Every agent definition in [.claude/agents/](../../../../.claude/agents) sets `memory: project`. The `project` scope stores the memory inside the repository instead of in a user profile.
 
 | Item | Value |
 | --- | --- |

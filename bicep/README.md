@@ -12,7 +12,7 @@ bicep/
 └── modules/                # one module per service group
 ```
 
-The GitHub Actions workflows that deploy these templates are in [.github/workflows/](../.github/workflows/), because GitHub runs workflows only from that folder:
+The GitHub Actions workflows that deploy these templates are in [.github/workflows/](../.github/workflows), because GitHub runs workflows only from that folder:
 
 | Workflow | Trigger | Action |
 | --- | --- | --- |
