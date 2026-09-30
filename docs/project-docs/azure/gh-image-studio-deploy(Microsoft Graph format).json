@@ -1,0 +1,90 @@
+{
+	"id": "1e61a7fb-6126-483c-84a8-bd82e267e35a",
+	"deletedDateTime": null,
+	"appId": "8a66208a-9f2b-4d31-9f1b-5364b406be3f",
+	"applicationTemplateId": null,
+	"disabledByMicrosoftStatus": null,
+	"createdByAppId": "18ed3507-a475-4ccb-b669-d66bc9f2a36e",
+	"createdDateTime": "2026-09-29T10:31:03Z",
+	"displayName": "gh-image-studio-deploy",
+	"description": null,
+	"groupMembershipClaims": null,
+	"identifierUris": [],
+	"isDeviceOnlyAuthSupported": null,
+	"isDisabled": null,
+	"isFallbackPublicClient": null,
+	"nativeAuthenticationApisEnabled": null,
+	"notes": "PURPOSE: Deployment identity for GitHub Actions in aidevme/aidevme-foundry-image-studio. Provisions and deletes the Azure resources of AIDevMe Foundry Image Studio with Bicep.\n\nUSED BY: workflows infra-validate, infra-deploy, infra-delete (manual runs only).\n\nSIGN-IN: OpenID Connect. No client secret or certificate. One federated credential per GitHub environment: github-env-dev, github-env-test, github-env-prod (github-pull-request is unused). Subject: repo:aidevme@252468833/aidevme-foundry-image-studio@1394548975:environment:<name> (immutable IDs, case-sensitive).\n\nAZURE ACCESS: Contributor and User Access Administrator on the subscription. Limit the second role to the roles the templates assign.\n\nGITHUB VARIABLES: AZURE_CLIENT_ID (this app), AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID, AZURE_LOCATION.\n\nOWNER: Zsolt Zombik. Created 2026-09-29.\nDOCS: docs/project-docs/github/workflows/index.md\nREVIEW: Remove a credential when its environment is removed. Add no secrets.\n",
+	"publisherDomain": "aidevme.com",
+	"serviceManagementReference": null,
+	"signInAudience": "AzureADMyOrg",
+	"tags": [],
+	"tokenEncryptionKeyId": null,
+	"samlMetadataUrl": null,
+	"defaultRedirectUri": null,
+	"certification": null,
+	"optionalClaims": null,
+	"requestSignatureVerification": null,
+	"addIns": [],
+	"api": {
+		"acceptMappedClaims": null,
+		"knownClientApplications": [],
+		"requestedAccessTokenVersion": null,
+		"oauth2PermissionScopes": [],
+		"preAuthorizedApplications": []
+	},
+	"appRoles": [],
+	"info": {
+		"logoUrl": "https://aadcdn.msftauthimages.net/c1c6b6c8-b653xbyajbpuiq3cgds8ekvijou7w-9eww6ayodmuru/appbranding/hwbpojceou4xgbrrz9763e0n4ffayn15nsayctt7jnk/1033/bannerlogo?ts=639263485020839383",
+		"marketingUrl": null,
+		"privacyStatementUrl": null,
+		"supportUrl": null,
+		"termsOfServiceUrl": null
+	},
+	"keyCredentials": [],
+	"parentalControlSettings": {
+		"countriesBlockedForMinors": [],
+		"legalAgeGroupRule": "Allow"
+	},
+	"passwordCredentials": [],
+	"publicClient": {
+		"redirectUris": []
+	},
+	"requiredResourceAccess": [
+		{
+			"resourceAppId": "00000003-0000-0000-c000-000000000000",
+			"resourceAccess": [
+				{
+					"id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+					"type": "Scope"
+				}
+			]
+		}
+	],
+	"verifiedPublisher": {
+		"displayName": null,
+		"verifiedPublisherId": null,
+		"addedDateTime": null
+	},
+	"web": {
+		"homePageUrl": null,
+		"logoutUrl": null,
+		"redirectUris": [],
+		"implicitGrantSettings": {
+			"enableAccessTokenIssuance": false,
+			"enableIdTokenIssuance": false
+		},
+		"redirectUriSettings": []
+	},
+	"servicePrincipalLockConfiguration": {
+		"isEnabled": true,
+		"allProperties": true,
+		"credentialsWithUsageVerify": true,
+		"credentialsWithUsageSign": true,
+		"identifierUris": false,
+		"tokenEncryptionKeyId": true
+	},
+	"spa": {
+		"redirectUris": []
+	}
+}
