@@ -1,0 +1,141 @@
+# Rate limits, region support, and enterprise features for evaluation
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Rate limits, region support, and enterprise features for evaluation |
+| **Document Location** | `docs/research-docs/azure-foundry/10-evaluation/01-evaluation-regions-limits-virtual-network.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Rate limits, region support, and enterprise features for evaluation". Learn about region availability, rate limits, virtual network support, and using your own storage account for evaluation in Microsoft Foundry. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-regions-limits-virtual-network). Article date: 2026-04-03. Page updated: 2026-08-18. Retrieved: 2026-09-29. Navigation: Evaluation > Rate limits and regions.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+This article provides an overview of which regions support AI-assisted evaluators, the rate limits that apply to evaluation runs, how to configure virtual network support for network isolation, and using your own storage account to run evaluations.
+
+## Regional availability
+
+### Supported regions for Agent playground evaluations
+
+The agent playground evaluations are supported in the following regions:
+
+| Americas | Europe |
+| --- | --- |
+| East US 2 | France Central |
+| West US | Norway East |
+| West US 2 | Sweden Central |
+| West US 3 | Germany West Central |
+| Central US | Italy North |
+| East US | Poland Central |
+| North Central US | Spain Central |
+| South Central US |   |
+
+### Supported regions for batch evaluations
+
+The batch evaluations are supported in the following regions:
+
+| Americas | Europe | Asia Pacific | Middle East & Africa |
+| --- | --- | --- | --- |
+| Brazil South | France Central | Australia East | South Africa North |
+| Canada Central | Germany West Central | Central India | UAE North |
+| Canada East | Italy North | East Asia |   |
+| Central US | North Europe | Japan East |   |
+| East US | Norway East | Japan West |   |
+| East US 2 | Poland Central | Korea Central |   |
+| North Central US | Spain Central | South India |   |
+| South Central US | Sweden Central | Southeast Asia |   |
+| West Central US | Switzerland North |   |   |
+| West US | UK South |   |   |
+| West US 2 | West Europe |   |   |
+| West US 3 |   |   |   |
+
+### Supported regions for risk and safety evaluators
+
+These regions support the following safety evaluators: Hate and unfairness, Sexual, Violent, Self-harm, Indirect attack, Code vulnerabilities, and Ungrounded attributes.
+
+| Americas | Europe | Asia Pacific |
+| --- | --- | --- |
+| Brazil South | France Central | Australia East |
+| Canada Central | Germany West Central |   |
+| Canada East | Italy North |   |
+| Central US | Norway East |   |
+| East US | Poland Central |   |
+| East US 2 | Spain Central |   |
+| North Central US | Sweden Central |   |
+| South Central US | Switzerland North |   |
+| West Central US | Switzerland West |   |
+| West US | West Europe |   |
+| West US 3 |   |   |
+
+Supported regions for Groundedness Pro:
+
+- East US 2
+- Sweden Central
+
+Supported regions for Protected material:
+
+- East US 2
+
+### Supported regions for AI red teaming
+
+AI red teaming is supported in the following regions.
+
+- East US 2
+- North Central US
+
+> **Note**
+>
+> For supported local red teaming regions, see [regions for AI Red Teaming (classic)](https://learn.microsoft.com/en-us/azure/foundry-classic/concepts/evaluation-regions-limits-virtual-network#supported-regions-for-ai-red-teaming).
+
+### Supported regions for data generation
+
+The following regions support synthetic data generation and trace-to-dataset generation:
+
+| Americas | Europe | Asia Pacific | Middle East & Africa |
+| --- | --- | --- | --- |
+| East US | France Central | Australia East | South Africa North |
+| East US 2 | Germany West Central | Japan East | UAE North |
+| North Central US | Italy North | South India |   |
+| South Central US | Norway East |   |   |
+| West US | Poland Central |   |   |
+| West US 3 | Sweden Central |   |   |
+|   | Switzerland North |   |   |
+|   | UK South |   |   |
+|   | West Europe |   |   |
+
+### Azure OpenAI graders regional availability
+
+For the Azure OpenAI graders regional list, see [Regional availability](https://learn.microsoft.com/en-us/azure/foundry-classic/openai/how-to/evaluations#regional-availability).
+
+## Rate limits
+
+The following rate limits apply to evaluation runs:
+
+| Limit | Value |
+| --- | --- |
+| Maximum size per row | 2 MB |
+| Maximum rows per batch evaluation | 100,000 |
+
+Evaluation run creations are rate-limited at the tenant, subscription, and project levels. If you exceed the limit:
+
+- The response includes a `retry-after` header with the wait time.
+- The response body contains rate limit details.
+
+Use exponential backoff when retrying failed requests.
+
+## Bring your own storage
+
+You can use your own storage account to run evaluations for your Foundry project, whether the project is configured with a virtual network or without one.
+
+For projects without a virtual network, you can use the storage account connection template. For projects with a virtual network, the storage setup is already included in the [evaluation-only setup template (15a)](https://github.com/microsoft-foundry/foundry-samples/tree/main/infrastructure/infrastructure-setup-bicep/15a-private-network-evaluation-only-setup).
+
+1. For projects without a virtual network, create and connect your storage account to your Foundry project at the resource level. You can [use a Bicep template](https://github.com/microsoft-foundry/foundry-samples/blob/main/infrastructure/infrastructure-setup-bicep/01-connections/connection-storage-account.bicep), which provisions and connects a storage account to your Foundry project with key authentication.
+2. Make sure the connected storage account has access to all projects.
+3. If you connected your storage account by using Microsoft Entra ID, make sure to give managed identity **Storage Blob Data Owner** permissions to both your account and the Foundry project resource in the Azure portal.
+
+## Related content
+
+- [How to configure a private link](../13-manage-and-operate/13.3-security-and-governance/07-configure-private-link.md)
+- [Observability for generative AI applications](../09-observability/01-observability.md)
+- [Assign Azure roles for access to blob data](https://learn.microsoft.com/en-us/azure/storage/blobs/assign-azure-role-data-access)

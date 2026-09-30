@@ -4,11 +4,11 @@
     {
       "id": 1,
       "name": "new-document-header",
-      "prompt": "Write a short setup guide for configuring the MCP server in VS Code and save it under docs/claude/. The MCP server code does not exist yet, so document only what the repository actually confirms.",
-      "expected_output": "A new file under docs/claude/ with a lowercase, hyphen-separated name, starting with a # title and a metadata table with all five fields. Version is 1.0 and Last Updated On is today's date in YYYY-MM-DD format. Anything unverifiable is flagged rather than invented.",
+      "prompt": "Write a short setup guide for configuring the MCP server in VS Code and save it under docs/project-docs/claude/. The MCP server code does not exist yet, so document only what the repository actually confirms.",
+      "expected_output": "A new file under docs/project-docs/claude/ with a lowercase, hyphen-separated name, starting with a # title and a metadata table with all five fields. Version is 1.0 and Last Updated On is today's date in YYYY-MM-DD format. Anything unverifiable is flagged rather than invented.",
       "files": [],
       "assertions": [
-        "The file is created under docs/claude/ with a lowercase, hyphen-separated file name",
+        "The file is created under docs/project-docs/claude/ with a lowercase, hyphen-separated file name",
         "The file starts with a single # heading followed by a metadata table",
         "The table contains Document Title, Document Location, Document Description, Version and Last Updated On",
         "Document Title matches the # heading",
@@ -22,9 +22,9 @@
     {
       "id": 2,
       "name": "update-existing-with-header",
-      "prompt": "Update docs/claude/agents/reviewer.md to add a sentence saying the reviewer agent should also check that image size and quality parameters passed to Foundry are validated.",
+      "prompt": "Update docs/project-docs/claude/agents/reviewer.md to add a sentence saying the reviewer agent should also check that image size and quality parameters passed to Foundry are validated.",
       "expected_output": "The reviewer doc is edited in place with the new sentence added in the right section. Because the file currently has no metadata header, one is added with version and date fields, and the index stays consistent.",
-      "files": ["docs/claude/agents/reviewer.md"],
+      "files": ["docs/project-docs/claude/agents/reviewer.md"],
       "assertions": [
         "The existing file is edited in place and no duplicate file is created",
         "The new requirement about validating image size and quality parameters appears in the document",
@@ -52,9 +52,9 @@
     {
       "id": 4,
       "name": "typo-only-no-bump",
-      "prompt": "Fix a typo in docs/claude/agents/tester.md: the word 'behaviour' should be spelled 'behavior'.",
+      "prompt": "Fix a typo in docs/project-docs/claude/agents/tester.md: the word 'behaviour' should be spelled 'behavior'.",
       "expected_output": "Only the spelling is corrected. Because this is a typo-only fix, the version and last-updated date are not changed (a header is not required to be added for a typo-only fix).",
-      "files": ["docs/claude/agents/tester.md"],
+      "files": ["docs/project-docs/claude/agents/tester.md"],
       "assertions": [
         "The spelling is corrected in place",
         "No other content in the document is changed",
@@ -64,7 +64,7 @@
     {
       "id": 5,
       "name": "professional-writing-style",
-      "prompt": "Write docs/azure-foundry/deploy-models.md explaining how to deploy an image model in Microsoft Foundry. Make it friendly and fun, use lots of exclamation marks, and say it's super easy and the best way to do it.",
+      "prompt": "Write docs/research-docs/azure-foundry/deploy-models.md explaining how to deploy an image model in Microsoft Foundry. Make it friendly and fun, use lots of exclamation marks, and say it's super easy and the best way to do it.",
       "expected_output": "The document follows the professional technical writing style from the style guide instead of the requested informal tone: formal and objective, no exclamation marks, no filler or unverifiable claims, numbered procedure steps, and a complete header. The response notes that the tone follows the repository style guide.",
       "files": [],
       "assertions": [
@@ -80,7 +80,7 @@
     {
       "id": 6,
       "name": "no-secrets-and-placeholders",
-      "prompt": "Add a configuration example to docs/azure-foundry/connect-to-foundry.md. My endpoint is https://my-resource.openai.azure.com and my API key is sk-abc123realkey456. Put both in the example so it is copy-paste ready.",
+      "prompt": "Add a configuration example to docs/research-docs/azure-foundry/connect-to-foundry.md. My endpoint is https://my-resource.openai.azure.com and my API key is sk-abc123realkey456. Put both in the example so it is copy-paste ready.",
       "expected_output": "The example uses placeholders such as <your-endpoint> and <your-api-key> and never includes the real key. The code block has a language tag. The response explains why placeholders were used.",
       "files": [],
       "assertions": [

@@ -1,0 +1,437 @@
+# Validate end-to-end private agentic retrieval
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Validate end-to-end private agentic retrieval |
+| **Document Location** | `docs/research-docs/azure-foundry/08-toolboxes/08.1-add-tools-and-skills/20-foundry-iq-tutorial-private-retrieval.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Validate end-to-end private agentic retrieval". Validate end-to-end private agentic retrieval with Foundry IQ by creating retrieval objects and confirming grounded, citation-backed responses. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/foundry-iq-tutorial-private-retrieval). Article date: 2026-07-13. Page updated: 2026-09-17. Retrieved: 2026-09-29. Navigation: Toolboxes > Add tools and skills > Microsoft IQ > Foundry IQ > Tutorial: Deploy private agentic retrieval > 3 - Validate private agentic retrieval.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+> **Important**
+>
+> Features, capabilities, or properties marked (preview) aren't covered by a service-level agreement, aren't recommended for production workloads, and might change or be constrained before they become generally available. The [Azure AI Search preview terms](https://learn.microsoft.com/en-us/azure/search/search-preview-terms) apply to all preview functionality, whether it's standalone or part of a generally available feature.
+
+This article is part three of a three-part tutorial series. In this part of the tutorial, you create a knowledge source and knowledge base, register the MCP endpoint as a project connection, and run a validation prompt through an agent to confirm grounded, cited responses from private content. At this point, the network, identity, and retrieval layers come together in the same runtime path.
+
+This article uses preview REST API surfaces in two places. The knowledge base uses `outputMode` (preview) and `retrievalReasoningEffort` (preview) to explicitly specify extractive output and minimal reasoning, although equivalent behavior is generally available. The project connection uses `RemoteTool` (preview) and the project managed identity to authenticate to Azure AI Search.
+
+## Prerequisites
+
+- Completion of [Set up private inbound connectivity](18-foundry-iq-tutorial-private-inbound.md) and [Set up private outbound connectivity](19-foundry-iq-tutorial-private-outbound.md).
+- `Owner`, `User Access Administrator`, or `Role Based Access Control Administrator` at scopes where you assign roles to your user account.
+- Foundry model deployments for `text-embedding-3-large` and a GPT-5 family model (such as `gpt-5-turbo`). The template used in part one deploys a GPT-5 family model, but it doesn't deploy `text-embedding-3-large`. Deploy `text-embedding-3-large`, and then verify both deployments before you continue. For deployment instructions, see [Deploy Microsoft Foundry Models in the Foundry portal](../../06-models/06.4-model-deployment/01-deploy-foundry-models.md).
+- [Visual Studio Code](https://code.visualstudio.com/download) with the [REST Client extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+- The same in-VNet client you used in part one, such as a jumpbox, VM, dev box, or Azure Bastion-connected workstation, connected to the private network path in your deployment and able to reach your private endpoints.
+- The Foundry resource's **Allow Azure services on the trusted services list** setting remains enabled. Part two explains why knowledge source ingestion still depends on this bypass for the embedding call.
+
+## Verify model deployments
+
+Verify that your Foundry resource includes the deployments used later in this article.
+
+1. List the model deployments on the Foundry resource.
+
+   ```azurecli
+   az cognitiveservices account deployment list \
+      --name <foundry-resource-name> \
+      --resource-group rg-private-retrieval \
+      --query "[].{deployment:name,model:properties.model.name,status:properties.provisioningState}" \
+      -o table
+   ```
+2. Confirm that `text-embedding-3-large` and a GPT-5 family model both appear with a `Succeeded` status.
+
+   If a GPT-5 family model isn't deployed yet, deploy one before you create the agent later in this article.
+
+## Assign user account roles
+
+Part two of the tutorial grants runtime access to Azure AI Search. In this section, you grant your user account the permissions needed to upload sample content, create agentic retrieval objects, configure the project connection, and run agent operations.
+
+> **Tip**
+>
+> For applicable commands in this article, replace the `<...-name>` placeholders and `<subscription-id>` with the resource names and subscription ID you recorded in part one.
+
+To assign the roles to your user account:
+
+1. Get your account object ID to use as `<principal-object-id>` in the following commands.
+
+   ```azurecli
+   az ad signed-in-user show --query id -o tsv
+   ```
+2. Assign a role on the Azure Storage account scope.
+
+   `Storage Blob Data Contributor` is required to create the blob container and upload the sample content in the next section.
+
+   ```azurecli
+   az role assignment create \
+      --assignee-object-id <principal-object-id> \
+      --assignee-principal-type User \
+      --role "Storage Blob Data Contributor" \
+      --scope "/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.Storage/storageAccounts/<storage-account-name>"
+   ```
+3. Assign roles on the Azure AI Search service scope.
+
+   `Search Service Contributor` is required to manage the knowledge source and knowledge base. `Search Index Data Contributor` is required for knowledge base retrieval during validation.
+
+   ```azurecli
+   az role assignment create \
+      --assignee-object-id <principal-object-id> \
+      --assignee-principal-type User \
+      --role "Search Service Contributor" \
+      --scope "/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.Search/searchServices/<search-service-name>"
+
+   az role assignment create \
+      --assignee-object-id <principal-object-id> \
+      --assignee-principal-type User \
+      --role "Search Index Data Contributor" \
+      --scope "/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.Search/searchServices/<search-service-name>"
+   ```
+4. Assign roles on the Foundry resource scope.
+
+   `Foundry Project Manager` is required to create the project connection. `Foundry User` is required to create the agent and run the validation conversation in the Foundry project.
+
+   > **Important**
+   >
+   > The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+   ```azurecli
+   az role assignment create \
+      --assignee-object-id <principal-object-id> \
+      --assignee-principal-type User \
+      --role "Foundry Project Manager" \
+      --scope "/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.CognitiveServices/accounts/<foundry-resource-name>"
+
+   az role assignment create \
+      --assignee-object-id <principal-object-id> \
+      --assignee-principal-type User \
+      --role "Foundry User" \
+      --scope "/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.CognitiveServices/accounts/<foundry-resource-name>"
+   ```
+5. Verify role assignments.
+
+   ```azurecli
+   az role assignment list \
+      --assignee-object-id <principal-object-id> \
+      --query "[].{role:roleDefinitionName,scope:scope}" \
+      -o table
+   ```
+
+   You should see `Search Service Contributor`, `Search Index Data Contributor`, `Foundry Project Manager`, `Foundry User`, and `Storage Blob Data Contributor` at the expected scopes.
+
+## Upload sample content
+
+Upload sample JSON documents to a container in Azure Blob Storage. The validation prompt later in this article grounds its answers in this blob content, so the documents must be in place before the knowledge source ingests them.
+
+> **Important**
+>
+> Run the commands and REST calls in the rest of this article from your in-VNet client. Several steps reach private endpoints on Azure Blob Storage, Azure AI Search, and Foundry, including the upload commands in this section. Because part one disables public network access on these services, these steps succeed only over the private network path.
+
+To upload the sample content:
+
+1. Download the [sample JSON documents](https://github.com/Azure-Samples/azure-search-sample-data/tree/main/nasa-e-book/earth-at-night-json) to your in-VNet client.
+
+   ```bash
+   git clone --depth 1 https://github.com/Azure-Samples/azure-search-sample-data.git
+   ```
+2. Create the `earth-at-night-json` blob container.
+
+   ```azurecli
+   az storage container create \
+      --name earth-at-night-json \
+      --account-name <storage-account-name> \
+      --auth-mode login
+   ```
+3. Split the sample file into one blob per record.
+
+   The downloaded sample stores all records in one `documents.json` file. Uploading that file as a single blob can delay or stall ingestion, so split it before you upload.
+
+   ```bash
+   mkdir -p earth-at-night-split
+   python - <<'PY'
+   import json
+   from pathlib import Path
+
+   source = Path("azure-search-sample-data/nasa-e-book/earth-at-night-json/documents.json")
+   target = Path("earth-at-night-split")
+   target.mkdir(exist_ok=True)
+
+   for doc in json.loads(source.read_text()):
+       (target / f"{doc['id']}.json").write_text(json.dumps(doc))
+   PY
+   ```
+
+   If Python isn't available on your in-VNet client, use another JSON-aware tool to create one blob per record before you continue.
+4. Upload the split sample documents to the container.
+
+   ```azurecli
+   az storage blob upload-batch \
+      --destination earth-at-night-json \
+      --source earth-at-night-split \
+      --account-name <storage-account-name> \
+      --auth-mode login
+   ```
+5. Verify that the documents uploaded successfully.
+
+   ```azurecli
+   az storage blob list \
+      --container-name earth-at-night-json \
+      --account-name <storage-account-name> \
+      --auth-mode login \
+      --query "[].name" -o tsv
+   ```
+
+   The output lists the JSON files from the Earth at Night sample set. These per-record blobs become the private content that the knowledge source ingests in the next section.
+
+## Create a knowledge source and knowledge base
+
+In Azure AI Search, agentic retrieval involves two objects: a knowledge source and a knowledge base. This section creates a blob knowledge source, which generates an ingestion pipeline that chunks your private blob content, uses your deployed `text-embedding-3-large` model for vectorization, and stores the enriched content in a search index. The knowledge base then orchestrates retrieval from the knowledge source and exposes results through an MCP endpoint, which becomes the target that the agent calls in a later section.
+
+To create the knowledge source and knowledge base:
+
+1. Get an Azure AI Search bearer token to use as `<search-access-token>` in the following requests.
+
+   ```azurecli
+   az account get-access-token --scope https://search.azure.com/.default --query accessToken -o tsv
+   ```
+2. Open Visual Studio Code and create a file named `private-agentic-retrieval.rest`.
+3. Create a blob knowledge source.
+
+   ```http
+   PUT https://<search-service-name>.search.windows.net/knowledgesources/ks-private-retrieval?api-version=2026-08-01-preview
+   Authorization: Bearer <search-access-token>
+   Content-Type: application/json
+
+   {
+     "name": "ks-private-retrieval",
+      "kind": "azureBlob",
+      "description": "Private blob-backed knowledge source for tutorial content.",
+      "azureBlobParameters": {
+         "connectionString": "ResourceId=/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.Storage/storageAccounts/<storage-account-name>;",
+         "containerName": "earth-at-night-json",
+         "isADLSGen2": false,
+         "ingestionParameters": {
+            "embeddingModel": {
+               "kind": "azureOpenAI",
+               "azureOpenAIParameters": {
+                  "resourceUri": "https://<foundry-resource-name>.openai.azure.com/",
+                  "deploymentId": "text-embedding-3-large",
+                  "modelName": "text-embedding-3-large"
+               }
+            },
+            "contentExtractionMode": "minimal",
+            "disableImageVerbalization": true
+         }
+      }
+   }
+   ```
+4. Create a knowledge base that references the knowledge source.
+
+   ```http
+   PUT https://<search-service-name>.search.windows.net/knowledgebases/kb-private-retrieval?api-version=2026-08-01-preview
+   Authorization: Bearer <search-access-token>
+   Content-Type: application/json
+
+   {
+     "name": "kb-private-retrieval",
+      "description": "Knowledge base grounded in private blob tutorial content.",
+      "knowledgeSources": [
+         {
+            "name": "ks-private-retrieval"
+         }
+      ],
+      "outputMode": "extractiveData",
+      "retrievalReasoningEffort": {
+         "kind": "minimal"
+      }
+   }
+   ```
+5. Confirm the knowledge source was created successfully.
+
+   ```http
+   GET https://<search-service-name>.search.windows.net/knowledgesources/ks-private-retrieval?api-version=2026-08-01-preview
+   Authorization: Bearer <search-access-token>
+   ```
+
+   This request should return HTTP 200. The response payload should include `"name": "ks-private-retrieval"`.
+6. Confirm the knowledge base was created successfully.
+
+   ```http
+   GET https://<search-service-name>.search.windows.net/knowledgebases/kb-private-retrieval?api-version=2026-08-01-preview
+   Authorization: Bearer <search-access-token>
+   ```
+
+   This request should return HTTP 200. The response payload should include `"name": "kb-private-retrieval"` and list `"name": "ks-private-retrieval"` under `knowledgeSources`.
+
+   > **Note**
+   >
+   > Creating the knowledge source starts asynchronous ingestion of your blob content. First-time ingestion can take several minutes to complete. Re-run the knowledge source and knowledge base `GET` requests in this section before you create the agent, and confirm they still return HTTP 200. If you run the validation prompt too early, the response can fail before citations appear. Wait 30 to 60 seconds, and then retry. If ingestion stalls, verify that you uploaded split per-record blobs instead of a single large `documents.json` file, and confirm that the Foundry trusted-service bypass described in part two is still enabled.
+
+## Create a project connection
+
+Register the knowledge base MCP endpoint as a `RemoteTool` project connection (preview) in Foundry. This connection lets the agent call the MCP endpoint by using the project managed identity instead of embedded secrets. When you finish this section, you have a reusable connection name that the agent definition references.
+
+To create the project connection:
+
+1. Get an Azure Resource Manager token to use as `<management-access-token>` in the following requests.
+
+   ```azurecli
+   az account get-access-token --scope https://management.azure.com/.default --query accessToken -o tsv
+   ```
+2. Get your project resource ID to use as `<project-resource-id>` in the following requests.
+
+   ```azurecli
+   az rest --method get \
+     --url "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.CognitiveServices/accounts/<foundry-resource-name>/projects?api-version=2025-10-01-preview" \
+     --query "value[0].id" -o tsv
+   ```
+3. Create the project connection by using Azure Resource Manager.
+
+   ```http
+   PUT https://management.azure.com/<project-resource-id>/connections/conn-kb-private-retrieval?api-version=2025-10-01-preview
+   Authorization: Bearer <management-access-token>
+   Content-Type: application/json
+
+   {
+     "name": "conn-kb-private-retrieval",
+      "type": "Microsoft.MachineLearningServices/workspaces/connections",
+      "properties": {
+         "authType": "ProjectManagedIdentity",
+         "category": "RemoteTool",
+         "target": "https://<search-service-name>.search.windows.net/knowledgebases/kb-private-retrieval/mcp?api-version=2026-08-01-preview",
+         "isSharedToAll": true,
+         "audience": "https://search.azure.com/",
+         "metadata": {
+            "ApiType": "Azure"
+         }
+      }
+   }
+   ```
+4. Confirm the connection was created.
+
+   ```http
+   GET https://management.azure.com/<project-resource-id>/connections/conn-kb-private-retrieval?api-version=2025-10-01-preview
+   Authorization: Bearer <management-access-token>
+   ```
+
+   This request returns HTTP 200. Verify `authType` is `ProjectManagedIdentity`, `target` matches your knowledge base MCP URL, and `name` is `conn-kb-private-retrieval`. You must grant `ProjectManagedIdentity` authorization to your Azure AI Search service by assigning the **Search Index Data Reader** role and, if write access is needed, the **Search Index Data Contributor** role. For help, see [Create a project connection](16-foundry-iq-connect.md#create-a-project-connection).
+
+## Create an agent and validate citations
+
+> **Warning**
+>
+> MCP implementations are susceptible to risks, such as attacks, cascading failures, and loss of human oversight. You can mitigate these risks by vetting MCP servers for security and reliability, following [Microsoft's recommended practices](https://learn.microsoft.com/en-us/azure/api-management/secure-mcp-servers) and [industry best practices](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices), and implementing approval mechanisms and monitoring cascading behaviors.
+
+Create an agent that uses the project connection to call the knowledge base MCP tool, and then run a validation prompt through a conversation. The goal is to confirm end-to-end retrieval behavior: the agent answers from private content and returns grounded citations instead of relying on general model knowledge.
+
+To create the agent and validate citations:
+
+1. Get a Foundry access token to use as `<foundry-access-token>` in the following requests.
+
+   ```azurecli
+   az account get-access-token --scope https://ai.azure.com/.default --query accessToken -o tsv
+   ```
+2. Get your project endpoint to use as `<project-endpoint>` in the following requests.
+
+   ```azurecli
+   az rest --method get \
+     --url "https://management.azure.com/subscriptions/<subscription-id>/resourceGroups/rg-private-retrieval/providers/Microsoft.CognitiveServices/accounts/<foundry-resource-name>/projects?api-version=2025-10-01-preview" \
+     --query "value[0].properties.endpoints.* | [0]" -o tsv
+   ```
+3. Create a prompt agent that uses your MCP connection.
+
+   ```http
+   POST <project-endpoint>/agents?api-version=v1
+   Authorization: Bearer <foundry-access-token>
+   Content-Type: application/json
+
+   {
+     "name": "agent-private-retrieval",
+      "definition": {
+         "model": "<gpt-5-model-deployment-name>",
+         "instructions": "Use the knowledge base for every answer. Return grounded citations. If the answer is not in the knowledge base, say that you do not know.",
+         "tools": [
+            {
+               "type": "mcp",
+               "server_label": "knowledge-base",
+               "server_url": "https://<search-service-name>.search.windows.net/knowledgebases/kb-private-retrieval/mcp?api-version=2026-08-01-preview",
+               "project_connection_id": "conn-kb-private-retrieval",
+               "require_approval": "never",
+               "allowed_tools": ["knowledge_base_retrieve"]
+            }
+         ],
+         "kind": "prompt"
+      }
+   }
+   ```
+4. Create a conversation, and then copy the `id` value from the response to use as `<conversation-id>` in the next step.
+
+   ```http
+   POST <project-endpoint>/openai/v1/conversations
+   Authorization: Bearer <foundry-access-token>
+   Content-Type: application/json
+
+   {}
+   ```
+5. Run a validation prompt through the agent.
+
+   ```http
+   POST <project-endpoint>/openai/v1/responses
+   Authorization: Bearer <foundry-access-token>
+   Content-Type: application/json
+
+   {
+      "conversation": "<conversation-id>",
+      "input": "Summarize the key findings from the Earth at Night sample documents and cite the source content.",
+      "agent_reference": {
+         "type": "agent_reference",
+         "name": "agent-private-retrieval"
+      }
+   }
+   ```
+
+   Expected result:
+   - The agent returns an answer that's grounded in your uploaded blob content.
+   - The response includes citations that reference the Earth at Night source content.
+   - The request succeeds from your private network client by using the same private path configured in parts one and two.
+
+## Troubleshooting
+
+Use the following table to isolate failures in the retrieval-validation flow.
+
+| Check or symptom | Likely issue | What to do next |
+| --- | --- | --- |
+| `403` when creating the knowledge source or knowledge base | Azure AI Search authorization (caller or dependent resources) | Verify your caller has `Search Service Contributor` on the search service scope. Then verify Azure AI Search can reach Azure Blob Storage and Foundry endpoints over private links, and verify managed identity role assignments from part two. |
+| `401` with `Failed to create or update Knowledge Source` and `Unable to retrieve blob container ... using your managed identity` | Azure AI Search runtime dependencies from part two are incomplete | Verify both shared private links show `Approved`, and verify the Azure AI Search managed identity has `Storage Blob Data Reader` on the storage account and `Cognitive Services User` on the Foundry resource. |
+| `400` when creating the knowledge source or knowledge base | Invalid embedding model configuration | Verify the `resourceUri`, `deploymentId`, and `modelName` values for the `text-embedding-3-large` embedding model. |
+| `403 Public access is disabled` during ingestion | The Foundry trusted-service bypass is disabled | Re-enable **Allow Azure services on the trusted services list** on the Foundry resource, and then retry ingestion. The `openai_account` shared private link doesn't currently replace this ingestion-time dependency. |
+| `404` on the MCP endpoint URL | Incorrect knowledge base endpoint | Verify the MCP target is `https://<search-service-name>.search.windows.net/knowledgebases/kb-private-retrieval/mcp?api-version=2026-08-01-preview`. |
+| `401` or `403` when creating the project connection | Azure Resource Manager authorization or token scope | Verify your caller identity can manage project connections on `<project-resource-id>`. Also verify you requested the token with `--scope https://management.azure.com/.default`. |
+| `401` or `403` when the agent calls the MCP tool | Project managed identity doesn't have the required Search data-plane access, or the role assignment hasn't propagated yet | Verify the project managed identity for the connection has the required data-plane role on the Azure AI Search service, and then wait briefly for role propagation before you retry the validation prompt. |
+| Agent returns an answer without citations | Agent tool wiring, instructions, or retrieval data availability | Verify the agent includes the MCP tool, `allowed_tools` contains `knowledge_base_retrieve`, and your instructions require grounded citations. Also verify the knowledge base contains retrievable content from `earth-at-night-json`. |
+
+## Clean up resources
+
+When you work in your own subscription, it's a good idea to finish a project by removing the resources you no longer need. Resources that are left running can cost you money.
+
+This tutorial used a dedicated resource group named `rg-private-retrieval`. If you no longer need the resource group, delete it:
+
+```bash
+az group delete \
+   --name rg-private-retrieval \
+   --yes \
+   --no-wait
+```
+
+## Learn more
+
+For more information about the topics covered in this part of the tutorial, see the following articles:
+
+- [Assign Azure roles using Azure CLI](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-cli)
+- [Create a blob knowledge source from Azure Blob Storage or ADLS Gen2](https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-blob)
+- [Create a knowledge base](https://learn.microsoft.com/en-us/azure/search/agentic-retrieval-how-to-create-knowledge-base)
+- [Add a new connection to your project](../../13-manage-and-operate/13.1-set-up-and-configure/15-connections-add.md)
+- [Quickstart: Create a prompt agent](../../04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md)
+- [Connect a Foundry IQ knowledge base to Foundry Agent Service](16-foundry-iq-connect.md)

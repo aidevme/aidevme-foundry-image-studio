@@ -1,0 +1,168 @@
+# Get started with LangChain and LangGraph with Foundry
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Get started with LangChain and LangGraph with Foundry |
+| **Document Location** | `docs/research-docs/azure-foundry/05-developer-tools-and-integrations/05.5-develop-with-langchain-and-langgraph/01-langchain.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Get started with LangChain and LangGraph with Foundry". Learn how to use langchain-azure-ai as an entry point for LangChain and LangGraph apps with Microsoft Foundry capabilities. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/langchain). Article date: 2026-07-20. Page updated: 2026-08-18. Retrieved: 2026-09-29. Navigation: Developer tools and integrations > Develop with LangChain and LangGraph > Get started with LangChain and LangGraph in Foundry.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+Use the `langchain-azure-ai` package as the entry point for building LangChain and LangGraph applications with Microsoft Foundry capabilities. This article gives you a high-level map of the package so you can start quickly, then move to the right deep-dive documentation for each capability.
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md).
+- The **Foundry User** role on the Foundry project (least-privilege role for
+
+  > **Important**
+  >
+  > The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+  development). If you also create or manage resources, use **Contributor** or **Owner** as needed. For details, see [Role-based access control for Microsoft Foundry](../../13-manage-and-operate/13.3-security-and-governance/02-rbac-foundry.md).
+- Python 3.10 or later.
+- Azure CLI signed in (`az login`) so `DefaultAzureCredential` can authenticate.
+
+> **Tip**
+>
+> This article mentions support for **Microsoft Foundry (new)**, which uses version `azure-ai-projects>=2.0`. If you are using Foundry classic, use `langchain-azure-ai[v1]` instead.
+
+## Install the package
+
+Install the base package:
+
+```bash
+pip install -U langchain-azure-ai azure-identity
+```
+
+Install optional extras based on your scenario:
+
+```bash
+pip install -U "langchain-azure-ai[tools]"
+pip install -U "langchain-azure-ai[opentelemetry]"
+```
+
+- Use `[tools]` if your app uses tools from the namespace `langchain_azure_ai.tools.*`, like Document Intelligence.
+- Use `[opentelemetry]` if you want tracing integration via OpenTelemetry.
+
+## Choose integration building blocks
+
+Use this map to pick the right namespace for your solution:
+
+| Capability | Namespace | Typical use |
+| --- | --- | --- |
+| Foundry Agent Service | `langchain_azure_ai.agents` | Build managed agent nodes to build complex graph and flows for LangGraph and LangChain. [See detailed examples](04-langchain-agents.md). |
+| LangGraph hosting | `langchain_azure_ai.agents.hosting` | Host compiled LangGraph agents on Foundry Agent Service with Responses or Invocations protocols. [See detailed examples](06-langchain-hosted-agents.md). |
+| Foundry Content Safety | `langchain_azure_ai.agents.middleware` | Use Foundry Content Safety and Moderation to make sure you can deploy solution with the right guardrails. [See detailed examples](03-langchain-middleware.md). |
+| Chat models | `langchain_azure_ai.chat_models` | Call Azure OpenAI and model catalog chat models. [See detailed examples](02-langchain-models.md). |
+| Embeddings | `langchain_azure_ai.embeddings` | Call embedding models from the catalog and generate vectors for search, retrieval, and ranking workflows. [See detailed examples](02-langchain-models.md#use-embedding-models). |
+| Vector stores | `langchain_azure_ai.vectorstores` | Use Azure AI Search and Cosmos DB vector integrations. |
+| Retrievers | `langchain_azure_ai.retrievers` | Run retrieval over Azure-backed indexes and stores. |
+| Chat history stores | `langchain_azure_ai.chat_history` | Persist and replay chat history across sessions. Use memory-powered histories to retrieve consolidated pass chat history. [See detailed examples](07-langchain-memory.md). |
+| Tools | `langchain_azure_ai.tools` | Add tools such as Document Intelligence, Vision, health text analytics, and Logic Apps; or an entire project Toolbox. [See detailed examples](05-langchain-toolbox.md) |
+| Foundry Toolbox | `langchain_azure_ai.tools` | Load managed tools and skills from a Foundry Toolbox through a single MCP endpoint. [See detailed examples](05-langchain-toolbox.md). |
+| Callbacks and tracing | `langchain_azure_ai.callbacks` | Capture run events and emit OpenTelemetry traces. [See detailed examples](08-langchain-traces.md). |
+| Query constructors | `langchain_azure_ai.query_constructors` | Build backend-specific query filters for retrieval scenarios. |
+
+See the section [Learn each capability in detail](#learn-each-capability-in-detail) for specific walkthroughs.
+
+## Connect with project endpoints and credentials
+
+Many `langchain-azure-ai` classes support connecting through a Foundry project endpoint. Set `AZURE_AI_PROJECT_ENDPOINT` once, then reuse it across supported classes.
+
+```bash
+export AZURE_AI_PROJECT_ENDPOINT="https://<resource>.services.ai.azure.com/api/projects/<project>"
+```
+
+When you use `project_endpoint`, authentication uses Microsoft Entra ID and Azure RBAC on the project.
+
+API keys are for direct service endpoints, such as `/openai/v1`.
+
+```bash
+export OPENAI_BASE_URL="https://<resource>.services.ai.azure.com/openai/v1"
+export OPENAI_API_KEY="<your-key>"
+```
+
+### Example: Use Foundry Models
+
+Once the environment variables are configured, you can use a model by:
+
+```python
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model("azure_ai:gpt-5.2")
+```
+
+You can also configure clients specifically. As an example, let's see `AzureAIOpenAIApiChatModel` as a representative pattern:
+
+```python
+import os
+
+from azure.identity import AzureCliCredential, DefaultAzureCredential
+from langchain_azure_ai.chat_models import AzureAIOpenAIApiChatModel
+
+# Option A: Use a Foundry project endpoint (Microsoft Entra ID required).
+model_from_project = AzureAIOpenAIApiChatModel(
+  project_endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+  credential=DefaultAzureCredential(),
+  model="gpt-5.2",
+)
+
+# Option B: Use a service endpoint directly with an API key.
+model_from_endpoint = AzureAIOpenAIApiChatModel(
+  endpoint=os.environ["OPENAI_BASE_URL"],
+  credential=os.environ["OPENAI_API_KEY"],
+  model="gpt-5.2",
+)
+
+# Option C: Use a different credential strategy.
+model_with_cli_credential = AzureAIOpenAIApiChatModel(
+  endpoint=os.environ["OPENAI_BASE_URL"],
+  credential=AzureCliCredential(),
+  model="gpt-5.2",
+)
+```
+
+**What this snippet does:** Shows the same model initialized from a Foundry project endpoint or from a direct service endpoint, and shows how to swap credentials.
+
+You can apply the same pattern to tools. For example, `AzureAIDocumentIntelligenceTool` can use the project endpoint and `DefaultAzureCredential` without extra configuration when `AZURE_AI_PROJECT_ENDPOINT` is set:
+
+```python
+from langchain_azure_ai.tools import AzureAIDocumentIntelligenceTool
+
+document_tool = AzureAIDocumentIntelligenceTool()
+```
+
+### How `DefaultAzureCredential` works
+
+`DefaultAzureCredential` tries several Microsoft Entra ID credential sources in order and uses the first one that works. Common sources are environment variables, managed identity, developer tools, and Azure CLI.
+
+Use `DefaultAzureCredential` as the default for local development and deployed workloads. If you need stricter control, replace it with a specific credential such as `AzureCliCredential` for local-only development or `ManagedIdentityCredential` for production workloads in Azure.
+
+The same project-endpoint pattern is also used by other classes.
+
+## Learn each capability in detail
+
+Start with these guides in this documentation set:
+
+- [Use Foundry Models with LangChain and LangGraph](02-langchain-models.md)
+- [Use Foundry Content Safety middleware](03-langchain-middleware.md)
+- [Use Foundry Agent Service with LangGraph](04-langchain-agents.md)
+- [Use Foundry Toolbox with LangChain](05-langchain-toolbox.md)
+- [Host LangGraph agents as Foundry hosted agents](06-langchain-hosted-agents.md)
+- [Use Foundry Memory with LangChain and LangGraph](07-langchain-memory.md)
+- [Use Foundry Observability to trace apps](08-langchain-traces.md)
+
+Use these package resources for module-level details and updates:
+
+- [Package overview](https://github.com/langchain-ai/langchain-azure/tree/main/libs/azure-ai) and [README](https://github.com/langchain-ai/langchain-azure/blob/main/libs/azure-ai/README.md).
+- [LangChain documentation for `langchain-azure-ai`](https://python.langchain.com/api_reference/azure_ai).
+
+## Next step
+
+[Use Foundry Models with LangChain](04-langchain-agents.md)

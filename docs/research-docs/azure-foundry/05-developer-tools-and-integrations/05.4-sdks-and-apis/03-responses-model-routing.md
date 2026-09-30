@@ -1,0 +1,173 @@
+# Auto and direct model routing with the Responses API
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Auto and direct model routing with the Responses API |
+| **Document Location** | `docs/research-docs/azure-foundry/05-developer-tools-and-integrations/05.4-sdks-and-apis/03-responses-model-routing.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Auto and direct model routing with the Responses API". Use the Responses API as a single interface to call any model in Microsoft Foundry, from automatic selection with model router to deterministically named models. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses-model-routing). Article date: 2026-09-03. Page updated: 2026-09-11. Retrieved: 2026-09-29. Navigation: Developer tools and integrations > SDKs and APIs > Auto and direct model routing.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+The Responses API is the programmatic interface for every model in Microsoft Foundry. Pass `model-router` in the `model` field to let Foundry pick the best model automatically. Or pass a specific model name for deterministic control. The code is the same—only the `model` value changes.
+
+> **Note**
+>
+> You pass your deployment name to the `model` parameter. In most cases the deployment name matches the model name. For example, a `gpt-4.1-mini` deployment is called `"gpt-4.1-mini"`.
+
+The [Microsoft Foundry Skill](../../04-get-started/04.1-what-do-you-want-to-build/05-use-microsoft-foundry-skill.md) can help apply the Responses API examples, choose routing behavior, and troubleshoot model deployment issues.
+
+## Prerequisites
+
+- A Foundry project with a `model-router` deployment. See [Deploy model router](../../06-models/06.1-explore-foundry-models/21-model-router.md#deploy-a-model-router-model).
+- At least one named model deployment for deterministic calls (for example, `gpt-4.1-mini`). See [Deploy a model](https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/create-resource).
+- Familiarity with the [Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md).
+- Python 3.10+ or Node.js 22+.
+- The Foundry SDK for your language:
+
+**[Python]**
+
+```bash
+pip install "azure-ai-projects>=2.0.0"
+```
+
+**[JavaScript/TypeScript]**
+
+```bash
+npm install @azure/ai-projects @azure/identity
+```
+
+## Call models through the Responses API
+
+The following sample calls several models through the same `responses.create()` interface, starting with `model-router` for automatic selection, then named models for deterministic control.
+
+**[Python]**
+
+```python
+import os
+import time
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+
+# Create the Foundry project client
+project = AIProjectClient(
+    endpoint=os.environ["PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential(),
+)
+
+deployments = ["model-router", "gpt-5.2", "grok-4-fast-reasoning", "gpt-5-mini", "Deepseek-V3.2"]
+prompt = "Explain retrieval-augmented generation in one sentence."
+
+print(f"{'Deployment':<22} {'Responded':<22} {'Latency':>8}  Response")
+print("-" * 100)
+
+# Get an OpenAI-compatible client that works with all Foundry models
+with project.get_openai_client() as client:
+    for name in deployments:
+        start = time.time()
+        response = client.responses.create(model=name, input=prompt)
+        elapsed = time.time() - start
+
+        responded_model = response.model
+        print(
+            f"{name:<22} {responded_model:<22} {elapsed:>7.2f}s  "
+            f"{response.output_text[:60]}"
+        )
+```
+
+**[JavaScript/TypeScript]**
+
+```typescript
+import { DefaultAzureCredential } from "@azure/identity";
+import { AIProjectClient } from "@azure/ai-projects";
+
+// Create the Foundry project client
+const project = new AIProjectClient(
+  process.env["PROJECT_ENDPOINT"]!,
+  new DefaultAzureCredential(),
+);
+
+const deployments = [
+  "model-router",
+  "gpt-5.2",
+  "grok-4-fast-reasoning",
+  "gpt-5-mini",
+  "Deepseek-V3.2",
+];
+const prompt = "Explain retrieval-augmented generation in one sentence.";
+
+// Get an OpenAI-compatible client that works with all Foundry models
+const client = project.getOpenAIClient();
+
+for (const name of deployments) {
+  const start = Date.now();
+  const response = await client.responses.create({
+    model: name,
+    input: prompt,
+  });
+  const elapsedSeconds = (Date.now() - start) / 1000;
+
+  console.log(
+    `${name} -> responded: ${response.model} ` +
+      `(${elapsedSeconds.toFixed(2)}s): ${response.output_text.slice(0, 60)}`,
+  );
+}
+```
+
+- Reference: [`AIProjectClient.get_openai_client`](https://learn.microsoft.com/en-us/python/api/azure-ai-projects/azure.ai.projects.aiprojectclient) (Python) / [`AIProjectClient.getOpenAIClient`](https://learn.microsoft.com/en-us/javascript/api/@azure/ai-projects/aiprojectclient) (JavaScript/TypeScript)
+- Reference: [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses) (`responses.create`, both languages)
+
+The following table shows a sample output. Actual latency and response text vary per request.
+
+| Deployment | Responded | Latency | Response |
+| --- | --- | --- | --- |
+| model-router | gpt-4.1-nano | 0.59 s | It combines retrieval of relevant documents with generati... |
+| gpt-5.2 | same | 0.78 s | Retrieval-augmented generation enhances model output by firs... |
+| grok-4-fast-reasoning | same | 0.65 s | It is a technique that grounds language model responses in... |
+| gpt-5-mini | same | 0.67 s | It retrieves external knowledge to augment a model's genera... |
+| Deepseek-V3.2 | same | 1.14 s | It augments model generation by first retrieving relevant do... |
+
+See the first row: `model-router` didn't target a specific model, but the `Responded` column shows that it selected `gpt-4.1-nano`. For the named models that follow, the two columns match. The code is identical in every case.
+
+> **Tip**
+>
+> The `response.model` field always returns the model that handled the request. Use it for logging, cost attribution, or debugging routing decisions.
+
+## Routing strategies
+
+Every call goes through `responses.create()`. The `model` value is the only decision point.
+
+| Use case | `model` value | Result |
+| --- | --- | --- |
+| The best model for each request, optimized by cost or quality | `"model-router"` | Foundry evaluates the prompt and selects the best model from your configured pool |
+| A specific model for compliance, reproducibility, or benchmarking | The model name (`"gpt-5-2"`, `"Deepseek-V3.2"`) | Foundry routes to exactly that model |
+| To switch between strategies | Change one string | The rest of the code stays identical |
+
+Use `model-router` as your default. Customize your model router deployment with optional settings. See [Model router deployment options](../../06-models/06.1-explore-foundry-models/21-model-router.md#optional-customize-deployment-settings).
+
+Switch to a named model only when you need deterministic control.
+
+When you evaluate automatic routing, use the named model that currently serves your workload as the baseline. Keep the request and application configuration consistent, then compare the quality, cost, and latency outcomes before you adopt model router broadly. See [Evaluate model router for your workload](../../06-models/06.1-explore-foundry-models/23-evaluate-model-router.md).
+
+## Built-in enterprise capabilities
+
+Every `responses.create()` call, whether routed through `model-router` or targeting a named model, automatically includes:
+
+- **Automatic failover**—When using `model-router`, if the selected model encounters a transient issue, model router transparently redirects the request to the next most appropriate model. No disruption to your application, no retry logic required. If you configure a model subset, that subset also serves as your fallback set — select at least two models to benefit from failover.
+- **Prompt caching**—Model router supports prompt caching. When model router delegates a request to a model that supports prompt caching, cached tokens are used automatically. Combined with model router's right-fit model selection, you get an extra efficiency lift: the optimal model for the task *and* reduced token costs on repeated prompt prefixes — no configuration needed.
+- **Content filtering**—Configurable content safety applied to inputs and outputs without extra API parameters.
+- **Role-based access control**—Azure role-based access control governs who can call which deployments. No separate API key management.
+- **Model identification**—The response includes `response.model`, which identifies the model that handled the request. To inspect preview routing attempts, status, and reported latency for Chat Completions requests, see [Monitor model router](../../06-models/06.1-explore-foundry-models/22-monitor-model-router.md).
+- **Data residency and compliance**—Traffic stays within your Azure region. No data leaves your tenant boundary.
+- **Rate limiting and quotas**—Per-deployment token-per-minute limits protect your workloads from noisy neighbors.
+
+These capabilities apply uniformly across all models in the catalog. You don't opt in or configure them per request—they're part of the platform.
+
+## Related content
+
+- [Use model router for Microsoft Foundry](../../06-models/06.1-explore-foundry-models/21-model-router.md) — deployment, routing modes, model subsets
+- [Use the Azure OpenAI Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md) — streaming, tools, stored responses
+- [Microsoft Foundry SDKs and endpoints](01-sdk-overview.md#foundry-sdk) — client setup and endpoint patterns

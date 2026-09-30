@@ -1,0 +1,153 @@
+# Microsoft Foundry Models quotas and limits
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Microsoft Foundry Models quotas and limits |
+| **Document Location** | `docs/research-docs/azure-foundry/06-models/06.2-quota-limits-and-region-availability/05-quotas-limits.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Microsoft Foundry Models quotas and limits". Learn about quotas, rate limits, and best practices for Foundry Models, including per-model token and request limits, client timeouts, and how to request increases. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/quotas-limits). Article date: 2026-07-17. Page updated: 2026-07-17. Retrieved: 2026-09-29. Navigation: Models > Quota limits and region availability > Foundry Models quotas and limits.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+This article provides a quick reference and detailed description of the quotas and limits for [Foundry Models sold by Azure](../06.1-explore-foundry-models/01-models-sold-directly-by-azure.md). For quotas and limits specific to the Azure OpenAI in Foundry Models, see [Quotas and limits in Azure OpenAI](06-quotas-limits.md).
+
+## Subscription-level quota management
+
+> **Important**
+>
+> Subscription-level quota management in Microsoft Foundry started after **May 7, 2026**.
+
+Starting with Realtime Translate and Realtime Transcribe, and soon all models, Foundry tracks quota for deployments at the subscription level rather than per resource or per region. This approach brings consistency and predictability to how quota is managed across deployments, since all resources and regions in a subscription share the same quota pool.
+
+This change consolidates quota into shared pools:
+
+- **Global Standard**: Deployments of the same model and version share one quota pool across all regions in a subscription.
+- **Data Zone Standard**: Deployments of the same model and version share one quota pool per data zone (for example, US or EU).
+
+### Check quota management scope
+
+You can find the quota management system that applies to a given model by going to the Foundry portal's **Quota** page. The value in the **Scope** column for a given model indicates how Foundry manages quota for that model. A Scope value of:
+
+- **Global** or **Data Zone**, indicates subscription-level quota management.
+- **A region** (for example, East US or West US), indicates per-region quota management for that subscription and model.
+
+### Changes for onboarded models
+
+For the models that are onboarded to the subscription-level quota management system:
+
+- All Global Standard deployments of the same model and version under a subscription now draw from a single shared quota pool across all regions.
+- All Data Zone Standard deployments of the same model and version under a subscription now draw from a shared quota pool within each data zone.
+- Existing approved quota is retained and automatically applies at the subscription level—no action required.
+
+This consolidation allows Microsoft Foundry to offer supported models consistently across all Foundry regions, regardless of how quota is distributed across resources or regions.
+
+### Quota limits when a model is upgraded
+
+When an existing model is upgraded, its new Global or Data Zone quota limit is set to the greater of:
+
+- The applicable tier limit.
+- The total quota assigned to all existing deployments of that model within the quota scope.
+
+For example, if a model has Global Standard deployments across five regions, the new global quota limit equals the combined quota of those deployments if that total exceeds the tier limit. Otherwise, the tier limit applies.
+
+## Quotas and limits reference
+
+> **Important**
+>
+> This section addresses quota for models that aren't onboarded to the subscription-level quota management system. For onboarded models, see [Subscription-level quota management](#subscription-level-quota-management).
+
+The following sections provide a quick guide to the default quotas and limits that apply to Foundry Models. Quotas and limits aren't enforced at the tenant level. Instead, the highest level of quota restrictions is scoped at the Azure subscription level. Tokens per minute (TPM) and requests per minute (RPM) limits are defined per region, per subscription, and per model or deployment type.
+
+### Resource limits (per Azure subscription, per region)
+
+| Limit name | Limit value |
+| --- | --- |
+| Foundry resources per region per Azure subscription | 100 |
+| Max projects per resource | 250 |
+| Max deployments per resource (model deployments within a Foundry resource) | 32 |
+
+### Rate limits
+
+The following table lists limits for Foundry Models for the following rates:
+
+- Tokens per minute
+- Requests per minute
+- Concurrent request
+
+| Models | Tokens per minute | Requests per minute | Concurrent requests |
+| --- | --- | --- | --- |
+| Azure OpenAI models | Varies per model and SKU. See [limits for Azure OpenAI](06-quotas-limits.md). | Varies per model and SKU. See [limits for Azure OpenAI](06-quotas-limits.md). | Varies. See [Azure OpenAI limits](06-quotas-limits.md). |
+| - Llama 3.3 70B Instruct - Llama-4-Maverick-17B-128E-Instruct-FP8 | 400,000 | 1,000 | 300 |
+| - Flux.2-Pro | not applicable | - Low (Default): 15 - Medium: 30 - High (Enterprise): 100 | not applicable |
+| - FLUX-1.1-pro - Flux.1-Kontext Pro | not applicable | 2 capacity units (6 requests per minute) | not applicable |
+| Rest of models | 400,000 | 1,000 | 300 |
+
+To increase your quota, use [Microsoft Foundry Service: Request for Quota Increase](https://aka.ms/oai/stuquotarequest) to submit your request. Due to high demand, requests to increase quota are evaluated individually. For more information on quota increase requests, see [request increases to the default limits](#request-increases-to-the-default-limits).
+
+### Other limits
+
+| Limit name | Limit value |
+| --- | --- |
+| Max number of custom headers in API requests1 | 10 |
+
+1 Current APIs allow up to 10 custom headers, which the pipeline passes through and returns. If you exceed this header count, your request results in an HTTP 431 error. To resolve this error, reduce the header volume. **Future API versions won't pass through custom headers**. Don't depend on custom headers in future system architectures.
+
+## Usage tiers
+
+Global Standard deployments use Azure's global infrastructure to dynamically route customer traffic to the data center with best availability for the customer's inference requests. This infrastructure enables more consistent latency for customers with low to medium levels of traffic. Customers with high sustained levels of usage might see more variabilities in response latency.
+
+The Usage Limit determines the level of usage beyond which customers might see larger variability in response latency. A customer's usage is defined per model and is the total tokens consumed across all deployments in all subscriptions in all regions for a given tenant.
+
+## Request increases to the default limits
+
+Submit the [quota increase request form](https://aka.ms/oai/stuquotarequest) to request quota increases for [Foundry Models sold by Azure](../06.1-explore-foundry-models/01-models-sold-directly-by-azure.md), Azure OpenAI models, and Anthropic models. Except for Anthropic models, [Models from partners and community](../06.1-explore-foundry-models/03-models-from-partners.md) don't support quota increases.
+
+Quota increase requests are processed in the order they're received, and priority goes to customers who actively use their existing quota allocation. Requests that don't meet this condition might be denied.
+
+## General best practices to stay within rate limits
+
+To minimize issues related to rate limits, use the following techniques:
+
+- Implement retry logic in your application.
+- Avoid sharp changes in the workload. Increase the workload gradually.
+- Test different load increase patterns.
+- Increase the quota assigned to your deployment. Move quota from another deployment, if necessary.
+
+## Setting client-side timeout
+
+Set the client-side timeout explicitly based on the following guidance.
+
+> **Note**
+>
+> If not explicitly set, the client side timeout exists as per the library used, and might not be the same limits as above.
+
+- Reasoning models (models that generate intermediate reasoning tokens before producing a summarized response): up to 29 minutes.
+- Non-reasoning models:
+  - For streaming, up to 60 seconds.
+  - For non-streaming requests, up to 29 minutes.
+
+29 minutes here doesn't mean all requests take 29 minutes but rather depending on context tokens, generated tokens, and cache hit rates, requests can take up to 29 minutes.
+
+Set a timeout that's less than these values, tuned to your traffic patterns.
+
+For reasoning models including streaming requests, all the reasoning tokens are first generated and then summarized before sending the first response token back to the user.
+
+You can modify the [reasoning effort](../06.6-develop-with-ai-models/16-reasoning.md) parameter to control the number of reasoning tokens generated in the process.
+
+## Troubleshooting
+
+| Symptom | Cause | Resolution |
+| --- | --- | --- |
+| HTTP 429 Too Many Requests | Token-per-minute or request-per-minute limit exceeded | Implement retry logic with exponential backoff. Use the `Retry-After` header value. |
+| HTTP 431 Request Header Fields Too Large | More than 10 custom headers sent | Reduce custom headers to 10 or fewer. |
+| Quota page shows 0 available | Subscription or regional quota fully allocated | Move unused quota from another deployment. To increase your limit, [request a quota increase](#request-increases-to-the-default-limits). |
+| Model not available in region | Model isn't deployed or supported in the selected region | Check [model availability](../06.1-explore-foundry-models/01-models-sold-directly-by-azure.md) and choose an available region. |
+
+## Related content
+
+- [Models available in Foundry Models](../06.1-explore-foundry-models/01-models-sold-directly-by-azure.md)
+- [Manage and increase quotas for Foundry resources](https://learn.microsoft.com/en-us/azure/foundry-classic/openai/how-to/quota)
+- [Quotas and limits in Azure OpenAI](06-quotas-limits.md)

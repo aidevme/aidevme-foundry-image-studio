@@ -1,0 +1,103 @@
+# Get started with an AI template
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Get started with an AI template |
+| **Document Location** | `docs/research-docs/azure-foundry/04-get-started/04.1-what-do-you-want-to-build/07-ai-template-get-started.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Get started with an AI template". Find, explore, and deploy AI solution templates from the Foundry portal to accelerate your development. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/how-to/develop/ai-template-get-started). Article date: 2026-07-27. Page updated: 2026-07-27. Retrieved: 2026-09-29. Navigation: Get started > What do you want to build? > Start from a template.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+In this article, you find, explore, and deploy AI solution templates from the Foundry portal.
+
+AI solution templates are prebuilt, task-specific templates that include customizable code samples, preintegrated Azure services, and GitHub-hosted quick-start guides. Use templates to skip boilerplate setup and focus on building solutions for use cases like voice agents, release management, and data unification.
+
+> **Important**
+>
+> Starter templates, manifests, code samples, and other resources made available by Microsoft or its partners ("samples") are designed to assist in accelerating development of agents and AI solutions for specific scenarios. Review all provided resources and carefully test output behavior in the context of your use case. AI responses might be inaccurate and AI actions should be monitored with human oversight. Learn more in the transparency documents for [Agent Service](../../12-trust-and-safety/12.2-responsible-ai/08-transparency-note.md) and [Agent Framework](https://github.com/microsoft/agent-framework/blob/main/TRANSPARENCY_FAQ.md).
+>
+> Agents and AI solutions you create might be subject to legal and regulatory requirements, might require licenses, or might not be suitable for all industries, scenarios, or use cases. By using any sample, you acknowledge that Agents, AI solutions, or other output created using those samples are solely your responsibility, and that you will comply with all applicable laws, regulations, and relevant safety standards, terms of service, and codes of conduct.
+
+## Templates for common AI scenarios
+
+Speed up development by using these templates for common AI scenarios, including sample code and architecture guidance.
+
+| Scenario | GitHub repo | Documentation |
+| --- | --- | --- |
+| AI chat | [Sample code](https://github.com/Azure-Samples/get-started-with-ai-chat) | - [Architecture guidance: Baseline Microsoft Foundry chat](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-microsoft-foundry-chat) - [GitHub README resources](https://github.com/Azure-Samples/get-started-with-ai-chat?tab=readme-ov-file#resources) |
+| AI agents | [Sample code](https://github.com/Azure-Samples/get-started-with-ai-agents) | - [GitHub README resources](https://github.com/Azure-Samples/get-started-with-ai-agents?tab=readme-ov-file#resources) |
+| Conversation insights | [Sample code](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator) | - [Architecture guidance: Conversation knowledge mining](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/idea/unlock-insights-from-conversational-data) - [GitHub README resources](https://github.com/microsoft/Conversation-Knowledge-Mining-Solution-Accelerator#resources) |
+| Multi-agent workflow automation | [Sample code](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator) | - [Architecture guidance: Build a multiple-agent workflow automation solution](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/idea/multiple-agent-workflow-automation) - [GitHub README resources](https://github.com/microsoft/Multi-Agent-Custom-Automation-Engine-Solution-Accelerator#resources) |
+| Multi-modal content processing | [Sample code](https://github.com/microsoft/content-processing-solution-accelerator) | - [Architecture guidance: Extract and map information from unstructured content](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/idea/multi-modal-content-processing) - [GitHub README resources](https://github.com/microsoft/content-processing-solution-accelerator#resources) |
+| Document generation | [Sample code](https://github.com/microsoft/document-generation-solution-accelerator) | - [Architecture guidance: Build a document generation system](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/idea/generate-documents-from-your-data) - [GitHub README resources](https://github.com/microsoft/document-generation-solution-accelerator#resources) |
+| Client meeting enhancement | [Sample code](https://github.com/microsoft/Build-your-own-copilot-Solution-Accelerator) | - [GitHub README resources](https://github.com/microsoft/Build-your-own-copilot-Solution-Accelerator#resources) |
+| Code modernization | [Sample code](https://github.com/microsoft/Modernize-your-code-solution-accelerator) | - [GitHub README resources](https://github.com/microsoft/Modernize-your-code-solution-accelerator#resources) |
+| Conversational agent | [Sample code](https://github.com/Azure-Samples/Azure-Language-OpenAI-Conversational-Agent-Accelerator) | - [GitHub README resources](https://github.com/Azure-Samples/Azure-Language-OpenAI-Conversational-Agent-Accelerator#resources) |
+
+> **Tip**
+>
+> Each template includes a GitHub README with setup, deployment, and customization instructions. Start there for the fastest path forward.
+
+## Build agents with agent templates
+
+Agent templates are starter manifests that you can deploy directly in the Foundry portal. Each manifest defines a working agent configuration, so you can deploy it, inspect how it's built, and adapt it as a starting point for your own agent.
+
+Use agent templates to learn and experiment as you build your own agents. They shorten the path from idea to a running agent, giving you a concrete example to explore instead of starting from scratch.
+
+## Prerequisites
+
+- An Azure account with an active subscription. If you don't have one, create a [free Azure account, which includes a free trial subscription](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- Appropriate RBAC role to create Foundry resources. For details, see [Role-based access control](../../13-manage-and-operate/13.3-security-and-governance/02-rbac-foundry.md).
+- A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md).
+
+## Start with a sample application
+
+1. Sign in to [Microsoft Foundry](https://ai.azure.com/?cid=learnDocs). Make sure the **New Foundry** toggle is on. These steps refer to **Foundry (new)**.![](https://learn.microsoft.com/en-us/azure/foundry/media/version-banner/new-foundry.png)
+2. Select **Discover** from the upper-right navigation.
+3. Select **Solution templates** or **Agents** from the left pane.
+4. If you're viewing a solution template, select **Open in GitHub** to view the entire sample application.
+5. In some cases, you can also view a step-by-step tutorial that explains the AI code.
+
+## Explore the sample application
+
+When you view the GitHub repository for your sample, check the README for more instructions and information on how to deploy your own version of the application.
+
+Instructions vary by sample, but most include how to:
+
+- Open the solution in the location of your choice:
+  - GitHub Codespaces
+  - VS Code Dev Containers
+  - Your local IDE
+- Deploy the application to Azure
+- Test the application
+
+The README also includes information about the application, such as the use case, architecture, and pricing information.
+
+## Deploy and customize templates
+
+Most templates support quick-deploy options that launch in minutes. These architectures and implementations are customizable while staying [Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/) aligned by using [Azure Verified Modules](https://azure.github.io/Azure-Verified-Modules/). Use tools such as [PSRule](https://aka.ms/ps-rule) and [TFLint](https://github.com/terraform-linters/tflint) to test that your modified implementation is production-ready.
+
+After you deploy, verify that the application is running:
+
+1. Open the deployment URL shown in the terminal output.
+2. Confirm the application loads and responds to your input.
+
+## Benefits of AI solution templates
+
+AI templates in Microsoft Foundry provide:
+
+- **Faster time-to-value**: Skip boilerplate code and infrastructure setup to move from concept to production quickly.
+- **Reduced engineering overhead**: Preintegrated Azure services eliminate deployment friction.
+- **Trusted infrastructure**: Build with confidence on Microsoft's secure, scalable AI platform.
+- **Modular and interoperable foundation**: Scale solutions efficiently across your organization.
+- **Best practices built-in**: Use proven patterns and frameworks for production-ready solutions.
+
+## Related content
+
+- [Quickstart: Get started with Foundry](03-get-started-code.md)
+- [Role-based access control for Microsoft Foundry](../../13-manage-and-operate/13.3-security-and-governance/02-rbac-foundry.md)
+- [What is Microsoft Foundry?](../../01-what-is-microsoft-foundry/01-what-is-foundry.md)

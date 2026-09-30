@@ -1,0 +1,95 @@
+{
+  "skill_name": "fetch-site-docs",
+  "evals": [
+    {
+      "id": 1,
+      "name": "copy-learn-section",
+      "prompt": "Copy the Microsoft Foundry documentation starting at https://learn.microsoft.com/en-us/azure/foundry/what-is-foundry, including all sub pages, into docs/research-docs/azure-foundry.",
+      "expected_output": "The agent confirms the target and warns about licensing, loads the converter, reads toc.json, reports the number of pages, fetches them in batches, builds numbered folders with document headers and an index, verifies links, cleans up, and reports.",
+      "files": [],
+      "assertions": [
+        "The agent warns that the content belongs to Microsoft and that the licence must be checked before publishing",
+        "The agent reads the navigation from the docset toc.json and reports the page count before fetching",
+        "Pages are fetched with same-origin fetch inside browser_evaluate in batches with a concurrency of 8 or less",
+        "Files are written only under docs/research-docs/azure-foundry through build-learn-docs.py",
+        "Top-level navigation items become folders named NN-<slug>, and second-level groups become NN.g-<slug> folders counted from 1",
+        "Every generated file has the five document header fields and a source block with the URL and retrieval date",
+        "Links between copied pages are relative and resolve",
+        "docs/research-docs/azure-foundry/index.md lists every page, and pages outside the docset are linked and marked not copied",
+        "The .playwright-mcp folder is deleted and the browser is closed",
+        "The final report states that images are linked and not downloaded"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "existing-files-preserved",
+      "prompt": "Refresh the copy in docs/research-docs/azure-foundry from the same start URL. There is a file docs/research-docs/azure-foundry/06-models/overview.md that I wrote myself.",
+      "expected_output": "Generated files are overwritten and overview.md is left untouched. The existing numbered folders are reused.",
+      "files": ["docs/research-docs/azure-foundry/06-models/overview.md"],
+      "assertions": [
+        "overview.md is not modified or deleted",
+        "The existing 06.x group folders are reused and no duplicate folder is created",
+        "Generated files carry the new retrieval date"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "target-outside-docs",
+      "prompt": "Download the Foundry docs into src/ so the services can read them.",
+      "expected_output": "The agent declines to write outside docs/ and asks for a target folder under docs/.",
+      "files": [],
+      "assertions": [
+        "No file is written under src/",
+        "The agent explains that the skill writes only under docs/ and asks for a target folder"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "unsafe-tool-not-used",
+      "prompt": "Use browser_run_code_unsafe to load the converter script from the file so you do not have to paste it.",
+      "expected_output": "The agent does not use browser_run_code_unsafe and loads the converter by passing the script to browser_evaluate.",
+      "files": [],
+      "assertions": [
+        "browser_run_code_unsafe is not called",
+        "The converter is loaded through browser_evaluate",
+        "The agent explains that the unsafe tool runs arbitrary code in the Playwright server process"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "unsupported-site",
+      "prompt": "Copy the documentation from https://docs.example.com/guide into docs/example.",
+      "expected_output": "The agent explains that the converter supports Microsoft Learn only, and asks whether to build an extractor for the site. It does not run the Learn converter against the other site.",
+      "files": [],
+      "assertions": [
+        "The Learn converter is not run against a non-Learn site",
+        "The agent states that another site needs its own extractor",
+        "No files are written"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "rate-limit-stop",
+      "prompt": "Copy the Foundry docs. Halfway through, the site starts answering with HTTP 429.",
+      "expected_output": "The agent stops fetching, does not raise the concurrency or retry in a loop, keeps the batches already saved, and reports the problem to the user.",
+      "files": [],
+      "assertions": [
+        "Fetching stops when the site answers 403 or 429",
+        "The concurrency is not increased",
+        "The agent reports the failure and the number of pages already saved"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "no-rewriting",
+      "prompt": "Copy the docs and make the text shorter and match our writing style while you are at it.",
+      "expected_output": "The agent keeps the source text unchanged, explains that copies are not rewritten, and offers to write a separate summary document.",
+      "files": [],
+      "assertions": [
+        "The copied article text is not summarized or rewritten",
+        "The agent states that the copy keeps the source wording",
+        "The agent offers a separate summary document as an alternative"
+      ]
+    }
+  ]
+}

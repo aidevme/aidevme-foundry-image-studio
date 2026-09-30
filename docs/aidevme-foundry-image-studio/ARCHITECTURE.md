@@ -7,7 +7,7 @@
 | **Repository** | `aidevme-foundry-image-studio` |
 | **Status** | Proposed (v0.2) |
 | **Owner** | Zsolt Zombik |
-| **Last updated** | 2026-09-29 |
+| **Last updated** | 2026-09-30 |
 | **Platform** | Microsoft Foundry (Agent Service, Models, Toolboxes), Azure |
 | **Facts verified** | 2026-09-29 against the subscription model catalog, regions and quota (see [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure)) |
 
@@ -24,7 +24,7 @@ This revision closes the gaps found while implementing the first infrastructure,
 | G-3 | Added `vary_visual` and `upscale_visual` to the facade, and stated that `alternative` is not client-selectable. | [§7.2](#72-external-agent-mcp-facade-clients) |
 | G-4 | Added the composite index that `list_recent_visuals` needs. | [§9.2](#92-job-record-cosmos-db-container-jobs-partition-key-tenantid) |
 | G-5 | Corrected the repository structure to the actual layout. | [§18](#18-repository-structure) |
-| G-6 | Stated that the four product skills do not exist yet. | [§12](#12-agent-skills) |
+| G-6 | Separated the four product skills from the development skills, and stated where each kind is stored. The product skills do not exist yet. | [§12](#12-agent-skills) |
 | G-7 | Defined a 50 s agent-run budget inside the 60 s facade timeout. | [§15](#15-reliability-scaling-and-performance) |
 | G-8 | Recorded that image models are offered only as `GlobalStandard`, which conflicts with EU-only processing. | [§2.2](#22-quality-attributes), [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure), [§21](#21-risks-and-open-questions) |
 | G-9 | Decided the region (Sweden Central) and removed the EU Data Zone fallback that image models cannot use. | [§2.3](#23-constraints), [§6.3](#63-routing-rules), [§15](#15-reliability-scaling-and-performance), [§20](#20-architecture-decision-records) |
@@ -34,6 +34,8 @@ This revision closes the gaps found while implementing the first infrastructure,
 | G-13 | Added backup and recovery facts, and marked RPO and RTO as undecided. | [§2.2](#22-quality-attributes), [§15](#15-reliability-scaling-and-performance) |
 | G-14 | Added observed risks: search capacity, slow account creation, soft-delete name reservation, and low default quota. | [§21](#21-risks-and-open-questions) |
 | G-15 | Added ADR-010 to ADR-015 and new open questions. | [§20](#20-architecture-decision-records), [§21](#21-risks-and-open-questions) |
+| G-17 | Stated the scopes of the role assignments and the unapplied `dev` IP restriction as implemented in `bicep/`, and linked the Bicep documentation. | [§10.2](#102-rbac-least-privilege), [§17](#17-deployment-and-environments) |
+| G-16 | Recorded the orchestration research (2026-09-29): connected agents are unavailable in the new Foundry Agent Service, and Foundry workflows retire on 2026-12-01. Recommended, pending owner decision: an Agent Framework workflow in a hosted agent. Added ADR-016 (Proposed), updated ADR-008, and noted that hosted agents (Python or C# only) are a proposed exception to ADR-015. | [§4](#4-logical-components), [§5](#5-agent-design), [§20](#20-architecture-decision-records), [§21](#21-risks-and-open-questions) |
 
 ---
 
@@ -95,7 +97,7 @@ Teams need on-brand, governed images (blog heroes, social cards, slide backgroun
 | **Image MCP server** | Internal MCP server exposing image tools and routing to models. |
 | **Agent MCP facade** | External MCP server that exposes the *agent* (not the raw tools) to VS Code and other clients. |
 | **Prompt agent** | Foundry agent defined by configuration (instructions, model, tools); Foundry runs it. |
-| **Hosted agent** | Foundry agent whose code (e.g. Microsoft Agent Framework) runs in a container managed by Foundry. |
+| **Hosted agent** | Foundry agent whose code (e.g. Microsoft Agent Framework) runs in a container managed by Foundry. Supported languages: Python and C# only ([§5.6](#56-orchestration-mechanism-research-result)). |
 | **Toolbox** | Foundry feature for curating tools once and reusing them across agents. |
 
 ---
@@ -232,11 +234,11 @@ flowchart TB
 
 | # | Component | Responsibility | Azure / Foundry service | Hosting notes |
 |---|---|---|---|---|
-| C1 | **Channels** | User interaction | VS Code, Teams, Copilot Studio, web app | Copilot Studio can call Foundry agents as connected agents or over the API. |
+| C1 | **Channels** | User interaction | VS Code, Teams, Copilot Studio, web app | Copilot Studio can call a published Foundry agent through its Responses or A2A endpoint. Whether Copilot Studio supports either is not verified. Connected agents are not available in the new Foundry Agent Service ([§5.6](#56-orchestration-mechanism-research-result)). |
 | C2 | **AI gateway** | Auth, quotas, rate limits, cost metering, routing, logging | Azure API Management (AI gateway policies) | One product per consumer group; token/image metering per subscription. |
 | C3 | **Agent MCP facade** | Exposes the orchestrator as a few high-level MCP tools | Azure Container Apps or Functions | Streamable HTTP MCP; Entra-protected. |
-| C4 | **Orchestrator agent** | Intent routing, multi-step workflows, conversation state | Foundry Agent Service (prompt agent, later hosted) | Calls specialists as connected agents or via workflow. |
-| C5 | **Image agent** | Brief creation, prompt enrichment, tier selection, critique | Foundry Agent Service (prompt agent → hosted agent in phase 2) | Uses Image MCP, Foundry IQ, icon service. |
+| C4 | **Orchestrator agent** | Intent routing, multi-step workflows, conversation state | Foundry Agent Service (hosted agent that runs an Agent Framework workflow; recommended, pending owner decision, [§5.6](#56-orchestration-mechanism-research-result)) | Calls specialists as workflow participants or through the A2A tool. Fallback: a prompt agent with the A2A tool. |
+| C5 | **Image agent** | Brief creation, prompt enrichment, tier selection, critique | Foundry Agent Service (prompt agent → hosted agent in phase 2) | Uses Image MCP, Foundry IQ, icon service. As a hosted agent it must be Python or C# (open question 14). |
 | C6 | **Image MCP server** | `generate_image`, `edit_image`, `variations`, `upscale`, `get_job_status`; tier→deployment routing; safety checks; storage | Azure Container Apps (recommended) or Functions | Registered once in a Foundry Toolbox. |
 | C7 | **Model router** | Maps tier + request features to a deployment; fallback; provider abstraction | Library inside C6, config in App Configuration | Hot-reloadable routing table. |
 | C8 | **Model deployments** | Image generation and editing; agent reasoning and vision critique | Foundry Models (sold directly by Azure) | Pinned versions; region or EU Data Zone deployments. |
@@ -258,8 +260,8 @@ flowchart TB
 
 | Agent | Type | Model | Tools | Phase |
 |---|---|---|---|---|
-| **Orchestrator** | Prompt agent (hosted later if workflows get complex) | Reasoning model (`gpt-5.4`, version 2026-03-05, available in Sweden Central; see [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure)) | Connected agents: image, copy, QA; `get_job_status` | 2 |
-| **Image agent** | Prompt agent in phase 1; hosted agent (Agent Framework) in phase 2 | Reasoning + vision model | Image MCP (via Toolbox), Foundry IQ, icon service | 1 |
+| **Orchestrator** | Hosted agent that runs an Agent Framework workflow (recommended, pending owner decision). Fallback: prompt agent with the A2A tool. See [§5.6](#56-orchestration-mechanism-research-result). | Reasoning model (`gpt-5.4`, version 2026-03-05, available in Sweden Central; see [§6.1](#61-image-model-catalog-foundry-sold-directly-by-azure)) | Specialists (image, copy, QA) as workflow participants or through the A2A tool; `get_job_status` | 2 |
+| **Image agent** | Prompt agent in phase 1; hosted agent (Agent Framework, Python or C#) in phase 2 | Reasoning + vision model | Image MCP (via Toolbox), Foundry IQ, icon service | 1 |
 | **Copy agent** | Prompt agent | Reasoning model | Foundry IQ (brand voice), web search | 3 |
 | **Brand QA agent** | Prompt agent | Vision model | Foundry IQ, Content Safety, image analysis | 3 |
 
@@ -301,9 +303,9 @@ Always:
 ### 5.4 Orchestrator responsibilities (phase 2)
 
 - Classify intent: `image`, `copy`, `image+copy` (e.g. a social post), `review`.
-- Run multi-step workflows. For example, a blog-hero workflow: copy agent writes headline → image agent generates hero with reserved space → icon composition → brand QA agent checks → return bundle.
+- Run multi-step workflows as an Agent Framework workflow (recommended, see [§5.6](#56-orchestration-mechanism-research-result)). For example, a blog-hero workflow: copy agent writes headline → image agent generates hero with reserved space → icon composition → brand QA agent checks → return bundle.
 - Own conversation state and job fan-out; return job ids for long workflows.
-- Enforce per-request budgets (maximum attempts, maximum precision-tier calls).
+- Enforce per-request budgets (maximum attempts, maximum precision-tier calls) as workflow state, and again server-side in the Image MCP server, keyed by request identifier (inferred defense in depth).
 
 ### 5.5 Prompt agent vs hosted agent
 
@@ -312,8 +314,103 @@ Always:
 | Time to first version | Minutes | Days |
 | Custom control flow (parallel generation, deterministic critic loop) | Limited to what the model decides | Full control in code |
 | Compute to manage | None | Container managed by Foundry |
+| Language | Not applicable (definition and instructions) | Python or C# only (documented) |
 | Testing | Playground + evals | Unit tests + local run + evals |
-| Choice here | Phase 1 for both agents | Image agent in phase 2 for the critic loop and parallel A/B generation |
+| Choice here | Phase 1 for both agents | Image agent in phase 2 for the critic loop and parallel A/B generation. Orchestrator workflow in phase 2 (recommended, pending owner decision, [§5.6](#56-orchestration-mechanism-research-result)). |
+
+### 5.6 Orchestration mechanism: research result
+
+The researcher agent checked the orchestration options on 2026-09-29, using Microsoft Learn unless stated otherwise. The facts change quickly (retirement dates, preview status, language support), so re-verify them if this section is more than 60 days old. The result is **recommended by research, pending owner confirmation**. It is not an accepted decision. The decision is D3 in the [implementation plan](IMPLEMENTATION.md#decisions-required-before-phase-0-starts) and ADR-016 ([§20](#20-architecture-decision-records)).
+
+#### Options
+
+| Option | Status | Limits |
+|---|---|---|
+| Connected agents | Documented: exists only in Foundry (classic), API 2025-05-15-preview. Agents (classic) are deprecated and retire on 2027-03-31. Not available in the new Foundry Agent Service, where Microsoft recommends the A2A tool. | At most two levels deep, no local function calling, citations not guaranteed, Python and .NET samples only. |
+| Foundry workflows | Documented: preview, and Microsoft Foundry retires workflows on 2026-12-01. After that date the visual designer and in-portal execution stop, and YAML definitions run only when deployed as a hosted agent. Microsoft's migration order: Microsoft Agent Framework (recommended), Logic Apps, then A2A for simple hand-offs. | Defined in the portal designer or YAML with Power Fx. Templates: human in the loop, sequential, group chat. Nodes: if/else, go to, for each. No parallel or fan-out node is documented. Hosted agents are not supported in the designer. |
+| Agent Framework (MAF) workflows | Documented: MAF 1.0 is generally available for .NET and Python since 2026-04-02 (a product blog, not Microsoft Learn). Go is in preview. Declarative YAML workflows are 1.0 in both .NET and Python. | Graph-based workflows with fan-out and fan-in, conditional edges, loops, human in the loop (`request_info`), checkpoints, sub-workflows, and OpenTelemetry. Built-in patterns: sequential, concurrent, handoff, group chat, Magentic. There is no TypeScript MAF. |
+| A2A tool (successor of connected agents) | Documented: type `a2a` (A2A protocol v1.0) is generally available. The older `a2a_preview` (v0.3) is preview. SDKs: Python, C#, JavaScript and TypeScript (`@azure/ai-projects` 2.6.0 or later, Node 22 or later), Java, and REST. It attaches directly or through a Toolbox. | Incoming A2A on a Foundry prompt agent is text only, has no streaming, requires Microsoft Entra ID authentication (the caller needs the Foundry Agent Consumer role), keeps tasks and contexts for 60 days, defaults to v0.3 unless the v1.0 header is sent, and cannot be enabled in the portal yet. |
+
+On TypeScript: a private, unpublished TypeScript preview of MAF merged on 2026-09-17. It excludes approvals, durable stores, MCP, workflows, hosted tools, and telemetry.
+
+#### Comparison against the requirements
+
+In the table, Y means supported, P partial, and N not supported. "Connected agents" means the new-Foundry equivalent: a prompt-agent orchestrator that calls agents through the A2A tool.
+
+| Requirement | Connected agents (A2A) | Foundry workflows | MAF workflow in a hosted agent |
+|---|---|---|---|
+| Status | Not in new Foundry. Classic retires 2027-03-31. | Preview. Retire 2026-12-01. | MAF 1.0 GA. Hosted agents GA. Hosting packages prerelease. |
+| Intent routing | P (the model chooses) | Y | Y |
+| Multi-step hand-offs | P | Y | Y |
+| Parallel A/B generation | N or P | N | Y (fan-out and fan-in) |
+| Loops and budgets (maximum three attempts, one precision escalation, enforced) | P (prompt only, not enforced) | P | Y (code loop plus a counter in state) |
+| Human approval | N | Y | Y (`request_info` and the approval store) |
+| Long-running work and job identifiers | Through Responses background mode | Timeouts noted (details not in the research summary) | Y (background mode, resilient checkpoint resume) |
+| Conversation state, facade through the Responses API, Toolbox, MCP, A2A, observability | Y | Portal execution ends at retirement | Y |
+| TypeScript | Y (`@azure/ai-projects`) | No language needed | N (hosted agent must be Python or .NET) |
+
+#### Recommendation
+
+- **Do not keep connected agents** as the D3 default: they are not available in the new Foundry Agent Service, and classic is deprecated.
+- **Do not use Foundry workflows:** they retire on 2026-12-01, before phases 2 and 3 ship.
+- **Target from phase 2:** an Agent Framework workflow running in a Foundry hosted agent. It is Microsoft's recommended path, the only option with deterministic parallelism, loops, budgets, human in the loop, and checkpointing, and it fits ADR-008. Specialists (copy, brand QA, and the image agent until it becomes a hosted agent) stay prompt agents. The workflow calls them as `FoundryAgent` participants (inferred, not confirmed) or through the A2A tool.
+- **Facade:** it stays TypeScript and calls the orchestrator's Responses endpoint, with `background: true` for long jobs.
+- **Budgets:** keep them as workflow state, and enforce them again in the TypeScript Image MCP server, keyed by request identifier (inferred defense in depth).
+
+#### Hosting on Foundry (documented)
+
+- Wrap the workflow with `Workflow.as_agent()` and serve it through the Responses protocol. The host provides checkpoint, function-approval, and session stores backed by the Foundry State Store. With `resilient_background=True`, a run resumes from the last checkpoint after a restart, so external side effects must be idempotent.
+- Hosted agents are generally available, but the Python and .NET hosting packages are prerelease.
+- Hosted agents support Python and C# only. "There's no Node.js hosted runtime" for source deployment. The TypeScript SDK can deploy and call hosted agents but cannot be their runtime.
+- The endpoint is `{project}/agents/{name}/endpoint/protocols/openai/responses`, callable from any OpenAI-compatible SDK, including JavaScript.
+- Other facts: background mode, a dedicated Microsoft Entra agent identity, Toolbox access over its MCP endpoint, OpenTelemetry to Application Insights, one VM per session with at most 2 vCPU and 4 GiB, an idle timeout of 2 to 60 minutes, sessions deleted after 30 days of inactivity, no traffic splitting between versions, and availability in Sweden Central.
+- Networking: BYO VNet is supported but must be configured when the Foundry account is created. A private Azure Container Registry works only for projects created after 2026-06-25. The Azure Developer CLI page says the agent endpoint stays public in this preview.
+- Evaluation: target-based evaluation works for synchronous, non-streaming agents. Long-running, streaming, and A2A agents are evaluated from traces.
+
+#### Language conflict with ADR-015
+
+ADR-015 (Accepted) fixes TypeScript on Node.js for all services. A hosted orchestrator or image agent cannot be TypeScript. The owner must decide (open question 14):
+
+1. **Python** for the hosted agents. The research recommends it (inferred: the icon scripts are already Python, the Python functional workflow API supports native loops and `asyncio.gather`, and the resilient-background and approval stores are documented for Python). The Python hosting package is prerelease.
+2. **C#**, if the team prefers the .NET workflow packages, which the research describes as stable (not independently verified).
+3. **Keep TypeScript** and use the fallback below.
+
+Until the owner records a decision, ADR-015 stays in force and no hosted agent is created.
+
+#### Fallback that keeps TypeScript
+
+Use it only if the TypeScript-only rule must hold in phase 2. A prompt-agent orchestrator calls the image prompt agent through the GA `a2a` tool, for intent routing and a single hand-off. The critic loop, A/B mode, and budgets then live in TypeScript code in the Image MCP server or a facade-side controller. Switch to an Agent Framework workflow as soon as any of these is needed: parallel A/B generation, a guaranteed loop or budget, multi-step phase 3 workflows, the approval step (P3.4.1), or resumable long jobs. Also switch if the A2A limits (text only, no streaming) become a problem. They are acceptable now because assets move as Blob references (ADR-009).
+
+#### Not verified
+
+- Whether a custom Node.js container that implements the Responses protocol is accepted as a hosted agent. Treat it as unsupported.
+- Whether orchestrator calls to MCP and A2A stay on the private network in a virtual-network-isolated project.
+- Hosted-agent pricing.
+- Whether Foundry workflows ever supported parallel branches.
+- Whether a prompt agent issues parallel A2A tool calls.
+
+#### Conflicts in the sources
+
+- The classic connected-agents page says to migrate to workflows, but the workflows page says they retire on 2026-12-01. The workflows page is newer (updated 2026-09-17) and takes precedence.
+- The Agent Service overview lists "GitHub Copilot SDK" and "Anthropic Agent SDK" as hosted frameworks, but the language section says Python and C# only. This document follows the language section.
+- Hosted agents are generally available, but the hosting packages are prerelease, and the Azure Developer CLI networking page says "this preview".
+
+#### Sources
+
+- Connected agents (classic, updated 2026-06-05): https://learn.microsoft.com/azure/foundry-classic/agents/how-to/connected-agents
+- Migrate from classic (2026-09-11): https://learn.microsoft.com/azure/foundry/agents/how-to/migrate
+- A2A tool: https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent
+- Enable an A2A endpoint on an agent (2026-09-11): https://learn.microsoft.com/azure/foundry/agents/how-to/enable-agent-to-agent-endpoint
+- Foundry workflows (2026-07-31, updated 2026-09-17): https://learn.microsoft.com/azure/foundry/agents/concepts/workflow
+- Microsoft Agent Framework overview: https://learn.microsoft.com/agent-framework/overview/
+- Agent Framework workflows: https://learn.microsoft.com/agent-framework/concepts/workflows/
+- Agent Framework 1.0 announcement (product blog): https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/
+- Agent Framework TypeScript preview (pull request 8414): https://github.com/microsoft/agent-framework/pull/8414
+- Host an Agent Framework agent on Foundry (2026-09-28): https://learn.microsoft.com/agent-framework/hosting/foundry-hosted-agent
+- Hosted agents: https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents
+- Deploy a hosted agent from code: https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-code
+- Virtual networks for Agent Service: https://learn.microsoft.com/azure/foundry/agents/how-to/virtual-networks
+- Toolbox overview: https://learn.microsoft.com/azure/foundry/agents/concepts/toolbox-overview
 
 ---
 
@@ -751,6 +848,8 @@ Agents that are published get their own identity, distinct from the project's ma
 | Platform team | Contributor | Resource group (via PIM) |
 | Deployment identity (GitHub Actions) | Contributor and User Access Administrator | Subscription. Limit the second role with a condition to the roles that the templates assign (data-plane and pull roles, none of Owner, User Access Administrator or RBAC Administrator). The templates run at subscription scope and create the resource group. |
 
+As implemented in `bicep/modules/rbac.bicep`, the Foundry roles (Azure AI User, Cognitive Services OpenAI User) are assigned at the Foundry account, not at the project or the model deployments, and the Cosmos DB data contributor role is assigned at the account, not at the `jobs` container. The template assigns no Search or Storage reader role to the Foundry project identity. See the [RBAC module document](../project-docs/bicep/modules/rbac.md) for every assignment and for the assignments that are not in the template.
+
 ### 10.3 Network
 
 - **Production:** Foundry project, model endpoints, Storage, Cosmos DB, Service Bus, Key Vault and Content Safety behind **private endpoints** in a hub-spoke VNet; public network access disabled.
@@ -786,6 +885,19 @@ Agents that are published get their own identity, distinct from the project's ma
 
 ## 12. Agent skills
 
+This system has two kinds of skills. They are stored in different places and must not be mixed.
+
+| | **Product skills** | **Development skills** |
+|---|---|---|
+| Purpose | Part of the Foundry solution. They teach the Foundry agents (and client agents) how to brief, generate, edit and review images. | Help Claude Code build this repository, for example `write-document`. |
+| Stored in | `skills/` at the repository root *(planned)* | `.claude/skills/` |
+| Used by | The Foundry agents, served through a Toolbox, and developer clients in consuming repositories (VS Code, Claude Code) | Claude Code sessions and the `.claude/agents/` subagents in this repository only |
+| Deployed | Yes. They are published with the solution. | No. They are never deployed or shipped. |
+| Tested by | Skill evaluations and the golden set (`evals/`, [§14.3](#143-evaluation)) | `evals.json` next to the skill |
+| Documented in | `docs/skills/` *(planned)* | `docs/project-docs/claude/skills/` |
+
+Do not store a product skill in `.claude/skills/`, and do not store a development skill in `skills/`. The rest of this section describes the product skills.
+
 Portable skills in the open `SKILL.md` format, shared by the Foundry agents (served through a Toolbox) and by developer clients (VS Code, Claude Code).
 
 | Skill | Role |
@@ -795,7 +907,7 @@ Portable skills in the open `SKILL.md` format, shared by the Foundry agents (ser
 | `image-edit` | Edit classification, masks, keep-lists, one change per call, drift checks. |
 | `microsoft-product-icons` | Finds official icons (`find_icon.py`) and composites them unchanged (`compose.py`). |
 
-**Status:** none of the four product skills exists yet (implementation plan task P0.6). The repository currently ships one process skill, `write-document`, which applies the documentation style and is not part of the image system.
+**Status:** none of the four product skills exists yet (implementation plan task P0.6). The only skill in the repository, `write-document` in `.claude/skills/`, is a development skill. It is not part of the image system and is never deployed.
 
 **Brief schema (summary)**
 
@@ -861,7 +973,7 @@ Remote-only alternative (no local files): `"type": "http"` pointing at the facad
 
 ### 13.3 Skills in the repo
 
-Place the four skills under `.github/skills/` (GitHub Copilot) or `.claude/skills/` (Claude Code) in consuming repos so that client agents brief and review consistently with the Foundry agents.
+The source of the four product skills is `skills/` in this repository. Publish copies under `.github/skills/` (GitHub Copilot) or `.claude/skills/` (Claude Code) in **consuming** repositories, so that client agents brief and review consistently with the Foundry agents. Do not copy them into this repository's own `.claude/skills/`, which holds development skills only.
 
 ### 13.4 Build-time tooling
 
@@ -945,14 +1057,14 @@ Always check current prices on the Azure pricing page. The OpenAI list price for
 | `test` | Integration and evaluation gate | Private endpoints | All tiers, candidate versions |
 | `prod` | Production | Private endpoints, internal APIM | All tiers, pinned versions |
 
-Only `dev` exists today. The GitHub environments are named `dev`, `test` and `prod`, matching the environment types in resource names.
+Only `dev` exists today. In `dev`, `allowedIpAddresses` is empty in `main.dev.bicepparam`, so Storage and Cosmos DB accept connections from any address and rely on Entra authentication; the IP restriction is not applied yet. The GitHub environments are named `dev`, `test` and `prod`, matching the environment types in resource names.
 
 ### 17.2 Infrastructure as code
 
-- **Bicep** in `.infrastructure/` ([ADR-011](#20-architecture-decision-records)): `main.bicep` at subscription scope (it creates the resource group), one module per service group under `modules/`, and one `main.<env>.bicepparam` file per environment. It is deployed with `az deployment sub create`. `azd` is not used, and there is no `azure.yaml`.
+- **Bicep** in `bicep/` ([ADR-011](#20-architecture-decision-records)), documented file by file in [docs/project-docs/bicep/](../project-docs/bicep/index.md): `main.bicep` at subscription scope (it creates the resource group), one module per service group under `modules/`, and one `main.<env>.bicepparam` file per environment. It is deployed with `az deployment sub create`. `azd` is not used, and there is no `azure.yaml`.
 - Services in the templates: Foundry resource, project and model deployments; Content Safety; Storage; Cosmos DB; Key Vault; App Configuration; Azure AI Search; Container Registry; Container Apps environment and apps; API Management; Log Analytics and Application Insights; managed identities; role assignments. Service Bus and the worker job are behind `enableAsyncJobs`.
 - **Not implemented yet:** virtual network, private endpoints, Azure Firewall, the API Management policy and products, and the `test` and `prod` parameter files. The `dev` environment uses public network access with Entra authentication.
-- Agent definitions (instructions, tools, model) stored as YAML in `agents/` and applied by a deployment script through the Foundry SDK.
+- Agent definitions (instructions, tools, model) stored as YAML in `agents/` and applied by a deployment script through the Foundry SDK. The script is TypeScript in `src/infrastructure/`, not in `bicep/`, which holds Bicep only.
 - Toolbox definitions in `toolboxes/`.
 
 **Naming ([ADR-012](#20-architecture-decision-records)).** Environment-specific names contain the environment type (`dev`, `test`, `prod`) and a 13-character unique token, `toLower(uniqueString(subscription().id, environmentName, location))`. Storage accounts and container registries use a form without hyphens (`stdev<token>`, `crdev<token>`). Others use `<prefix>-<env>-<token>` (for example `kv-dev-<token>`, `cosmos-dev-<token>`). The resource group is `rg-image-studio-<env>`. The token is deterministic, so recreating an environment in the same subscription and region reuses the same names.
@@ -1003,13 +1115,14 @@ aidevme-foundry-image-studio/
 │   ├── facade-mcp/                 # Agent MCP facade (stub)
 │   ├── icon-service/               # find + compose (wraps skill scripts) (stub)
 │   ├── vscode-proxy/               # @aidevme/image-studio-mcp (stdio) (stub)
+│   ├── infrastructure/             # post-provisioning scripts: agents, toolbox, skills, routing table, brand index (stub)
 │   └── shared/                     # contracts, telemetry, auth helpers (stub)
 ├── agents/                         # (planned) Foundry agent definitions
 │   ├── orchestrator/agent.yaml
 │   └── image/agent.yaml
 ├── toolboxes/                      # (planned)
 │   └── image-studio.yaml           # Image MCP + icon tools + knowledge
-├── skills/                         # (planned) the four product skills
+├── skills/                         # (planned) the four PRODUCT skills (part of the Foundry solution)
 │   ├── image-brief/
 │   ├── image-generate/
 │   ├── image-edit/
@@ -1028,12 +1141,12 @@ aidevme-foundry-image-studio/
 │   ├── templates/                  # document style
 │   ├── adr/                        # (planned) ADR-001 ... ADR-015
 │   └── runbooks/                   # (planned)
-├── .infrastructure/                # Bicep: main.bicep, modules/, main.<env>.bicepparam, bicepconfig.json
+├── bicep/                # Bicep only: main.bicep, modules/, main.<env>.bicepparam, bicepconfig.json
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
 │   ├── workflows/                  # infra-validate.yml, infra-deploy.yml, infra-delete.yml
 │   └── skills/                     # (planned) copies for Copilot in this repo
-└── .claude/                        # subagents, agent memory, and the write-document skill
+└── .claude/                        # subagents, agent memory, and DEVELOPMENT skills (write-document)
 ```
 
 ---
@@ -1061,16 +1174,17 @@ aidevme-foundry-image-studio/
 | **ADR-005** | Expose the agent (not raw tools) to VS Code via an MCP facade plus a local stdio proxy that writes files to the workspace. | Accepted |
 | **ADR-006** | Pin model versions; manual upgrade policy; never use moving aliases in production. | Accepted |
 | **ADR-007** | Official Microsoft icons are composited, never generated. | Accepted |
-| **ADR-008** | Prompt agents first; move the image agent to a hosted agent (Agent Framework) for the critic loop in phase 2. | Proposed |
+| **ADR-008** | Prompt agents first; move the image agent to a hosted agent (Agent Framework, running on the Foundry hosted-agent runtime in Python or C#, the only documented hosted languages) for the critic loop in phase 2. The orchestrator becomes a hosted agent too (ADR-016). The language is open question 14. | Proposed |
 | **ADR-009** | Images move as Blob references with short-lived user-delegation SAS; no base64 in agent context. | Accepted |
 | **ADR-010** | Deploy to Sweden Central. It is the only region checked (2026-09-29) that offers all `gpt-image` models and MAI-Image. Consequence: image models are `GlobalStandard` only, so EU-only processing cannot be guaranteed (risk R-8). | Accepted |
-| **ADR-011** | Provision with Bicep (subscription-scope `main.bicep` in `.infrastructure/`) deployed by manually started GitHub Actions workflows. `azd` is not used. | Accepted |
+| **ADR-011** | Provision with Bicep (subscription-scope `main.bicep` in `bicep/`) deployed by manually started GitHub Actions workflows. `azd` is not used. | Accepted |
 | **ADR-012** | Include the environment type and a deterministic unique token in resource names. | Accepted |
 | **ADR-013** | Add an `overlay_text` tool so long or exact text is rendered in code, not by the image model. | Proposed |
 | **ADR-014** | Key Vault uses purge protection, and the deploy workflow recovers a soft-deleted vault. Revisit for `dev` and `test`, where purge protection blocks clean recreation. | Accepted, to be revisited |
-| **ADR-015** | Implement the Image MCP server, the facade, the shared libraries and the VS Code proxy in TypeScript on Node.js. The icon scripts (`find_icon.py`, `compose.py`) stay in Python. Reason: the proxy is an npm package, and one language lets the services share types and JSON schemas. | Accepted |
+| **ADR-015** | Implement the Image MCP server, the facade, the shared libraries and the VS Code proxy in TypeScript on Node.js. The icon scripts (`find_icon.py`, `compose.py`) stay in Python. Reason: the proxy is an npm package, and one language lets the services share types and JSON schemas. Note: hosted agents (orchestrator and image agent) cannot be TypeScript, because Foundry hosted agents support Python and C# only. They are a proposed exception, pending the owner's decision (open question 14, [§5.6](#56-orchestration-mechanism-research-result)). This ADR stays in force until then. | Accepted |
+| **ADR-016** | Orchestrate with an Agent Framework workflow running in a Foundry hosted agent, not with connected agents (unavailable in the new Foundry Agent Service) and not with Foundry workflows (retire 2026-12-01). Fallback that keeps TypeScript: a prompt-agent orchestrator with the `a2a` tool. See [§5.6](#56-orchestration-mechanism-research-result). | Proposed (recommended by research, pending owner decision) |
 
-Full ADRs will live in `docs/adr/`. The folder does not exist yet (implementation plan task P0.2.1).
+Full ADRs will live in `docs/adr/` (implementation plan task P0.2.1). The folder currently contains only an empty `ADR-010.md`.
 
 ---
 
@@ -1092,11 +1206,16 @@ Full ADRs will live in `docs/adr/`. The folder does not exist yet (implementatio
 | Soft-deleted resources reserve names after a delete | Redeploy fails on name conflict | High | Purge (delete workflow), recover Key Vault (deploy workflow). See [§17.2](#172-infrastructure-as-code). |
 | Default quota for image models is 2 to 4 units | Throttling under load | High (observed) | Request quota early. See [§15](#15-reliability-scaling-and-performance). |
 | Trademark or likeness issues | Legal | Low–medium | Icon policy; people policy; brand QA; human approval for external use. |
+| Connected agents are not available in the new Foundry Agent Service, and Agents (classic) retire on 2027-03-31 | An orchestrator built on them must be rebuilt | High (documented) | Do not use them. Use an Agent Framework workflow, or the `a2a` tool as the fallback ([§5.6](#56-orchestration-mechanism-research-result)). |
+| Foundry workflows retire on 2026-12-01 | Workflows built in the designer stop running in the portal before phases 2 and 3 ship | High (documented) | Do not use them ([§5.6](#56-orchestration-mechanism-research-result)). |
+| Agent Framework hosting packages (Python and .NET) are prerelease, although hosted agents are generally available. Toolbox tool search and skills and A2A v0.3 are preview. | API changes, rework | Medium | Isolate the hosting code behind the workflow, track it in the preview register (X3), and pin A2A to v1.0. |
+| BYO VNet for hosted agents must be configured when the Foundry account is created | Private networking cannot be added later to `test` or `prod` accounts created without it | High (documented) | Create the `test` and `prod` accounts with it (task P2.8.1). |
+| Hosted agents are Python or C# only, which conflicts with ADR-015 | The TypeScript-only rule cannot hold for hosted agents | High (documented) | Owner decision (open question 14). The fallback in [§5.6](#56-orchestration-mechanism-research-result) keeps TypeScript with fewer capabilities. |
 
 ### 21.2 Open questions
 
 1. **Resolved:** Sweden Central is the primary region ([ADR-010](#20-architecture-decision-records)).
-2. Is the orchestrator's multi-agent routing built with connected agents, Foundry workflows or Agent Framework workflows?
+2. **Researched (2026-09-29), pending owner decision:** is the orchestrator's multi-agent routing built with connected agents, Foundry workflows or Agent Framework workflows? The research recommends an Agent Framework workflow in a hosted agent (ADR-016, [§5.6](#56-orchestration-mechanism-research-result)).
 3. Should MAI-Image or a catalog model (FLUX) be the `alternative` tier after the first evals?
 4. Which brand guidelines are the grounding source (SharePoint, repo, DAM)?
 5. Retention periods per tenant and whether immutability is required.
@@ -1108,6 +1227,7 @@ Full ADRs will live in `docs/adr/`. The folder does not exist yet (implementatio
 11. Does `gpt-5.4` (or the chosen reasoning model) accept image input for the critic step? The catalog does not say.
 12. Which SKU and region should Azure AI Search use, given the capacity failure in Sweden Central?
 13. Which MAI-Image model (2.6, 2.6-Flash, 2.5 family) becomes the `alternative` tier?
+14. **Hosted-agent language (proposed exception to ADR-015):** Python (recommended by the research), C#, or keep TypeScript with the A2A fallback? Where does the hosted-agent code live, in `agents/` or under `src/`? ([§5.6](#56-orchestration-mechanism-research-result))
 
 ---
 
@@ -1119,6 +1239,7 @@ Full ADRs will live in `docs/adr/`. The folder does not exist yet (implementatio
 - Foundry Models sold directly by Azure (image models list): https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure
 - What's new in Microsoft Foundry (monthly updates): https://devblogs.microsoft.com/foundry/
 - Microsoft Agent Framework: https://github.com/microsoft/agent-framework
+- Orchestration options and hosted agents: the sources listed in [§5.6](#56-orchestration-mechanism-research-result)
 
 **OpenAI image models**
 - Image generation guide: https://developers.openai.com/api/docs/guides/image-generation

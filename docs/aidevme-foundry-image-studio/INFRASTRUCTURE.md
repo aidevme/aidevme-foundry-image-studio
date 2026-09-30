@@ -5,8 +5,8 @@
 | **Document Title** | Infrastructure provisioning with Bicep |
 | **Document Location** | `docs/aidevme-foundry-image-studio/INFRASTRUCTURE.md` |
 | **Document Description** | Explains how to provision every Azure service that AIDevMe Foundry Image Studio needs by using Bicep and Azure Developer CLI, including the module layout, the code for each module, the deployment procedure, and the steps that Bicep cannot perform. It is intended for the engineers who build and operate the environments. |
-| **Version** | 2.5 |
-| **Last Updated On** | 2026-09-29 |
+| **Version** | 3.4 |
+| **Last Updated On** | 2026-09-30 |
 
 ## Introduction
 
@@ -14,7 +14,7 @@ This document describes how to provision the Azure resources listed in [ARCHITEC
 
 Read this document to create an environment, to add a resource to the templates, or to diagnose a failed deployment.
 
-> **Important:** The Bicep code in this document is implemented in `.infrastructure/` and compiles and lints without errors. The public-network `dev` variant is what is implemented: the virtual network, private endpoints, and firewall modules described below are not implemented yet. The templates have not been deployed. Resource API versions, model names and versions, SKU names, and role identifiers change over time. Verify them as described in [Verification status](#verification-status) before you deploy.
+> **Important:** The templates in `bicep/` are the source of truth. They are documented file by file in [Bicep code documentation](../project-docs/bicep/index.md), and that documentation replaces the code samples in this document wherever the two differ. Only the public-network `dev` variant is implemented: the `network.bicep` and `firewall.bicep` modules, the `enablePrivateNetworking` flag, and the `test` and `prod` parameter files described below do not exist. The templates have not been deployed. Resource API versions, model names and versions, SKU names, and role identifiers change over time. Verify them as described in [Verification status](#verification-status) before you deploy.
 
 ## Scope
 
@@ -113,18 +113,19 @@ The last command must return `"Registered"`.
 
 ## Repository layout
 
-Infrastructure code lives in `.infrastructure/` (the architecture, §17.2 and §18, names the folder `infra/`; the repository uses `.infrastructure/` instead). GitHub Actions runs workflows only from `.github/workflows/`, so the deployment workflows are stored there and reference the templates in `.infrastructure/`.
+Infrastructure code lives in `bicep/` (the architecture, §17.2 and §18, names the folder `infra/`; the repository uses `bicep/` instead). GitHub Actions runs workflows only from `.github/workflows/`, so the deployment workflows are stored there and reference the templates in `bicep/`.
 
 ```text
-azure.yaml                          # azd project definition (not created yet)
+azure.yaml                          # azd project definition (not created; azd is not used, ADR-011)
 .github/workflows/
 ├── infra-validate.yml              # manual run only: lint, build, optional what-if
-└── infra-deploy.yml                # manual run only: deploy
-.infrastructure/
+├── infra-deploy.yml                # manual run only: deploy
+└── infra-delete.yml                # manual run only: delete an environment
+bicep/
 ├── main.bicep                      # subscription-scope entry point
 ├── main.dev.bicepparam             # parameters per environment
-├── main.test.bicepparam
-├── main.prod.bicepparam
+├── main.test.bicepparam            # not created yet
+├── main.prod.bicepparam            # not created yet
 ├── bicepconfig.json                # linter rules
 └── modules/
     ├── monitoring.bicep
@@ -139,8 +140,8 @@ azure.yaml                          # azd project definition (not created yet)
     ├── containerapps.bicep         # environment, apps, worker job
     ├── servicebus.bicep
     ├── apim.bicep
-    ├── network.bicep               # VNet, private endpoints, private DNS
-    ├── firewall.bicep
+    ├── network.bicep               # not created yet: VNet, private endpoints, private DNS
+    ├── firewall.bicep              # not created yet
     └── rbac.bicep                  # role assignments
 ```
 
@@ -152,7 +153,7 @@ Apply these rules to every module.
 2. **One module per service group.** A module has typed parameters, and it returns only the outputs that other modules need (resource identifiers, names, endpoints, principal identifiers).
 3. **No secrets in outputs or parameter files.** Do not output keys or connection strings.
 4. **Deterministic names.** Build names from an abbreviation, the environment name, and a `uniqueString` token so that global names (storage, Key Vault, Cosmos DB) do not collide.
-5. **Tags on every resource.** Use the tags `environment`, `application`, and `owner`.
+5. **Tags on every resource.** `main.bicep` sets the tags `application` and `environment` on every resource. Add an `owner` tag (or any other tag) through the `tags` parameter.
 6. **Pinned model versions.** Set `versionUpgradeOption` to `NoAutoUpgrade` (§6.4, ADR-006).
 7. **Optional services use flags.** A boolean parameter switches a service on, so `dev` stays small and `test` and `prod` add asynchronous jobs and private networking.
 8. **Secure defaults, then relax for `dev`.** Modules default to the secure setting (for example, public network access disabled), and the `dev` parameter file relaxes a setting only when it is required, for example an IP allowlist.
@@ -169,7 +170,7 @@ var nameSuffix = '${environmentType}-${resourceToken}'        // for example dev
 var nameSuffixCompact = '${environmentType}${resourceToken}'  // for example devabc123def4567
 ```
 
-Storage accounts and container registries do not allow hyphens, so they use the compact suffix. All other services use the hyphenated suffix. The longest suffix (`prod-` plus the token, 18 characters) keeps every name within its service limit, for example 20 characters for a storage account (limit 24) and 21 for a Key Vault (limit 24).
+Storage accounts and container registries do not allow hyphens, so they use the compact suffix. All other services use the hyphenated suffix. The longest suffix (`prod-` plus the token, 18 characters) keeps every name within its service limit, for example 19 characters for a storage account (`st` + `prod` + 13, limit 24) and 21 for a Key Vault (limit 24). The full length table is in [Bicep code documentation](../project-docs/bicep/index.md#naming-conventions).
 
 | Resource | Name pattern | Example for `dev` |
 | --- | --- | --- |
@@ -193,7 +194,7 @@ Storage accounts and container registries do not allow hyphens, so they use the 
 
 Names inside a service (Foundry project `image-studio`, Cosmos DB database `image-studio` and container `jobs`, queue `image-jobs`, and the model deployment names) do not contain the environment, because they are already scoped to an environment-specific parent resource.
 
-> **Note:** The module code samples later in this document were written before the naming change and use a `resourceToken` parameter. The files in `.infrastructure/modules/` are the source of truth. They use `nameSuffix` (and `nameSuffixCompact` for Storage and Container Registry).
+> **Note:** The module code samples later in this document were written before the naming change and use a `resourceToken` parameter. The files in `bicep/modules/` are the source of truth. They use `nameSuffix` (and `nameSuffixCompact` for Storage and Container Registry). The samples also differ from the files in other ways, for example: `main.bicep` has the parameter `apimPublisherEmail` and no `enablePrivateNetworking`; `monitoring.bicep` returns no connection string or instrumentation key (`containerapps.bicep` and `apim.bicep` take the component name instead); `identity.bicep` returns no client IDs; `search.bicep` has no `authOptions`; `registry.bicep` has no `anonymousPullEnabled`; `containerapps.bicep` uses API version `2025-01-01`, has no virtual network setting, and names the apps `ca-image-mcp-<env>` and `ca-facade-mcp-<env>`; `apim.bicep` has no virtual network settings and a fixed `Developer` SKU; and `rbac.bicep` includes the deployer assignments but not the search and storage reader roles. Read [Bicep code documentation](../project-docs/bicep/index.md) for the real declarations.
 
 ## Entry point: `main.bicep`
 
@@ -1146,7 +1147,7 @@ output principalId string = apim.identity.principalId
 Points to note:
 
 - **SKU.** `Developer` has no service level agreement and suits `dev` only. `test` and `prod` use a SKU that supports virtual network integration. Confirm the current SKU names, in particular the v2 tiers that the architecture mentions ("internal or Premium v2"), because they change.
-- **Policies.** The API policy that validates the Entra token, applies quotas and rate limits, and meters usage per subscription is an XML document. Store it in `.infrastructure/policies/image-studio.xml`, and attach it with a `Microsoft.ApiManagement/service/apis/policies` resource that uses `loadTextContent`. Write the policy in task `P1.10.2`.
+- **Policies.** The API policy that validates the Entra token, applies quotas and rate limits, and meters usage per subscription is an XML document. Store it in `bicep/policies/image-studio.xml`, and attach it with a `Microsoft.ApiManagement/service/apis/policies` resource that uses `loadTextContent`. Write the policy in task `P1.10.2`.
 - **Products and subscriptions.** Create one product per consumer group (`P1.10.1`) with `products` and `subscriptions` resources after the API contract is stable.
 - **Provisioning time.** An API Management instance can take 30 to 45 minutes to create, and Premium and virtual network deployments take longer. Deploy it separately from the fast modules when you iterate.
 
@@ -1206,7 +1207,7 @@ Add the private DNS zones and private endpoints in a reusable child module, and 
 | Service Bus | `namespace` | `privatelink.servicebus.windows.net` |
 | Container Registry | `registry` | `privatelink.azurecr.io` |
 
-Verify the zone names against the current Azure private endpoint DNS documentation. A missing zone causes name-resolution failures that look like connectivity failures. The Foundry Agent Service standard setup with a bring-your-own virtual network (task `P4.2`) needs an additional delegated subnet and capability host configuration. Follow the current Foundry documentation for it, because the requirements are specific and change.
+Verify the zone names against the current Azure private endpoint DNS documentation. A missing zone causes name-resolution failures that look like connectivity failures. The Foundry Agent Service standard setup with a bring-your-own virtual network (task `P4.2`) needs an additional delegated subnet and capability host configuration. Follow the current Foundry documentation for it, because the requirements are specific and change. If the orchestrator or image agent runs as a hosted agent, configure the bring-your-own virtual network when you create the Foundry account, because it cannot be added to an existing account. A private Azure Container Registry works for hosted agents only in projects created after 2026-06-25. Both statements come from Microsoft Learn (checked 2026-09-29). See [ARCHITECTURE.md section 5.6](ARCHITECTURE.md#56-orchestration-mechanism-research-result).
 
 ### `rbac.bicep`
 
@@ -1380,7 +1381,7 @@ resource facadeAcrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 ```
 
-The module above omits the following assignments for brevity. Add them in the same pattern.
+The module above omits the following assignments. The real `rbac.bicep` includes the deployer assignments but not the search and storage reader roles (see [RBAC module](../project-docs/bicep/modules/rbac.md)).
 
 | Principal | Role | Scope | Condition |
 | --- | --- | --- | --- |
@@ -1397,7 +1398,7 @@ The identities created in `identity.bicep` may not be visible to Entra ID immedi
 
 Use one `.bicepparam` file per environment. The `dev` environment is small and public. `test` and `prod` add asynchronous jobs and private networking.
 
-`.infrastructure/main.dev.bicepparam`:
+`bicep/main.dev.bicepparam`:
 
 ```bicep
 using './main.bicep'
@@ -1465,7 +1466,9 @@ The `dev` environment needs only the draft and standard deployments (§17.1). Re
 
 ## Azure Developer CLI project
 
-`azure.yaml` at the repository root ties the infrastructure to the services.
+> **Important:** `azd` is not used (ADR-011), and the repository has no `azure.yaml`. This section and the `azd` procedure under [Deployment procedure](#deployment-procedure) describe an earlier design and are kept for reference. Deploy with the Azure CLI or the [workflows](#continuous-deployment). The `azd-service-name` tags in `containerapps.bicep` have no effect without `azure.yaml`.
+
+`azure.yaml` at the repository root would tie the infrastructure to the services.
 
 ```yaml
 name: aidevme-foundry-image-studio
@@ -1474,7 +1477,7 @@ metadata:
 
 infra:
   provider: bicep
-  path: .infrastructure
+  path: bicep
   module: main
 
 services:
@@ -1497,11 +1500,11 @@ Notes:
 - The service names must match the `azd-service-name` tags in `containerapps.bicep`.
 - `language: ts` follows the recommended runtime in decision D2. Change it to match the decision.
 - Add `image-worker` under `services` when you enable asynchronous jobs. Because the worker is a Container Apps job, check the current `azd` support for the `containerapp` host with jobs, or deploy the worker image with an `az containerapp job update` step in a hook.
-- The `infra.module` value `main` selects `.infrastructure/main.bicep`. `azd` reads the `main.<environment>.bicepparam` file through the environment name if you name the file `main.parameters.json`. If you keep `.bicepparam` files, set the `AZURE_ENV_NAME` variable and select the file explicitly (see the deployment commands). Check the current `azd` behavior for `.bicepparam` support.
+- The `infra.module` value `main` selects `bicep/main.bicep`. `azd` reads the `main.<environment>.bicepparam` file through the environment name if you name the file `main.parameters.json`. If you keep `.bicepparam` files, set the `AZURE_ENV_NAME` variable and select the file explicitly (see the deployment commands). Check the current `azd` behavior for `.bicepparam` support.
 
 ## Deployment procedure
 
-You can deploy with `azd` (recommended, because it also builds and deploys the services) or directly with the Azure CLI (useful for infrastructure only).
+Deploy with the Azure CLI or the GitHub Actions workflows. The `azd` procedure below is not available, because `azd` is not used (ADR-011). The commands for the Azure CLI are also in [Bicep code documentation](../project-docs/bicep/index.md#deploy-locally).
 
 ### Before the first deployment
 
@@ -1518,8 +1521,8 @@ You can deploy with `azd` (recommended, because it also builds and deploys the s
 5. Lint and compile the templates. Both commands must finish without errors.
 
    ```bash
-   az bicep lint --file .infrastructure/main.bicep
-   az bicep build --file .infrastructure/main.bicep --stdout > /dev/null
+   az bicep lint --file bicep/main.bicep
+   az bicep build --file bicep/main.bicep --stdout > /dev/null
    ```
 
 ### Preview the changes
@@ -1529,8 +1532,8 @@ The `what-if` operation shows what a deployment would change without applying it
 ```bash
 az deployment sub what-if \
   --location <region> \
-  --template-file .infrastructure/main.bicep \
-  --parameters .infrastructure/main.dev.bicepparam
+  --template-file bicep/main.bicep \
+  --parameters bicep/main.dev.bicepparam
 ```
 
 Check that the output contains only the expected creations, and no unexpected deletions or replacements.
@@ -1541,8 +1544,8 @@ Check that the output contains only the expected creations, and no unexpected de
 az deployment sub create \
   --name image-studio-dev \
   --location <region> \
-  --template-file .infrastructure/main.bicep \
-  --parameters .infrastructure/main.dev.bicepparam
+  --template-file bicep/main.bicep \
+  --parameters bicep/main.dev.bicepparam
 ```
 
 The command prints the outputs when it finishes. Read them again later:
@@ -1567,11 +1570,11 @@ azd up                 # provision and deploy in one step
 
 ### Deployment order and timing
 
-Resource Manager resolves dependencies from module outputs. The table shows the effective order and typical duration. Durations are estimates.
+Resource Manager resolves dependencies from module outputs. The table shows the grouping and typical duration. Durations are estimates. Modules without a dependency on each other run in parallel, and the exact order is derived in [main.bicep](../project-docs/bicep/main.md#deployment-order). In particular, the role assignments (`rbac`) do not wait for the container apps or API Management, and they start as soon as the modules they reference have finished, including all model deployments.
 
-| Order | Resources | Typical duration |
+| Group | Resources | Typical duration |
 | --- | --- | --- |
-| 1 | Resource group, Log Analytics, Application Insights, identities, network | Minutes |
+| 1 | Resource group, Log Analytics, Application Insights, identities | Minutes |
 | 2 | Storage, Cosmos DB, Key Vault, App Configuration, Container Registry | Minutes |
 | 3 | Foundry resource, project, model deployments, Content Safety, AI Search | Minutes per model deployment (they run one at a time) |
 | 4 | Service Bus, Container Apps environment and apps | Minutes |
@@ -1602,7 +1605,7 @@ Then add the app role and an Application ID URI to the manifest, and assign the 
 
 ## Continuous deployment
 
-Two GitHub Actions workflows deploy the templates. They are stored in `.github/workflows/` because GitHub runs workflows only from that folder. Sign-in uses OpenID Connect (OIDC) federation, so the repository stores no Azure credentials.
+Three GitHub Actions workflows validate, deploy, and delete the templates' resources. They are stored in `.github/workflows/` because GitHub runs workflows only from that folder. Sign-in uses OpenID Connect (OIDC) federation, so the repository stores no Azure credentials. Each workflow is documented step by step in [GitHub Actions workflows](../project-docs/github/workflows/index.md).
 
 | Workflow | Trigger | Steps |
 | --- | --- | --- |
@@ -1624,7 +1627,7 @@ The workflows read the Azure subscription and the other non-secret settings from
 
 ### One-time setup
 
-Create the deployment app registration, one federated credential for each token subject that the workflows use (`environment:dev`; all workflows run manually in the environment, so no `pull_request` credential is needed), and the role assignments. The commands are in [.infrastructure/README.md](../../.infrastructure/README.md#2-deployment-identity-with-oidc-federation). Then create the GitHub environment `dev`, and add required reviewers to it to implement the manual approval step in §17.3.
+Create the deployment app registration, one federated credential for each token subject that the workflows use (`environment:dev`; all workflows run manually in the environment, so no `pull_request` credential is needed), and the role assignments. The commands are in [bicep/README.md](../../bicep/README.md#2-deployment-identity-with-oidc-federation). Then create the GitHub environment `dev`, and add required reviewers to it to implement the manual approval step in §17.3.
 
 Because `main.bicep` creates the resource group at subscription scope, the deployment identity needs `Contributor` and `User Access Administrator` at the subscription. To narrow the scope, create the resource group beforehand, change the template to resource-group scope, and record the decision as an ADR.
 
@@ -1640,7 +1643,7 @@ Soft-deleted resources keep their names reserved. The delete workflow purges Fou
 
 Run **Infrastructure deploy** from the **Actions** tab, and select the environment. Select **Preview the changes without deploying** to run only the what-if. The workflow never runs on its own, so merging a change does not deploy it.
 
-Only the `dev` environment exists. To add `test` or `prod`, add a `main.<environment>.bicepparam` file, add the environment to the `options` list in `infra-deploy.yml`, create a matching GitHub environment, and add its federated credential.
+Only the `dev` environment exists. To add `test` or `prod`, add a `main.<environment>.bicepparam` file, add the environment to the `options` list in `infra-validate.yml`, `infra-deploy.yml` and `infra-delete.yml`, create a matching GitHub environment, and add its federated credential.
 
 ## Verification
 
@@ -1686,11 +1689,9 @@ A capacity change in the parameter file changes the deployment. Some models reje
 
 ### Delete an environment
 
-```bash
-azd down --purge
-```
+Run the **Infrastructure delete** workflow, as described in [Delete an environment](#delete-an-environment) under Continuous deployment and in [the workflow document](../project-docs/github/workflows/infra-delete.md). `azd` is not used (ADR-011), so `azd down` does not apply.
 
-The `--purge` flag also purges soft-deleted Key Vault, App Configuration, and Foundry (Cognitive Services) resources. Without it, the soft-deleted names stay reserved, and recreating the environment fails with a name conflict. Key Vault with purge protection cannot be purged until the retention period ends. Do not delete `prod` this way.
+With `purge_soft_deleted` selected, the workflow also purges soft-deleted Foundry, Content Safety, App Configuration, and API Management resources. Without it, the soft-deleted names stay reserved, and recreating the environment fails with a name conflict. Key Vault with purge protection cannot be purged until the retention period ends, and the deploy workflow recovers it. Do not delete `prod` this way.
 
 ### Cost
 
@@ -1730,5 +1731,7 @@ The following statements about this document could not be verified in the author
 
 - [Architecture](ARCHITECTURE.md): the design that these templates implement (§4, §10, §17)
 - [Implementation plan](IMPLEMENTATION.md): the tasks that use these templates (Phase 0 to Phase 4)
+- [GitHub Actions workflows](../project-docs/github/workflows/index.md): the validate, deploy, and delete workflows
+- [Bicep code documentation](../project-docs/bicep/index.md): the templates as implemented, file by file
 - [Generic Document Style](../templates/GENERIC_DOCUMENT_STYLE.md)
 - [Documentation index](../index.md)

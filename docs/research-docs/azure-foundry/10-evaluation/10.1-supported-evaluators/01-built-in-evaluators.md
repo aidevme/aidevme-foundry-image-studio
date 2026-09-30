@@ -1,0 +1,155 @@
+# Built-in evaluators reference
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Built-in evaluators reference |
+| **Document Location** | `docs/research-docs/azure-foundry/10-evaluation/10.1-supported-evaluators/01-built-in-evaluators.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Built-in evaluators reference". Comprehensive reference for all built-in evaluators in Microsoft Foundry |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/concepts/built-in-evaluators). Article date: 2026-06-02. Page updated: 2026-08-27. Retrieved: 2026-09-29. Navigation: Evaluation > Supported evaluators > Overview.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+> **Important**
+>
+> Items marked (preview) in this article are currently in public preview. This preview is provided without a service-level agreement, and we don't recommend it for production workloads. Certain features might not be supported or might have constrained capabilities. For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+Microsoft Foundry includes built-in evaluators to assess the quality, safety, and reliability of AI responses throughout the development lifecycle. This reference lists all available evaluators, their purposes, and guidance on selecting the right one for your use case. You can also create [custom evaluators](09-custom-evaluators.md) tailored to your specific evaluation criteria.
+
+As you choose evaluators, the [Microsoft Foundry Skill](../../04-get-started/04.1-what-do-you-want-to-build/05-use-microsoft-foundry-skill.md) can help connect this reference to evaluation setup, prompt optimization, and troubleshooting workflows.
+
+## General purpose evaluators
+
+| Evaluator | Purpose |
+| --- | --- |
+| Coherence | Measures logical consistency and flow of responses. |
+| Fluency | Measures natural language quality and readability. |
+
+To learn more, see [General purpose evaluators](02-general-purpose-evaluators.md).
+
+## Textual similarity evaluators
+
+| Evaluator | Purpose |
+| --- | --- |
+| Similarity | AI-assisted textual similarity measurement. |
+| F1 Score | Harmonic mean of precision and recall in token overlaps between response and ground truth. |
+| BLEU | Bilingual Evaluation Understudy score for translation quality measures overlaps in n-grams between response and ground truth. |
+| GLEU | Google-BLEU variant for sentence-level assessment measures overlaps in n-grams between response and ground truth. |
+| ROUGE | Recall-Oriented Understudy for Gisting Evaluation measures overlaps in n-grams between response and ground truth. |
+| METEOR | Metric for Evaluation of Translation with Explicit Ordering measures overlaps in n-grams between response and ground truth. |
+
+To learn more, see [Textual similarity evaluators](03-textual-similarity-evaluators.md).
+
+## RAG evaluators
+
+| Evaluator | Purpose |
+| --- | --- |
+| Retrieval | Measures how effectively the system retrieves relevant information. |
+| Document Retrieval | Measures accuracy in retrieval results given ground truth. |
+| Groundedness | Measures how grounded the response is in the retrieved context. Returns a score from 1–5 using a model-based judgment. |
+| Groundedness Pro (preview) | Measures whether the response is grounded in the retrieved context using the Azure AI Content Safety service. Returns a binary pass/fail without requiring a model deployment. |
+| Relevance | Measures how relevant the response is with respect to the query. |
+| Response Completeness (preview) | Measures to what extent the response is complete (not missing critical information) with respect to the ground truth. |
+
+To learn more, see [Retrieval-augmented Generation (RAG) evaluators](04-rag-evaluators.md).
+
+## Risk and safety evaluators
+
+| Evaluator | Purpose |
+| --- | --- |
+| Hate and Unfairness | Identifies biased, discriminatory, or hateful content. |
+| Sexual | Identifies inappropriate sexual content. |
+| Violence | Detects violent content or incitement. |
+| Self-Harm | Detects content promoting or describing self-harm. |
+| Protected Materials | Detects unauthorized use of copyrighted or protected content. |
+| Indirect Attack (XPIA) | Measures whether the response fell for an indirect jailbreak attempt injected through retrieved context. |
+| Code Vulnerability | Identifies security issues in generated code. |
+| Ungrounded Attributes | Detects fabricated or erroneous information inferred from user interactions. |
+| Prohibited Actions | Measures an AI agent's ability to engage in behaviors that violate explicitly disallowed actions. |
+| Sensitive Data Leakage | Measures an AI agent's vulnerability to exposing sensitive information. |
+
+To learn more, see [Risk and safety evaluators](05-risk-safety-evaluators.md).
+
+## Agent evaluators
+
+| Evaluator | Purpose |
+| --- | --- |
+| Task Adherence (preview) | Measures whether the agent follows through on identified tasks according to system instructions. |
+| Task Completion (preview) | Measures whether the agent successfully completed the requested task end-to-end. |
+| Customer Satisfaction (preview) | Measures holistic user satisfaction across a conversation using six dimensions: helpfulness, completeness, clarity, tone, resolution, and adaptability. |
+| Intent Resolution (preview) | Measures how accurately the agent identifies and addresses user intentions. |
+| Task Navigation Efficiency | Determines whether the agent's sequence of steps matches an optimal or expected path to measure efficiency. |
+| Tool Call Accuracy | Measures the overall quality of tool calls including selection, parameter correctness, and efficiency. |
+| Tool Selection | Measures whether the agent selected the most appropriate and efficient tools for a task. |
+| Tool Input Accuracy | Validates that all tool call parameters are correct with strict criteria including grounding, type, format, completeness, and appropriateness. |
+| Tool Output Utilization | Measures whether the agent correctly interprets and uses tool outputs contextually in responses and subsequent calls. |
+| Tool Call Success | Evaluates whether all tool calls executed successfully without technical failures. |
+| Quality Grader (preview) | Enables quality evaluation across multiple dimensions—relevance, abstention, answer completeness, groundedness, and context coverage—in a single evaluator instead of running individual evaluators separately. |
+
+To learn more, see [Agent evaluators](06-agent-evaluators.md).
+
+## Rubric evaluators (preview)
+
+| Evaluator | Purpose |
+| --- | --- |
+| Rubric | Scores a response or multi-turn conversation against custom, weighted criteria using an LLM as the judge. Returns a weighted average score normalized to 0–1 with per-dimension reasoning. |
+
+To learn more, see [Rubric evaluators](08-rubric-evaluators.md).
+
+## Azure OpenAI graders
+
+| Evaluator | Purpose |
+| --- | --- |
+| Model Labeler | Classifies content using custom guidelines and labels. |
+| String Checker | Performs flexible text validations and pattern matching. |
+| Text Similarity | Evaluates the quality of text or determine semantic closeness. |
+| Model Scorer | Generates numerical scores (customized range) for content based on custom guidelines. |
+
+To learn more, see [Azure OpenAI Graders](07-azure-openai-graders.md).
+
+## Custom evaluators (preview)
+
+In addition to built-in evaluators, you can create custom evaluators tailored to your specific evaluation criteria. Custom evaluators allow you to define unique scoring logic, validation rules, and quality metrics that align with your business requirements and application-specific needs.
+
+To learn more, see [Custom evaluators](09-custom-evaluators.md).
+
+## Evaluation levels
+
+Each evaluator supports specific evaluation levels, indicated by the `supported_evaluation_levels` field in the evaluator catalog:
+
+| Level | Description |
+| --- | --- |
+| `turn` | Evaluates individual agent responses (default) |
+| `conversation` | Evaluates entire multi-turn conversations |
+
+When creating an evaluation run, set `evaluation_level` to match your evaluators' supported levels. If omitted, the default is `turn`.
+
+**Conversation-level evaluators** score the full interaction rather than individual turns. Use them to measure outcomes like user satisfaction, task completion across multiple steps, or conversation-wide coherence.
+
+> **Important**
+>
+> All evaluators in a run must support the specified `evaluation_level`. You can't mix evaluators with incompatible levels in the same evaluation run.
+
+## Combining evaluators
+
+For comprehensive quality assessment, combine multiple evaluators:
+
+- **RAG applications**: Retrieval + Groundedness + Relevance + Content Safety
+- **Agent applications**: Tool Call Accuracy + Task Adherence + Intent Resolution + Rubric + Content Safety
+- **Translation applications**: BLEU + METEOR + Fluency + Coherence
+- **All applications**: Add risk and safety evaluators (Hate and Unfairness, Sexual, Violence, Self-Harm) for responsible AI practices
+
+## Related content
+
+- [Observability in generative AI](../../09-observability/01-observability.md)
+- [General purpose evaluators](02-general-purpose-evaluators.md)
+- [Textual similarity evaluators](03-textual-similarity-evaluators.md)
+- [Retrieval-augmented Generation (RAG) evaluators](04-rag-evaluators.md)
+- [Risk and safety evaluators](05-risk-safety-evaluators.md)
+- [Agent evaluators](06-agent-evaluators.md)
+- [Rubric evaluators](08-rubric-evaluators.md)
+- [Azure OpenAI Graders](07-azure-openai-graders.md)
+- [Custom evaluators](09-custom-evaluators.md)
+- [Evaluate generative AI apps in Foundry](../10.3-run-evaluations/12-evaluate-generative-ai-app.md)

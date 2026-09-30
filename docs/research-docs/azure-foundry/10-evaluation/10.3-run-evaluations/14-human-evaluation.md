@@ -1,0 +1,108 @@
+# Set up human evaluation for your agents (preview)
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Set up human evaluation for your agents (preview) |
+| **Document Location** | `docs/research-docs/azure-foundry/10-evaluation/10.3-run-evaluations/14-human-evaluation.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Set up human evaluation for your agents (preview)". Learn how to set up human evaluation for your Microsoft Foundry agents, create templates, and analyze results to improve agent performance. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/human-evaluation). Article date: 2026-07-31. Page updated: 2026-08-01. Retrieved: 2026-09-29. Navigation: Evaluation > Run evaluations > Specialized evaluation workflows > Set up human evaluation.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+> **Important**
+>
+> Items marked (preview) in this article are currently in public preview. This preview is provided without a service-level agreement, and we don't recommend it for production workloads. Certain features might not be supported or might have constrained capabilities. For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+This article explains how to set up human evaluation for your Foundry agent. As an agent builder, you define evaluation question templates focused on key aspects of interest. Human reviewers — peers, data scientists, or compliance team members — complete those templates for each agent response in the agent's preview experience. After reviewers submit their evaluations, you can view and download the results directly from the Foundry portal for further analysis.
+
+## Prerequisites
+
+- A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md) with one or more [agents](../../07-agents/01-overview.md).
+- [Application Insights configured](../../09-observability/09.2-tracing/02-trace-agent-setup.md) for your project.
+- **Foundry Project Manager** role (or higher) on the Foundry project, to create and manage evaluation templates. For more information, see [Role-based access control in Microsoft Foundry](../../13-manage-and-operate/13.3-security-and-governance/02-rbac-foundry.md).
+
+  > **Important**
+  >
+  > The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+- For human reviewers: **Foundry User** role (minimum) on the Foundry project and **Reader** on the account, to access the preview web app and submit feedback.
+
+## Create a human evaluation template
+
+To begin human evaluation for your Foundry agent, define a template that contains the set of questions you want human reviewers to complete based on agent responses.
+
+1. Select the agent you want to evaluate from the agent table in the **Agents** tab.
+2. Go to the **Human Evaluation** tab under **Evaluation**.
+3. Select **Create new template** to start the template creation process.
+4. In the **Create Human Evaluation Template** pop-up, assign a name and description, edit or delete sample questions, and add new questions based on your evaluation goals. Supported question types include thumbs up/down, slider, multiple choice, and free-form text.
+
+   > **Tip**
+   >
+   > Example questions by type:
+   >
+   > - **Thumbs up/down:** "Was this response accurate?"
+   > - **Slider (1–5):** "Rate the helpfulness of this response."
+   > - **Multiple choice:** "Which best describes this response? (Correct / Partially correct / Incorrect)"
+   > - **Free-form text:** "What additional context would have improved this response?"
+5. After configuring the template, select **Create** to finalize it.
+
+The new template appears in the template table with **Inactive** status. Activate it before reviewers begin evaluating.
+
+## Manage your evaluation templates
+
+You can create multiple evaluation templates based on your assessment needs. The template table allows you to edit, delete, and set templates as active or inactive.
+
+- Select **Edit** in the template table to update a template. The template opens in an editable pop-up.
+- Select **Delete** to remove a template.
+
+  > **Note**
+  >
+  > Once deleted, you can't retrieve the template and its associated evaluation results from the portal.
+- To set a template as active, select **Set as active** in the template table. Only one template can be active at any given time. Activating a new template automatically deactivates the previous one. Select **Set as inactive** to stop capturing human evaluation results for the current template.
+
+## Conduct human evaluation
+
+After you configure the evaluation template and set it as active for the target agent, human reviewers can start their evaluation through the preview web app. This web app is a browser-based chat interface that launches directly from the agent builder.
+
+> **Note**
+>
+> Human reviewers need the **Foundry User** role on the Foundry project to access the preview web app and submit feedback.
+
+1. Select **Preview** in the upper-right corner of the agent builder to open the agent in a browser-based chat interface.
+2. Enter input and select **Send** to trigger an agent run.
+3. After the agent responds, select the **Feedback** button to provide human evaluation for that response.
+   - A side panel appears, displaying the active evaluation template.
+   - Reviewers can answer some or all questions in the form.
+4. Select **Save** to store the evaluation data, or **Cancel** to discard it.
+5. Continue evaluating additional responses by entering new input or navigating to previous responses.
+   - Reviewers can skip evaluations for certain responses or submit multiple evaluations for the same response.
+
+Agent builders can view saved evaluations for each agent response in the **Evaluation Results** section.
+
+## Review human evaluation results
+
+After human reviewers complete their evaluations, agent builders can preview and download the results for further analysis through the Foundry portal.
+
+1. Navigate to the template table within the **Human Evaluation** tab and select the template you want to review results for.
+2. All corresponding evaluation results appear under the **Evaluation Results** section. Each instance is displayed with its timestamp for reference.
+3. Select an evaluation instance to view its JSON summary in the **JSON Output** section. The JSON includes:
+   - Timestamp
+   - User prompt
+   - Agent response
+   - Questions from the evaluation template
+   - Reviewer answers
+4. To download all evaluation results for a template, select **Download Results**. The results are exported as a CSV file containing all information from the JSON view for each evaluation instance.
+
+The downloaded CSV contains one row per evaluation instance, with columns for each field from the JSON view.
+
+> **Note**
+>
+> Evaluation data is stored in Application Insights and follows its retention policy. To adjust the retention period, see [Data retention and archive in Azure Monitor Logs](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/data-retention-configure). Download and persist the data elsewhere if you need it long term.
+
+## Related content
+
+- [Evaluate your AI agents](01-evaluate-agent.md)
+- [Agent tracing overview](../../09-observability/09.2-tracing/01-trace-agent-concept.md)
+- [Troubleshoot evaluation and observability issues](../../09-observability/02-troubleshooting.md)

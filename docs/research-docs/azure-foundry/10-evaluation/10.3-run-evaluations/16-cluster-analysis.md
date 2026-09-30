@@ -1,0 +1,160 @@
+# Analyze evaluation results with cluster analysis (preview)
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Analyze evaluation results with cluster analysis (preview) |
+| **Document Location** | `docs/research-docs/azure-foundry/10-evaluation/10.3-run-evaluations/16-cluster-analysis.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Analyze evaluation results with cluster analysis (preview)". Learn how to run and interact with an evaluation cluster analysis. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/how-to/cluster-analysis). Article date: 2026-07-31. Page updated: 2026-08-26. Retrieved: 2026-09-29. Navigation: Evaluation > Run evaluations > Review and analyze results > Analyze evaluation results.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+> **Important**
+>
+> Items marked (preview) in this article are currently in public preview. This preview is provided without a service-level agreement, and we don't recommend it for production workloads. Certain features might not be supported or might have constrained capabilities. For more information, see [Supplemental Terms of Use for Microsoft Azure Previews](https://azure.microsoft.com/support/legal/preview-supplemental-terms/).
+
+After you run one or more evaluation runs, you can generate an evaluation cluster analysis to understand your evaluation results. This analysis provides an intuitive way to identify the top patterns and errors in your evaluation runs, along with recommended next steps to improve evaluator scores.
+
+This article explains how to generate and interact with an evaluation cluster analysis.
+
+## Prerequisites
+
+- A [Foundry project](../../13-manage-and-operate/13.1-set-up-and-configure/07-create-projects.md).
+- One or more [completed evaluation runs](02-cloud-evaluation.md).
+- A deployed model in your project to use for cluster analysis generation. To learn more, see [Create model deployments](../../06-models/06.4-model-deployment/02-create-model-deployments.md).
+
+## Generate an evaluation cluster analysis
+
+1. On the evaluation detail page, select one or more completed evaluation runs.
+2. Select **Cluster analysis**. A setup window opens showing the estimated time and token usage based on the number of samples in the selected runs.
+3. Select a model from the dropdown to use for generating the analysis.
+4. Select **Generate**. The analysis is generated and the cluster map opens automatically.
+
+[![Screenshot of the cluster analysis setup window showing model selection dropdown and estimated token usage.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-set-up.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-set-up.png#lightbox)
+
+> **Important**
+>
+> The analysis result isn't stored. If you leave the page, the result is lost. To keep a copy, [download the analysis](#download-the-analysis) before navigating away.
+
+## View cluster analysis
+
+Cluster analysis provides an intuitive visualization of performance by grouping evaluation result samples with similar problems or response patterns. It helps you quickly identify recurring failure types, understand the distribution across error categories, and prioritize areas for improvement.
+
+[![Screenshot of the cluster analysis page.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-map.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-map.png#lightbox)
+
+At the top of the view, summary statistics for the evaluation run are displayed:
+
+- **Total samples** – Total number of evaluated responses (for example, 48).
+- **Clusters** – Number of automatically identified clusters (for example, 2).
+- **Passed/failed** – Breakdown of successful versus problematic samples.
+- **Avg Score** – The overall average quality score for the run.
+
+> **Note**
+>
+> Hover over a dot or cluster label to reveal detailed information, including example responses and evaluator feedback. Select to open the detail panel.
+
+### Visualization
+
+Each dot represents a sample from your evaluation dataset. Dots are grouped by semantic similarity, using embedding-based clustering of model outputs and feedback signals.
+
+- Color: Indicates the cluster assignment (for example, inadequate final answer or incorrect response).
+- Position: Samples closer together share similar characteristics or problems.
+
+### Detail panel
+
+#### Cluster
+
+When you select a cluster, a side panel opens that includes:
+
+- Selected cluster – Name of the top-level issue group.
+- Entry count – Total number of samples within this cluster.
+- Subclusters – Breakdown of related subcategories.
+- Description – Automatically generated diagnostic summary explaining the likely cause or characteristic pattern.
+- Recommendations – Suggested next steps for mitigation or agent improvement.
+
+[![Screenshot of a selected cluster with the side panel open.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-side-panel.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-side-panel.png#lightbox)
+
+#### Subcluster
+
+When you select a subcluster, a side panel opens that includes:
+
+- Cluster – Indicates the parent cluster this subcluster belongs to (for example, inadequate_final_answer).
+- Selected subcluster – The specific subset being examined (for example, invalid_or_missing_api_key).
+- Entry Count – Number of individual samples grouped under this subcluster.
+- Tabs
+  - Analysis – Provides summary statistics, score averages, and qualitative insights (when available).
+  - Entries – Lists each sample (Entry ID) in the subcluster with their individual scores such as fluency, groundedness, or accuracy.
+
+[![Screenshot of a selected subcluster with the side panel open.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-sub-cluster-side-panel.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-sub-cluster-side-panel.png#lightbox)
+
+#### Entry ID
+
+When you select a dot or entry ID, a side panel opens that includes:
+
+- Cluster hierarchy
+  - Displays the full path of where this entry belongs: Cluster → Subcluster → Entry ID For example, inadequate_final_answer → invalid_or_missing_api_key → Entry ID: 17-fluency.
+- Tabs
+- Conversation – Shows the full text interaction for the selected sample:
+  - Context Summary (if applicable) – Any background or preceding context used in the evaluation.
+  - Query – The model prompt or user question (for example, "How do I submit an FSA reimbursement claim?").
+  - Response – The model’s generated output for that query.
+- Metadata – Contains additional evaluation information such as scores, evaluators, timestamps, agent IDs, and trace IDs.
+
+[![Screenshot of entry ID select with side panel opened.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-entry-id.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-entry-id.png#lightbox)
+
+### Filter panel
+
+The filter panel on the right side of the cluster analysis view lets you customize how clusters are displayed for targeted inspection.
+
+- Color by
+  - Adjust how the samples are color-coded on the visualization.
+  - Options typically include:
+    - Cluster – Colors samples by top-level issue category.
+    - Subcluster – Colors samples by more granular subcategories within each cluster.
+    - Or evaluation result, evaluation type, score, and agent ID.
+
+[![Screenshot of the cluster analysis's filter panel.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-filter.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-filter.png#lightbox)
+
+- Advanced filtering
+  - Tools to focus the visualization on specific subsets of data.
+  - Define filters based on metadata or evaluation attributes.
+    - Select Parameter – Choose which field to filter on (for example, score, evaluator type, timestamp).
+    - Equal / Contains / Not equal – Define the condition for filtering.
+    - Select Value – Choose or input the specific value to match.
+    - Add Filter – Apply the condition to update the view dynamically.
+
+[![Screenshot of the cluster analysis's advanced filtering.](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-advanced-filtering.png)](https://learn.microsoft.com/en-us/azure/foundry/media/observability/cluster-analysis-advanced-filtering.png#lightbox)
+
+## Download the analysis
+
+To view the analysis offline, select **Download** to get a copy of the analysis in CSV format and view it in other applications.
+
+> **Note**
+>
+> The analysis result isn't stored. If you leave the page, the analysis result is lost.
+
+## Next steps
+
+Use the insights from cluster analysis to:
+
+- **Refine prompts** — Update your agent's instructions to address recurring failure patterns identified in the clusters.
+- **Retrain or fine-tune** — Use identified failure categories as signal for fine-tuning data curation.
+- **Re-evaluate** — After making changes, run a new evaluation and generate a fresh cluster analysis to compare results. See [Run evaluations from the SDK](02-cloud-evaluation.md).
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| **Cluster analysis** button is unavailable | No completed evaluation runs are selected | Select at least one completed evaluation run on the evaluation detail page before selecting **Cluster analysis**. |
+| No models appear in the generation window | No models are deployed in the project | Deploy a model in your project. See [Create model deployments](../../06-models/06.4-model-deployment/02-create-model-deployments.md). |
+| Analysis generation fails or times out | Data volume too large or service throttling | Reduce the number of evaluation runs selected, or try again later. |
+| Analysis disappears after navigating away | Results aren't persisted | Run cluster analysis again and [download the results](#download-the-analysis) before navigating away. |
+
+## Related content
+
+- [See evaluation results in the Foundry portal](15-evaluate-results.md)
+- [Run evaluations from the SDK](02-cloud-evaluation.md)
+- [Run evaluations from the Foundry portal](12-evaluate-generative-ai-app.md)

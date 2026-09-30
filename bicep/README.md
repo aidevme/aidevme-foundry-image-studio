@@ -1,11 +1,11 @@
-# .infrastructure
+# bicep
 
-Bicep templates that provision the Azure resources for AIDevMe Foundry Image Studio. The full guide is in [INFRASTRUCTURE.md](../docs/aidevme-foundry-image-studio/INFRASTRUCTURE.md).
+Bicep templates that provision the Azure resources for AIDevMe Foundry Image Studio. The templates are documented file by file in [docs/project-docs/bicep/](../docs/project-docs/bicep/index.md). The design guide is in [INFRASTRUCTURE.md](../docs/aidevme-foundry-image-studio/INFRASTRUCTURE.md).
 
 ## Layout
 
 ```text
-.infrastructure/
+bicep/
 ├── main.bicep              # subscription-scope entry point
 ├── main.dev.bicepparam     # parameters for the dev environment
 ├── bicepconfig.json        # linter rules
@@ -68,9 +68,9 @@ If a sign-in fails with `AADSTS700213`, the error shows the subject that GitHub 
 
 Create an environment named `dev` under **Settings → Environments**. Add required reviewers to it if you want a manual approval before each deployment.
 
-### 4. Replace the placeholders
+### 4. Check the model deployments
 
-`main.dev.bicepparam` contains `<...>` placeholders for model versions and the reasoning model. Replace them with values from the Foundry model catalog for your region. The deploy workflow refuses to run while placeholders remain.
+`main.dev.bicepparam` contains the model names, versions, and SKUs that were read from the Foundry model catalog for `swedencentral` on 2026-09-29. Check them again if you change the region or upgrade a version ([parameter file document](../docs/project-docs/bicep/parameters.md)). The deploy workflow refuses to run while a `<...>` placeholder remains in the file.
 
 ## Deploy
 
@@ -93,10 +93,10 @@ export AZURE_LOCATION=<region>
 export APIM_PUBLISHER_EMAIL=<address>
 az login
 az account set --subscription <subscription-id>
-az bicep lint --file .infrastructure/main.bicep
+az bicep lint --file bicep/main.bicep
 az deployment sub what-if --location "$AZURE_LOCATION" \
-  --template-file .infrastructure/main.bicep \
-  --parameters .infrastructure/main.dev.bicepparam
+  --template-file bicep/main.bicep \
+  --parameters bicep/main.dev.bicepparam
 ```
 
 ## Current limits

@@ -1,0 +1,1091 @@
+# Azure OpenAI SDK language support
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Azure OpenAI SDK language support |
+| **Document Location** | `docs/research-docs/azure-foundry/05-developer-tools-and-integrations/05.4-sdks-and-apis/05-supported-languages.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Azure OpenAI SDK language support". Compare Azure OpenAI SDK support for Python, C#, JavaScript, Java, and Go, with current examples for authentication and model inference. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/openai/supported-languages). Article date: 2026-07-20. Page updated: 2026-07-22. Retrieved: 2026-09-29. Navigation: Developer tools and integrations > SDKs and APIs > Azure OpenAI > SDK language support.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+Use the OpenAI SDKs with the Azure OpenAI v1 endpoint to build model inference applications in Python, C#, JavaScript, Java, or Go. The examples use the Responses API for new applications and show Chat Completions for applications that still use its message-based interface.
+
+## Prerequisites
+
+- An Azure subscription. [Create one for free](https://azure.microsoft.com/free/) if you don't have one.
+- An Azure OpenAI resource with a `gpt-5-mini` model deployment.
+- Your Azure OpenAI resource endpoint, such as `https://YOUR-RESOURCE-NAME.openai.azure.com`.
+- For Microsoft Entra ID authentication, an identity that has permission to run inference. For role options, see [Configure Microsoft Entra ID authentication](../../13-manage-and-operate/13.3-security-and-governance/05-configure-entra-id.md).
+- For API key authentication, an Azure OpenAI resource key. Microsoft Entra ID is recommended for production applications.
+- A supported language runtime and package manager for the language you select.
+
+The `model` value in every request is your Azure model deployment name. The examples use `gpt-5-mini`; replace it if your deployment has a different name.
+
+**[programming-language-dotnet]**
+
+[Source code](https://github.com/openai/openai-dotnet) | [Package](https://www.nuget.org/packages/OpenAI) | [API surface](https://github.com/openai/openai-dotnet/blob/main/api/OpenAI.netstandard2.0.cs)
+
+The examples were tested with `OpenAI` 2.12.0, `Azure.Identity` 1.21.0, and .NET 8. The OpenAI package also targets .NET Standard 2.0 and later .NET versions.
+
+## Install the packages
+
+Install the OpenAI and Azure Identity packages:
+
+```dotnetcli
+dotnet add package OpenAI
+dotnet add package Azure.Identity
+```
+
+The commands add both package references to your project.
+
+## Create a response with Microsoft Entra ID
+
+Use `DefaultAzureCredential` and `BearerTokenPolicy` to authenticate without storing an API key.
+
+```csharp
+using Azure.Identity;
+using OpenAI.Responses;
+using System.ClientModel.Primitives;
+
+#pragma warning disable OPENAI001
+
+var endpoint = new Uri(
+    "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/");
+var tokenPolicy = new BearerTokenPolicy(
+    new DefaultAzureCredential(),
+    "https://ai.azure.com/.default");
+var openAIClient = new ResponsesClient(
+    tokenPolicy,
+    new ResponsesClientOptions { Endpoint = endpoint });
+
+var response = await openAIClient.CreateResponseAsync(
+    "gpt-5-mini",
+    "Explain the purpose of an API in one sentence.");
+Console.WriteLine(response.Value.GetOutputText());
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`ResponsesClient`](https://github.com/openai/openai-dotnet/blob/main/README.md#how-to-work-with-azure-openai)
+
+## Create a response with an API key
+
+API keys aren't recommended for production use. Store the key in the `AZURE_OPENAI_API_KEY` environment variable instead of placing it in source code.
+
+```bash
+export AZURE_OPENAI_API_KEY="<your-api-key>"
+```
+
+Then create the client and request:
+
+```csharp
+using OpenAI.Responses;
+using System.ClientModel;
+
+#pragma warning disable OPENAI001
+
+var endpoint = new Uri(
+    "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/");
+var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")
+    ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY is required.");
+var openAIClient = new ResponsesClient(
+    new ApiKeyCredential(apiKey),
+    new ResponsesClientOptions { Endpoint = endpoint });
+
+var response = await openAIClient.CreateResponseAsync(
+    "gpt-5-mini",
+    "Explain the purpose of an API in one sentence.");
+Console.WriteLine(response.Value.GetOutputText());
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`CreateResponseAsync`](https://github.com/openai/openai-dotnet/blob/main/examples/Responses/Example01_SimpleResponseAsync.cs)
+
+## Use Chat Completions
+
+For new applications, use the Responses API. Use Chat Completions when you need its message-based interface or are maintaining an existing application.
+
+```csharp
+using Azure.Identity;
+using OpenAI;
+using OpenAI.Chat;
+using System.ClientModel.Primitives;
+
+#pragma warning disable OPENAI001
+
+var endpoint = new Uri(
+    "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/");
+var tokenPolicy = new BearerTokenPolicy(
+    new DefaultAzureCredential(),
+    "https://ai.azure.com/.default");
+var openAIClient = new ChatClient(
+    model: "gpt-5-mini",
+    authenticationPolicy: tokenPolicy,
+    options: new OpenAIClientOptions { Endpoint = endpoint });
+
+var completion = await openAIClient.CompleteChatAsync([
+    new SystemChatMessage("You are a helpful assistant."),
+    new UserChatMessage("Explain the purpose of an API.")
+]);
+Console.WriteLine(completion.Value.Content[0].Text);
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`ChatClient`](https://github.com/openai/openai-dotnet/tree/main/examples/Chat)
+
+## Stream a response
+
+Call `CreateResponseStreamingAsync` and process text delta updates as the model generates them:
+
+```csharp
+using OpenAI.Responses;
+using System.ClientModel;
+
+#pragma warning disable OPENAI001
+
+var endpoint = new Uri(
+    "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/");
+var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")
+    ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY is required.");
+var openAIClient = new ResponsesClient(
+    new ApiKeyCredential(apiKey),
+    new ResponsesClientOptions { Endpoint = endpoint });
+
+// Stream text as the model generates it.
+var updates = openAIClient.CreateResponseStreamingAsync(
+    "gpt-5-mini",
+    "Explain the purpose of an API in one sentence.");
+await foreach (var update in updates)
+{
+    if (update is StreamingResponseOutputTextDeltaUpdate delta)
+    {
+        Console.Write(delta.Delta);
+    }
+}
+```
+
+The following streamed output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`CreateResponseStreamingAsync`](https://github.com/openai/openai-dotnet/blob/main/examples/Responses/Example02_SimpleResponseStreamingAsync.cs)
+
+## Handle errors and retries
+
+The client automatically retries HTTP 408, 429, 500, 502, 503, and 504 responses with exponential backoff. Configure the retry policy through the client options when you need different behavior. Catch `ClientResultException` to inspect the HTTP status and error details for a failed request.
+
+For diagnostics, retain the `ClientResult<T>` returned by an operation and inspect its raw response headers. Failed operations expose status information through `ClientResultException`.
+
+Reference: [Error handling and client result details](https://github.com/openai/openai-dotnet#how-to-handle-errors)
+
+## More SDK examples
+
+- [Use the Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md)
+- [Generate embeddings](../../06-models/06.6-develop-with-ai-models/18-embeddings.md)
+- [Analyze images](../../06-models/06.7-model-capabilities/05-gpt-with-vision.md)
+- [Fine-tune a model](../../06-models/06.8-fine-tuning/02-fine-tuning.md)
+
+**[programming-language-go]**
+
+[Source code](https://github.com/openai/openai-go) | [Package](https://pkg.go.dev/github.com/openai/openai-go/v3) | [REST API reference](https://ai.azure.com/api-reference/) | [Go API reference](https://github.com/openai/openai-go/blob/main/api.md)
+
+The examples require Go 1.25 or later. They were tested with `github.com/openai/openai-go/v3` 3.44.0 and `azidentity` 1.14.0.
+
+## Install the modules
+
+Install the OpenAI and Azure Identity modules:
+
+```bash
+go get github.com/openai/openai-go/v3
+go get github.com/Azure/azure-sdk-for-go/sdk/azidentity
+```
+
+The `/v3` suffix is required because it identifies the current major version of the Go module.
+
+## Create a response with Microsoft Entra ID
+
+Use `DefaultAzureCredential` and the Azure authentication option to authenticate without storing an API key.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/azure"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
+)
+
+func main() {
+	credential, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil { panic(err) }
+	endpoint := "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+	openaiClient := openai.NewClient(
+		option.WithBaseURL(endpoint),
+		azure.WithTokenCredential(credential, azure.WithTokenCredentialScopes(
+			[]string{"https://ai.azure.com/.default"})))
+	response, err := openaiClient.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: openai.ChatModel("gpt-5-mini"),
+		Input: responses.ResponseNewParamsInputUnion{OfString: openai.String(
+			"Explain the purpose of an API in one sentence.")},
+	})
+	if err != nil { panic(err) }
+	fmt.Println(response.OutputText())
+}
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`ResponseService.New`](https://github.com/openai/openai-go/blob/main/examples/responses/main.go) and [`WithTokenCredentialScopes`](https://github.com/openai/openai-go/blob/main/azure/azure.go)
+
+## Create a response with an API key
+
+API keys aren't recommended for production use. Store the key in the `AZURE_OPENAI_API_KEY` environment variable instead of placing it in source code.
+
+```bash
+export AZURE_OPENAI_API_KEY="<your-api-key>"
+```
+
+Then create the client and request:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
+)
+
+func main() {
+	apiKey := os.Getenv("AZURE_OPENAI_API_KEY")
+	if apiKey == "" { panic("AZURE_OPENAI_API_KEY is required") }
+	endpoint := "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+	openaiClient := openai.NewClient(
+		option.WithBaseURL(endpoint),
+		option.WithAPIKey(apiKey))
+	response, err := openaiClient.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: openai.ChatModel("gpt-5-mini"),
+		Input: responses.ResponseNewParamsInputUnion{OfString: openai.String(
+			"Explain the purpose of an API in one sentence.")},
+	})
+	if err != nil { panic(err) }
+	fmt.Println(response.OutputText())
+}
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`Responses.New`](https://github.com/openai/openai-go/blob/main/examples/azure/main.go)
+
+## Use Chat Completions
+
+For new applications, use the Responses API. Use Chat Completions when you need its message-based interface or are maintaining an existing application.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/azure"
+	"github.com/openai/openai-go/v3/option"
+)
+
+func main() {
+	credential, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil { panic(err) }
+	endpoint := "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+	openaiClient := openai.NewClient(
+		option.WithBaseURL(endpoint),
+		azure.WithTokenCredential(credential, azure.WithTokenCredentialScopes(
+			[]string{"https://ai.azure.com/.default"})))
+	completion, err := openaiClient.Chat.Completions.New(context.Background(),
+		openai.ChatCompletionNewParams{
+			Model: openai.ChatModel("gpt-5-mini"),
+			Messages: []openai.ChatCompletionMessageParamUnion{
+				openai.DeveloperMessage("You are a helpful assistant."),
+				openai.UserMessage("Explain the purpose of an API.")}})
+	if err != nil { panic(err) }
+	fmt.Println(completion.Choices[0].Message.Content)
+}
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`Chat.Completions.New`](https://github.com/openai/openai-go/blob/main/README.md#chat-completions-api)
+
+## Stream a response
+
+Call `Responses.NewStreaming`, and process text delta events as the model generates them:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
+)
+
+func main() {
+	endpoint := "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+	openaiClient := openai.NewClient(option.WithBaseURL(endpoint),
+		option.WithAPIKey(os.Getenv("AZURE_OPENAI_API_KEY")))
+	// Stream text as the model generates it.
+	stream := openaiClient.Responses.NewStreaming(context.Background(), responses.ResponseNewParams{
+		Model: openai.ChatModel("gpt-5-mini"),
+		Input: responses.ResponseNewParamsInputUnion{OfString: openai.String(
+			"Explain the purpose of an API in one sentence.")},
+	})
+	for stream.Next() { fmt.Print(stream.Current().Delta) }
+	if err := stream.Err(); err != nil { panic(err) }
+}
+```
+
+The following streamed output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`Responses.NewStreaming`](https://github.com/openai/openai-go/blob/main/examples/responses-streaming/main.go)
+
+## Handle errors and retries
+
+The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses twice with exponential backoff. Use `option.WithMaxRetries` to change the default. Check the returned `error` before reading a response, and use `errors.As` to inspect an `openai.Error`.
+
+```go
+package main
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"os"
+
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
+)
+
+func main() {
+	endpoint := "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+	openaiClient := openai.NewClient(option.WithBaseURL(endpoint),
+		option.WithAPIKey(os.Getenv("AZURE_OPENAI_API_KEY")), option.WithMaxRetries(4))
+	// Send the request and inspect structured service errors.
+	result, err := openaiClient.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: openai.ChatModel("gpt-5-mini"),
+		Input: responses.ResponseNewParamsInputUnion{OfString: openai.String("Explain an API.")},
+	})
+	if err != nil {
+		var apiError *openai.Error
+		if errors.As(err, &apiError) { fmt.Printf("Status: %d; Request ID: %s\n",
+			apiError.StatusCode, apiError.Response.Header.Get("x-request-id")) }
+		panic(err)
+	}
+	fmt.Println(result.OutputText())
+}
+```
+
+For a successful request, the following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [Errors and retries](https://github.com/openai/openai-go#errors)
+
+## More SDK examples
+
+- [Use the Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md)
+- [Generate embeddings](../../06-models/06.6-develop-with-ai-models/18-embeddings.md)
+- [Analyze images](../../06-models/06.7-model-capabilities/05-gpt-with-vision.md)
+- [Fine-tune a model](../../06-models/06.8-fine-tuning/02-fine-tuning.md)
+
+**[programming-language-java]**
+
+[Source code](https://github.com/openai/openai-java) | [Package](https://central.sonatype.com/artifact/com.openai/openai-java) | [REST API reference](https://ai.azure.com/api-reference/) | [Java API reference](https://javadoc.io/doc/com.openai/openai-java/latest/index.html)
+
+The examples require Java 8 or later. They were tested with `openai-java` 4.43.0 and `azure-identity` 1.18.4.
+
+## Install the packages
+
+### Maven
+
+Add the OpenAI and Azure Identity dependencies to your Maven project:
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>com.openai</groupId>
+    <artifactId>openai-java</artifactId>
+                <version>4.43.0</version>
+  </dependency>
+  <dependency>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-identity</artifactId>
+    <version>1.18.4</version>
+  </dependency>
+</dependencies>
+```
+
+Maven resolves the packages and their transitive dependencies when you build the project.
+
+### Gradle
+
+Add the same packages to the `dependencies` block in your Gradle build file:
+
+```gradle
+dependencies {
+        implementation("com.openai:openai-java:4.43.0")
+        implementation("com.azure:azure-identity:1.18.4")
+}
+```
+
+Gradle resolves the packages when you build the project.
+
+## Create a response with Microsoft Entra ID
+
+Use `DefaultAzureCredential` and `BearerTokenCredential` to authenticate without storing an API key.
+
+```java
+import com.azure.identity.AuthenticationUtil;
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.credential.BearerTokenCredential;
+import com.openai.models.responses.ResponseCreateParams;
+
+public class ResponsesExample {
+    public static void main(String[] args) {
+        String endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+        OpenAIClient openAIClient = OpenAIOkHttpClient.builder()
+                .baseUrl(endpoint)
+                .credential(BearerTokenCredential.create(
+                        AuthenticationUtil.getBearerTokenSupplier(
+                                new DefaultAzureCredentialBuilder().build(),
+                                "https://ai.azure.com/.default")))
+                .build();
+        ResponseCreateParams params = ResponseCreateParams.builder()
+                .model("gpt-5-mini")
+                .input("Explain the purpose of an API in one sentence.")
+                .build();
+        openAIClient.responses().create(params).output().stream()
+                .flatMap(item -> item.message().stream())
+                .flatMap(message -> message.content().stream())
+                .flatMap(content -> content.outputText().stream())
+                .forEach(output -> System.out.println(output.text()));
+    }
+}
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`AzureEntraIdExample`](https://github.com/openai/openai-java/blob/main/openai-java-example/src/main/java/com/openai/example/AzureEntraIdExample.java) and [`ResponsesExample`](https://github.com/openai/openai-java/blob/main/openai-java-example/src/main/java/com/openai/example/ResponsesExample.java)
+
+## Create a response with an API key
+
+Don't use API keys for production. Store the key in the `AZURE_OPENAI_API_KEY` environment variable instead of placing it in source code.
+
+```bash
+export AZURE_OPENAI_API_KEY="<your-api-key>"
+```
+
+Then create the client and request:
+
+```java
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.responses.ResponseCreateParams;
+
+public class ApiKeyResponsesExample {
+    public static void main(String[] args) {
+        String endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+        String apiKey = System.getenv("AZURE_OPENAI_API_KEY");
+        if (apiKey == null) throw new IllegalStateException(
+                "AZURE_OPENAI_API_KEY is required.");
+        OpenAIClient openAIClient = OpenAIOkHttpClient.builder()
+                .baseUrl(endpoint).apiKey(apiKey).build();
+        ResponseCreateParams params = ResponseCreateParams.builder()
+                .model("gpt-5-mini")
+                .input("Explain the purpose of an API in one sentence.")
+                .build();
+        openAIClient.responses().create(params).output().stream()
+                .flatMap(item -> item.message().stream())
+                .flatMap(message -> message.content().stream())
+                .flatMap(content -> content.outputText().stream())
+                .forEach(output -> System.out.println(output.text()));
+    }
+}
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`OpenAIOkHttpClient`](https://github.com/openai/openai-java#client-configuration)
+
+## Use Chat Completions
+
+For new applications, use the Responses API. Use Chat Completions when you need its message-based interface or are maintaining an existing application.
+
+```java
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.chat.completions.ChatCompletionCreateParams;
+
+public class ChatExample {
+    public static void main(String[] args) {
+        String endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+        String apiKey = System.getenv("AZURE_OPENAI_API_KEY");
+        if (apiKey == null) throw new IllegalStateException(
+                "AZURE_OPENAI_API_KEY is required.");
+        OpenAIClient openAIClient = OpenAIOkHttpClient.builder()
+                .baseUrl(endpoint).apiKey(apiKey).build();
+        ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
+                .model("gpt-5-mini")
+                .addDeveloperMessage("You are a helpful assistant.")
+                .addUserMessage("Explain the purpose of an API.")
+                .build();
+        openAIClient.chat().completions().create(params).choices().stream()
+                .flatMap(choice -> choice.message().content().stream())
+                .forEach(System.out::println);
+    }
+}
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`ChatCompletionCreateParams`](https://github.com/openai/openai-java/blob/main/openai-java-example/src/main/java/com/openai/example/CompletionsExample.java)
+
+## Stream a response
+
+Call `createStreaming`, and process text delta events as the model generates them:
+
+```java
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.http.StreamResponse;
+import com.openai.models.responses.ResponseCreateParams;
+import com.openai.models.responses.ResponseStreamEvent;
+
+public class StreamingExample {
+    public static void main(String[] args) {
+        String endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+        String apiKey = System.getenv("AZURE_OPENAI_API_KEY");
+        if (apiKey == null) throw new IllegalStateException(
+                "AZURE_OPENAI_API_KEY is required.");
+        OpenAIClient openAIClient = OpenAIOkHttpClient.builder()
+                .baseUrl(endpoint).apiKey(apiKey).build();
+        // Stream text as the model generates it.
+        ResponseCreateParams params = ResponseCreateParams.builder()
+                .model("gpt-5-mini")
+                .input("Explain the purpose of an API in one sentence.")
+                .build();
+        try (StreamResponse<ResponseStreamEvent> stream =
+                openAIClient.responses().createStreaming(params)) {
+            stream.stream().flatMap(event -> event.outputTextDelta().stream())
+                    .forEach(delta -> System.out.print(delta.delta()));
+        }
+    }
+}
+```
+
+The following streamed output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`responses.createStreaming`](https://github.com/openai/openai-java/blob/main/openai-java-example/src/main/java/com/openai/example/ResponsesStreamingExample.java)
+
+## Handle errors and retries
+
+The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses twice with exponential backoff. Catch `OpenAIServiceException` to inspect the HTTP status and error details for a service response, and catch `OpenAIException` for other SDK failures.
+
+Call `maxRetries` on `OpenAIOkHttpClient.builder()` to change the default. Preserve the service exception so that your application can log its status and request metadata.
+
+Reference: [Error handling](https://github.com/openai/openai-java#error-handling) and [retries](https://github.com/openai/openai-java#retries)
+
+## More SDK examples
+
+- [Use the Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md)
+- [Generate embeddings](../../06-models/06.6-develop-with-ai-models/18-embeddings.md)
+- [Analyze images](../../06-models/06.7-model-capabilities/05-gpt-with-vision.md)
+- [Fine-tune a model](../../06-models/06.8-fine-tuning/02-fine-tuning.md)
+
+**[programming-language-javascript]**
+
+[Source code](https://github.com/openai/openai-node) | [Package](https://www.npmjs.com/package/openai) | [REST API reference](https://ai.azure.com/api-reference/) | [Azure OpenAI v1 guidance](04-api-version-lifecycle.md)
+
+The examples require Node.js 20 or later. They were tested with `openai` 6.46.0 and `@azure/identity` 4.13.1. Use `openai` 5.18.0 or later when you pass a Microsoft Entra token provider as `apiKey`.
+
+## Install the packages
+
+Install the OpenAI and Azure Identity packages:
+
+```bash
+npm install openai @azure/identity
+```
+
+The command adds both packages to your project.
+
+## Create a response with Microsoft Entra ID
+
+Use `DefaultAzureCredential` and `getBearerTokenProvider` to authenticate without storing an API key. The token provider refreshes the access token when needed.
+
+```typescript
+import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
+import OpenAI from "openai";
+
+const endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+const tokenProvider = getBearerTokenProvider(
+  new DefaultAzureCredential(),
+  "https://ai.azure.com/.default",
+);
+const openai = new OpenAI({ baseURL: endpoint, apiKey: tokenProvider });
+
+async function main() {
+  const response = await openai.responses.create({
+    model: "gpt-5-mini",
+    input: "Explain the purpose of an API in one sentence.",
+  });
+  console.log(response.output_text);
+}
+
+main().catch(console.error);
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`OpenAI` client and Azure OpenAI v1 authentication](https://github.com/openai/openai-node/blob/main/azure.md)
+
+## Create a response with an API key
+
+API keys aren't recommended for production use. Store the key in the `AZURE_OPENAI_API_KEY` environment variable instead of placing it in source code.
+
+```bash
+export AZURE_OPENAI_API_KEY="<your-api-key>"
+```
+
+Then create the client and request:
+
+```typescript
+import OpenAI from "openai";
+
+const endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+const apiKey = process.env["AZURE_OPENAI_API_KEY"];
+if (!apiKey) throw new Error("AZURE_OPENAI_API_KEY is required.");
+
+const openai = new OpenAI({ baseURL: endpoint, apiKey });
+
+async function main() {
+  const response = await openai.responses.create({
+    model: "gpt-5-mini",
+    input: "Explain the purpose of an API in one sentence.",
+  });
+  console.log(response.output_text);
+}
+
+main().catch(console.error);
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`responses.create`](https://github.com/openai/openai-node/blob/main/examples/azure/responses.ts)
+
+## Use Chat Completions
+
+For new applications, use the Responses API. Use Chat Completions when you need its message-based interface or are maintaining an existing application.
+
+```typescript
+import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
+import OpenAI from "openai";
+
+const endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+const tokenProvider = getBearerTokenProvider(
+  new DefaultAzureCredential(),
+  "https://ai.azure.com/.default",
+);
+const openai = new OpenAI({ baseURL: endpoint, apiKey: tokenProvider });
+
+async function main() {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-5-mini",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "Explain the purpose of an API." },
+    ],
+  });
+  console.log(completion.choices[0]?.message.content ?? "No response returned.");
+}
+
+main().catch(console.error);
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Keeping `messages` inside the request provides the contextual typing required for the `role` values. If you define the array separately, declare it as `OpenAI.Chat.ChatCompletionMessageParam[]`.
+
+Reference: [`chat.completions.create`](https://github.com/openai/openai-node/blob/main/examples/azure/chat.ts)
+
+## Stream a response
+
+Set `stream` to `true`, and process text delta events as the model generates them:
+
+```typescript
+import OpenAI from "openai";
+
+const endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+const apiKey = process.env["AZURE_OPENAI_API_KEY"];
+if (!apiKey) throw new Error("AZURE_OPENAI_API_KEY is required.");
+const openai = new OpenAI({ baseURL: endpoint, apiKey });
+
+async function main() {
+  // Stream text as the model generates it.
+  const stream = await openai.responses.create({
+    model: "gpt-5-mini",
+    input: "Explain the purpose of an API in one sentence.",
+    stream: true,
+  });
+  for await (const event of stream) {
+    if (event.type === "response.output_text.delta") {
+      process.stdout.write(event.delta);
+    }
+  }
+}
+
+main().catch(console.error);
+```
+
+The following streamed output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`responses.create` streaming](https://github.com/openai/openai-node#streaming-responses)
+
+## Handle errors and retries
+
+The SDK automatically retries connection errors, timeouts, HTTP 408, 409, 429, and 5xx responses twice with exponential backoff. Set `maxRetries` on the `OpenAI` client to change this behavior. Catch `APIError` to inspect the HTTP status, request ID, and error details for a failed request.
+
+The following example sets four retries and records the request ID for successful and failed requests:
+
+```typescript
+import OpenAI from "openai";
+
+const endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/";
+const apiKey = process.env["AZURE_OPENAI_API_KEY"];
+if (!apiKey) throw new Error("AZURE_OPENAI_API_KEY is required.");
+const openai = new OpenAI({ baseURL: endpoint, apiKey, maxRetries: 4 });
+
+async function main() {
+  try {
+    // Send the request and record its request ID.
+    const response = await openai.responses.create({
+      model: "gpt-5-mini",
+      input: "Explain the purpose of an API in one sentence.",
+    });
+    console.log(response.output_text);
+    console.log(`Request ID: ${response._request_id}`);
+  } catch (error) {
+    if (error instanceof OpenAI.APIError) {
+      console.error(`Status: ${error.status}; Request ID: ${error.requestID}`);
+    }
+    throw error;
+  }
+}
+
+main().catch(console.error);
+```
+
+For a successful request, the following output is representative. The response text and request ID vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+Request ID: <request-id>
+```
+
+Reference: [Request IDs, errors, and retries](https://github.com/openai/openai-node#request-ids)
+
+## More SDK examples
+
+- [Use the Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md)
+- [Generate embeddings](../../06-models/06.6-develop-with-ai-models/18-embeddings.md)
+- [Analyze images](../../06-models/06.7-model-capabilities/05-gpt-with-vision.md)
+- [Fine-tune a model](../../06-models/06.8-fine-tuning/02-fine-tuning.md)
+
+**[programming-language-python]**
+
+[Source code](https://github.com/openai/openai-python) | [Package](https://pypi.org/project/openai/) | [API reference](https://github.com/openai/openai-python/blob/main/api.md)
+
+The examples require Python 3.9 or later. They were tested with `openai` 2.46.0 and `azure-identity` 1.25.3. Use `openai` 1.106.0 or later when you pass a Microsoft Entra token provider as `api_key`.
+
+## Install the packages
+
+Install the OpenAI and Azure Identity packages:
+
+```bash
+pip install openai azure-identity
+```
+
+The command installs both packages in the active Python environment.
+
+## Create a response with Microsoft Entra ID
+
+Use `DefaultAzureCredential` and `get_bearer_token_provider` to authenticate without storing an API key. The token provider refreshes the access token when needed.
+
+```python
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
+
+endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+token_provider = get_bearer_token_provider(
+    DefaultAzureCredential(), "https://ai.azure.com/.default"
+)
+openai = OpenAI(base_url=endpoint, api_key=token_provider)
+
+response = openai.responses.create(
+    model="gpt-5-mini",
+    input="Explain the purpose of an API in one sentence.",
+)
+print(response.output_text)
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`OpenAI` client](https://github.com/openai/openai-python) and [`get_bearer_token_provider`](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python&preserve-view=true#azure-identity-get-bearer-token-provider)
+
+## Create a response with an API key
+
+API keys aren't recommended for production use. Store the key in the `AZURE_OPENAI_API_KEY` environment variable instead of placing it in source code.
+
+```bash
+export AZURE_OPENAI_API_KEY="<your-api-key>"
+```
+
+Then create the client and request:
+
+```python
+import os
+from openai import OpenAI
+
+endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+api_key = os.environ["AZURE_OPENAI_API_KEY"]
+openai = OpenAI(base_url=endpoint, api_key=api_key)
+
+response = openai.responses.create(
+    model="gpt-5-mini",
+    input="Explain the purpose of an API in one sentence.",
+)
+print(response.output_text)
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`responses.create`](https://github.com/openai/openai-python/blob/main/README.md#usage)
+
+## Use Chat Completions
+
+For new applications, use the Responses API. Use Chat Completions when you need its message-based interface or are maintaining an existing application.
+
+```python
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
+
+endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+token_provider = get_bearer_token_provider(
+    DefaultAzureCredential(), "https://ai.azure.com/.default"
+)
+openai = OpenAI(base_url=endpoint, api_key=token_provider)
+
+completion = openai.chat.completions.create(
+    model="gpt-5-mini",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain the purpose of an API."},
+    ],
+)
+print(completion.choices[0].message.content)
+```
+
+The following output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`chat.completions.create`](https://github.com/openai/openai-python/blob/main/README.md#chat-completions)
+
+## Stream a response
+
+Set `stream` to `True`, and process text delta events as the model generates them:
+
+```python
+import os
+from openai import OpenAI
+
+endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+openai = OpenAI(
+    base_url=endpoint,
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+)
+
+# Stream text as the model generates it.
+stream = openai.responses.create(
+    model="gpt-5-mini",
+    input="Explain the purpose of an API in one sentence.",
+    stream=True,
+)
+for event in stream:
+    if event.type == "response.output_text.delta":
+        print(event.delta, end="", flush=True)
+```
+
+The following streamed output is representative. The exact wording might vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+```
+
+Reference: [`responses.create` streaming](https://github.com/openai/openai-python#streaming-responses)
+
+## Handle errors and retries
+
+The SDK automatically retries connection errors, timeouts, HTTP 408, 409, 429, and 5xx responses twice with exponential backoff. Set `max_retries` on the `OpenAI` client to change this behavior. Catch `openai.APIStatusError` to inspect the HTTP status, request ID, and response for a failed request.
+
+The following example sets four retries and records the request ID for successful and failed requests:
+
+```python
+import os
+import openai as openai_sdk
+from openai import OpenAI
+
+endpoint = "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/"
+openai = OpenAI(
+    base_url=endpoint,
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    max_retries=4,
+)
+
+try:
+    # Send the request and record its request ID.
+    response = openai.responses.create(
+        model="gpt-5-mini",
+        input="Explain the purpose of an API in one sentence.",
+    )
+    print(response.output_text)
+    print(f"Request ID: {response._request_id}")
+except openai_sdk.APIStatusError as error:
+    print(f"Status: {error.status_code}; Request ID: {error.request_id}")
+    raise
+```
+
+For a successful request, the following output is representative. The response text and request ID vary:
+
+```output
+An API allows software applications to communicate and exchange data through a defined set of rules.
+Request ID: <request-id>
+```
+
+Reference: [Request IDs, errors, and retries](https://github.com/openai/openai-python#request-ids)
+
+## More SDK examples
+
+- [Use the Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md)
+- [Generate embeddings](../../06-models/06.6-develop-with-ai-models/18-embeddings.md)
+- [Analyze images](../../06-models/06.7-model-capabilities/05-gpt-with-vision.md)
+- [Fine-tune a model](../../06-models/06.8-fine-tuning/02-fine-tuning.md)
+
+## Troubleshooting
+
+- For a `401` or `403` response, confirm that the intended identity or API key can access the Azure OpenAI resource.
+- For a `404` response, confirm that the base URL ends in `/openai/v1/` and that `model` contains a valid deployment name.
+- For a package or type error, update the SDK and compare the installed version with the version tested on this page.
+- For a model parameter error, check whether the deployed model supports the parameter. Parameter support can differ between model families.
+
+## Related content
+
+- [The Azure OpenAI Starter Kit](https://aka.ms/openai/start)
+- [Azure OpenAI To Responses](https://aka.ms/azure-openai-to-responses)
+- [Use the Azure OpenAI Responses API](../../06-models/06.6-develop-with-ai-models/02-responses.md)
+- [Azure OpenAI v1 API](04-api-version-lifecycle.md)

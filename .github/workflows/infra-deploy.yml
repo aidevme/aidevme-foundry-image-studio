@@ -1,12 +1,12 @@
 name: Infrastructure deploy
 
-# Deploys the Bicep templates in .infrastructure/ to Azure.
+# Deploys the Bicep templates in bicep/ to Azure.
 # Runs only when started manually from the Actions tab (workflow_dispatch).
 # Choose the environment and whether to only preview the changes (what-if).
 #
 # The Azure subscription is read from the AZURE_SUBSCRIPTION_ID repository variable.
 # Sign-in uses OpenID Connect, so no secret is stored in GitHub.
-# See .infrastructure/README.md for the one-time setup.
+# See bicep/README.md for the one-time setup.
 
 on:
   workflow_dispatch:
@@ -61,7 +61,7 @@ jobs:
 
       - name: Verify the parameter file has no placeholders
         run: |
-          file=".infrastructure/main.${ENVIRONMENT}.bicepparam"
+          file="bicep/main.${ENVIRONMENT}.bicepparam"
           if [ ! -f "$file" ]; then
             echo "::error::Parameter file $file does not exist."
             exit 1
@@ -73,8 +73,8 @@ jobs:
 
       - name: Lint and build Bicep
         run: |
-          az bicep lint --file .infrastructure/main.bicep
-          az bicep build --file .infrastructure/main.bicep --stdout > /dev/null
+          az bicep lint --file bicep/main.bicep
+          az bicep build --file bicep/main.bicep --stdout > /dev/null
 
       - name: Sign in to Azure (OIDC)
         uses: azure/login@v2
@@ -88,8 +88,8 @@ jobs:
           az deployment sub what-if \
             --location "$AZURE_LOCATION" \
             --name "image-studio-${ENVIRONMENT}" \
-            --template-file .infrastructure/main.bicep \
-            --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
+            --template-file bicep/main.bicep \
+            --parameters "bicep/main.${ENVIRONMENT}.bicepparam"
 
       - name: Recover a soft-deleted Key Vault
         if: ${{ !inputs.what_if_only }}
@@ -107,8 +107,8 @@ jobs:
           az deployment sub create \
             --location "$AZURE_LOCATION" \
             --name "image-studio-${ENVIRONMENT}" \
-            --template-file .infrastructure/main.bicep \
-            --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
+            --template-file bicep/main.bicep \
+            --parameters "bicep/main.${ENVIRONMENT}.bicepparam"
 
       - name: Summarize outputs
         if: ${{ !inputs.what_if_only }}

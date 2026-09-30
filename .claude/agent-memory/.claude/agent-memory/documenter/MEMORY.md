@@ -1,1 +1,0 @@
-- [Open documentation gaps](project_open_gaps.md) — header exemptions and stale write-document eval preconditions awaiting a decision

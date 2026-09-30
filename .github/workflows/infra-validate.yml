@@ -1,12 +1,12 @@
 name: Infrastructure validate
 
-# Validates the Bicep templates in .infrastructure/.
+# Validates the Bicep templates in bicep/.
 # Runs only when started manually from the Actions tab (workflow_dispatch).
 #   - Always: lints and compiles the templates and the parameter file, and reports placeholders.
 #   - Optional: previews the changes against Azure with what-if (nothing is deployed).
 #
 # The what-if job runs in the GitHub environment of the same name, so it signs in with the
-# environment:<name> federated credential. See .infrastructure/README.md for the setup.
+# environment:<name> federated credential. See bicep/README.md for the setup.
 
 on:
   workflow_dispatch:
@@ -43,20 +43,20 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Lint Bicep
-        run: az bicep lint --file .infrastructure/main.bicep
+        run: az bicep lint --file bicep/main.bicep
 
       - name: Build Bicep
-        run: az bicep build --file .infrastructure/main.bicep --stdout > /dev/null
+        run: az bicep build --file bicep/main.bicep --stdout > /dev/null
 
       - name: Build parameter file
-        run: az bicep build-params --file .infrastructure/main.${ENVIRONMENT}.bicepparam --stdout > /dev/null
+        run: az bicep build-params --file bicep/main.${ENVIRONMENT}.bicepparam --stdout > /dev/null
         env:
           AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'swedencentral' }}
           APIM_PUBLISHER_EMAIL: ${{ vars.APIM_PUBLISHER_EMAIL || 'platform@example.com' }}
 
       - name: Report unresolved placeholders
         run: |
-          if grep -nE "<[a-z][a-z0-9-]*>" ".infrastructure/main.${ENVIRONMENT}.bicepparam"; then
+          if grep -nE "<[a-z][a-z0-9-]*>" "bicep/main.${ENVIRONMENT}.bicepparam"; then
             echo "::warning::The parameter file contains unresolved placeholders. The deploy workflow refuses to run until they are replaced."
           fi
 
@@ -97,5 +97,5 @@ jobs:
           az deployment sub what-if \
             --location "$AZURE_LOCATION" \
             --name "image-studio-${ENVIRONMENT}" \
-            --template-file .infrastructure/main.bicep \
-            --parameters ".infrastructure/main.${ENVIRONMENT}.bicepparam"
+            --template-file bicep/main.bicep \
+            --parameters "bicep/main.${ENVIRONMENT}.bicepparam"

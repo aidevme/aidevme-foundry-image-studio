@@ -1,0 +1,207 @@
+# Enable priority processing for Microsoft Foundry models
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Enable priority processing for Microsoft Foundry models |
+| **Document Location** | `docs/research-docs/azure-foundry/06-models/06.3-offers-deployment-types-and-pricing/08-priority-processing.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Enable priority processing for Microsoft Foundry models". Learn how to enable priority processing for Microsoft Foundry models to achieve low latency and high availability for time-sensitive workloads. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/priority-processing). Article date: 2026-09-22. Page updated: 2026-09-22. Retrieved: 2026-09-29. Navigation: Models > Offers, deployment types, and pricing > Priority processing.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+Priority processing provides low-latency performance with the flexibility of pay-as-you-go. In this article, you enable priority processing on a model deployment, verify which service tier processed your requests, and monitor associated costs.
+
+## Prerequisites
+
+- An Azure subscription - [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account?cid=msft_learn).
+- A Microsoft Foundry project with a model of the deployment type `GlobalStandard` or `DataZoneStandard` deployed.
+- Model versions `2025-12-01` or later.
+
+## Key use cases
+
+- **Consistent, low latency** for responsive user experiences.
+- **Pay-as-you-go simplicity** with no long-term commitments.
+- **Business-hour or bursty traffic** that benefits from scalable, cost-efficient performance. Optionally, you can combine priority processing with Provisioned Throughput Units (PTU) for steady-state capacity and cost optimization.
+
+## Latency target
+
+The following table lists the *latency target value* for each model that supports priority processing. The latency target value is calculated as p50 request latency on a per 5-minute basis and expressed as a percentile threshold. For example, "99% > 50 Tokens per Second (TPS)" means 99% of requests are processed at more than 50 tokens per second.
+
+| Model | Latency target value |
+| --- | --- |
+| gpt-6-sol, 2026-09-22 | 99% > 80 TPS |
+| gpt-5.6-terra, 2026-07-09 | 99% > 70 TPS |
+| gpt-5.6-sol, 2026-07-09 | 99% > 80 TPS |
+| gpt-5.5, 2026-04-24 | 99% > 50 TPS |
+| gpt-5.4-mini, 2026-03-17 | 99% > 100 TPS |
+| gpt-5.4, 2026-03-051 | 99% > 50 TPS |
+| gpt-5.2, 2025-12-11 | 99% > 50 TPS |
+| gpt-5.1, 2025-11-13 | 99% > 50 TPS |
+| gpt-4.1, 2025-04-141 | 99% > 80 TPS |
+
+1 *Long context* for this model, that is, requests estimated to exceed **128k prompt tokens** are downgraded to standard processing and charged at the standard tier rate.
+
+## Priority processing availability by deployment type
+
+Priority processing can be enabled in Global standard deployments or Data Zone standard (US) deployments. For pricing information, see [the Azure OpenAI pricing page](https://azure.microsoft.com/pricing/details/azure-openai/).
+
+**[Global standard]**
+
+### Global standard model availability
+
+| **Region** | **gpt-6-sol**, **2026-09-22** | **gpt-5.6-terra**, **2026-07-09** | **gpt-5.6-sol**, **2026-07-09** | **gpt-5.5**, **2026-04-24** | **gpt-5.4-mini**, **2026-03-17** | **gpt-5.4**, **2026-03-05** | **gpt-5.2**, **2025-12-11** | **gpt-5.1**, **2025-11-13** | **gpt-4.1**, **2025-04-14** |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| australiaeast | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| brazilsouth | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| canadacentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| canadaeast | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| centralus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| eastus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| eastus2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| francecentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| germanywestcentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| italynorth | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| japaneast | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| koreacentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| northcentralus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| northeurope | - | - | - | ✅ | ✅ | ✅ | - | - | - |
+| norwayeast | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| polandcentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| southafricanorth | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| southcentralus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| southeastasia | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| southindia | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| spaincentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| swedencentral | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| switzerlandnorth | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| switzerlandwest | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| uaenorth | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| uksouth | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| westeurope | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| westus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| westus3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+**[Data Zone standard]**
+
+### Data zone standard model availability
+
+| **Region** | **gpt-6-sol**, **2026-09-22** | **gpt-5.5**, **2026-04-24** | **gpt-5.4-mini**, **2026-03-17** | **gpt-5.4**, **2026-03-05** | **gpt-5.2**, **2025-12-11** | **gpt-5.1**, **2025-11-13** | **gpt-4.1**, **2025-04-14** |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| centralus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| eastus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| eastus2 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| northcentralus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| southcentralus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| westus | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| westus3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+## Enable priority processing at the deployment level
+
+You can enable priority processing at the deployment level and [(optionally) at the request level](#enable-priority-processing-at-the-request-level).
+
+> **Note**
+>
+> Priority processing can be enabled in Global standard or Data Zone standard (US) deployments. Priority processing uses the same quota as standard processing.
+
+In the [Microsoft Foundry](https://ai.azure.com/?cid=learnDocs) portal, turn on the **Priority processing** toggle on the deployment details page when creating the deployment or update the setting of a deployed model by editing the deployment details.
+
+[![Screenshot showing how to enable priority processing during model deployment in the Foundry portal.](https://learn.microsoft.com/en-us/azure/foundry/openai/media/priority-processing/enable-priority-processing-foundry.png)](https://learn.microsoft.com/en-us/azure/foundry/openai/media/priority-processing/enable-priority-processing-foundry.png#lightbox)
+
+> **Note**
+>
+> If you prefer to use code to enable priority processing at the deployment level, you can do so via the REST API for deployment by setting the `service_tier` attribute as follows: `"properties" : {"service_tier" : "priority"}`. Allowed values for the `service_tier` attribute are `default` and `priority`. `default` implies standard processing, while `priority` enables priority processing.
+
+Once a model deployment is configured to use priority processing, you can start sending requests to the model.
+
+## View usage metrics
+
+You can view the utilization measure for your resource in the Azure Monitor section in the Azure portal.
+
+To view the volume of requests processed by standard processing versus priority processing, split by the service tier (standard or priority) that was in the original request:
+
+1. Sign in to [https://portal.azure.com](https://portal.azure.com/).
+2. Go to your Azure OpenAI resource and select the **Metrics** option from the left navigation.
+3. On the metrics page, add the **Azure OpenAI requests** metric. You can also select other metrics like **Azure OpenAI latency**, **Azure OpenAI usage**, and others.
+4. Select **Add filter** to select the standard deployment for which priority processing requests were processed.
+5. Select **Apply splitting** to split the values by **ServiceTierRequest** and **ServiceTierResponse**.
+
+[![Screenshot of the priority processing utilization on the resource's metrics page in the Azure portal.](https://learn.microsoft.com/en-us/azure/foundry/openai/media/priority-processing/azure-monitor-priority-processsing-utilization.png)](https://learn.microsoft.com/en-us/azure/foundry/openai/media/priority-processing/azure-monitor-priority-processsing-utilization.png#lightbox)
+
+For more information about monitoring your deployments, see [Monitor Azure OpenAI](https://learn.microsoft.com/en-us/azure/foundry-classic/openai/how-to/monitor-openai).
+
+## Monitor costs
+
+You can see a breakdown of costs for priority and standard requests in the Azure portal's cost analysis page by filtering on deployment name and billing tags as follows:
+
+1. Go to the cost analysis page in the [Azure portal](https://portal.azure.com/).
+2. (Optional) Filter by resource.
+3. To filter by deployment name: Add a filter for billing **Tag** > select **deployment** as the value, then choose your deployment name.
+
+[![Screenshot of the priority processing utilization on the resource's cost analysis page in the Azure portal.](https://learn.microsoft.com/en-us/azure/foundry/openai/media/priority-processing/cost-analysis-priority-processing.png)](https://learn.microsoft.com/en-us/azure/foundry/openai/media/priority-processing/cost-analysis-priority-processing.png#lightbox)
+
+For information about pricing for priority processing, see the [Azure OpenAI Service pricing overview](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/).
+
+## Enable priority processing at the request level
+
+> **Important**
+>
+> Beginning September 25, 2026, requests to models that don't support Flex processing return HTTP 400 with an `invalid_request_error`. Foundry doesn't automatically fall back from `flex` to Standard processing. Verify that your model supports Flex processing before you send a request. If Standard processing is acceptable, set `service_tier` to `default` instead. For supported models and fallback guidance, see [Use Flex processing with Azure OpenAI](07-flex-processing.md).
+
+Enabling priority processing at the request level is **optional**. Both the chat completions API and responses API have an optional attribute `service_tier` that specifies the processing type to use when serving a request. The following example shows how to set `service_tier` to `priority` in a responses request.
+
+```bash
+curl -X POST https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $AZURE_OPENAI_AUTH_TOKEN" \
+  -d '{
+     "model": "gpt-4.1",
+     "input": "This is a test",
+     "service_tier": "priority"
+    }'
+```
+
+Use the `service_tier` attribute to override the deployment-level setting. For Standard and Priority processing, `service_tier` can take the values `auto`, `default`, and `priority`.
+
+- If you don't set the attribute, it defaults to `auto`.
+- `service_tier = auto` means the request uses the service tier configured in the deployment.
+- `service_tier = default` means the request uses the standard pricing and performance for the selected model.
+- `service_tier = priority` means the request uses the priority processing service tier.
+
+The following table summarizes Standard and Priority routing based on the deployment-level and request-level settings for `service_tier`.
+
+| Deployment-level setting | Request-level setting | Request processed by service tier |
+| --- | --- | --- |
+| default | auto, default | Standard |
+| default | priority | Priority processing |
+| priority | auto, priority | Priority processing |
+| priority | default | Standard |
+
+## Limitations
+
+- The service currently doesn't support regional standard deployments and EU datazone standard deployments.
+- The service might re-route some priority requests to standard processing* during these scenarios:
+  - If rapid increases to your priority processing tokens per minute lead to hitting *ramp rate limits*. Currently, the ramp rate limit is defined as increasing traffic by more than 50% tokens per minute in less than 15 minutes.
+  - During periods of peak requests to priority processing.
+  - Long context requests sent to certain models listed in the [Latency target table](#latency-target).
+
+  > **Tip**
+  >
+  > If you routinely encounter ramp rate limits, consider purchasing PTU instead of or in addition to priority processing.
+  * The service bills requests processed by the standard service tier at standard rates. Requests processed by the standard service tier include `service_tier = default` in the response, while requests processed by priority processing tier include `service_tier = priority` in the response.
+
+## Troubleshooting
+
+| Issue | Cause | Resolution |
+| --- | --- | --- |
+| Requests downgraded to standard tier | One of these situations: - Traffic ramped up more than 50% tokens per minute in under 15 minutes, hitting the ramp rate limit. - Requests sent during periods of peak requests to priority processing. - Long context requests sent to certain models listed in the [Latency target table](#latency-target). | - Increase traffic gradually, if you've encountered ramp rate limits. - Consider purchasing PTU for steady-state capacity. |
+
+## Related content
+
+- [Provisioned throughput](09-provisioned-throughput.md)
+- [Spillover traffic management](15-spillover-traffic-management.md)
+- [Deployment types](04-deployment-types.md)
+- [Monitoring Azure OpenAI](https://learn.microsoft.com/en-us/azure/foundry-classic/openai/how-to/monitor-openai)
+- [Understanding costs associated with PTU](13-provisioned-throughput-billing.md)

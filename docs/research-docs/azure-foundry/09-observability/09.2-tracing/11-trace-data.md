@@ -1,0 +1,123 @@
+# Tracing and data handling
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Tracing and data handling |
+| **Document Location** | `docs/research-docs/azure-foundry/09-observability/09.2-tracing/11-trace-data.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Tracing and data handling". Tracing in Microsoft Foundry captures execution data to improve AI agent performance. Find out how to enable, disable, and govern trace data. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-data). Article date: 2026-06-02. Page updated: 2026-06-26. Retrieved: 2026-09-29. Navigation: Observability > Tracing > Tracing and data handling.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+Foundry tracing is an observability capability in Microsoft Foundry that captures Customer Data from AI agents. It helps developers and operators understand system behavior, debug problems, and optimize performance.
+
+Tracing records information such as:
+
+- User inputs and prompts
+- Agent and model inputs and outputs
+- Tool calls and intermediate steps
+- Execution metadata (timestamps, latency, token usage, errors, etc.)
+
+This data might include user-generated content and operational telemetry.
+
+This data is used to provide visibility into how agents run, enabling troubleshooting and performance improvements across agent workflows. Foundry uses OpenTelemetry standards and stores trace data in connected telemetry systems Azure Monitor Application Insights.
+
+> **Important**
+>
+> When you enable AppInsights for a project, AppInsights logs traces to help monitor and evaluate user-level interactions with agents. Project members with the Log Analytics Reader role in AppInsights can view trace data, which might contain personal data and customer content. If the underlying Log Analytics tables are [protected](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/protected-tables-configure) (their protection level is set to **Protected**), members need the [Privileged Monitoring Data Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/manage-access?tabs=portal#privileged-monitoring-data-reader) role to view that trace data. Review what trace data is collected and who can view and use this data. More information is in the following section.
+>
+> Default state:
+>
+> - **Tracing is off by default.**
+> - No trace data is collected or stored unless explicitly enabled by Foundry Account Owner or Foundry Owner.
+>
+> Additional [Azure Monitor App Insights pricing](https://azure.microsoft.com/pricing/details/monitor/) might apply.
+
+This ensures customers retain control over when data collection begins.
+
+## Enable tracing
+
+Tracing is enabled when a project is connected to an Azure Monitor Application Insights resource. Common enablement flows include:
+
+- Creating or connecting an Application Insights resource during project creation.
+- Creating or connecting an Application Insights resource to an existing project without a connected Application Insights resource.
+
+When you enable tracing:
+
+- Trace data begins to be collected and stored for all agents within the project.
+- To view traces in the Foundry Tracing UI, users need access to the Foundry project and read permission on the connected Application Insights or Log Analytics workspace. For example, roles such as Log Analytics Reader, Monitoring Reader, or Reader at the Application Insights resource, Log Analytics workspace, or an appropriate parent scope can grant this access. If the underlying Log Analytics tables are [protected](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/protected-tables-configure), assignees also need the [Privileged Monitoring Data Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/manage-access?tabs=portal#privileged-monitoring-data-reader) role to read that data.
+
+## Disable tracing
+
+Disable tracing by:
+
+- Disconnecting or removing the Application Insights resource.
+
+After you disable tracing:
+
+- No new trace data is collected on agents in that project.
+- Previously collected data remains subject to retention policies of the Application Insights.
+
+> **Note**
+>
+> Exact steps on how to disable tracing depend on the UI or SDK surface and should align with product documentation.
+
+## Where data is stored
+
+- The Application Insights resource connected to the Foundry project stores trace data.
+- Your Application Insights and Log Analytics configuration governs data retention and storage. For more information, see [Manage data retention in a Log Analytics workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/data-retention-configure).
+
+## Data sharing considerations
+
+- Trace data may be accessible to users with appropriate permissions on the connected telemetry resource.
+- Depending on the configuration, users within the same project or tenant might see data.
+- To view traces in the Foundry Tracing UI, users need access to the Foundry project and read permission on the connected Application Insights or Log Analytics workspace. For example, roles such as Log Analytics Reader, Monitoring Reader, or Reader at the Application Insights resource, Log Analytics workspace, or an appropriate parent scope can grant this access. If the underlying Log Analytics tables are [protected](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/protected-tables-configure), assignees also need the [Privileged Monitoring Data Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/manage-access?tabs=portal#privileged-monitoring-data-reader) role to read that data.
+- For additional considerations and important information specific to hosted agents, review [hosted agents](../../07-agents/07.3-hosted-agents/01-hosted-agents.md) and [hosted agent's platform-injected environment variables](../../07-agents/07.3-hosted-agents/49-deploy-hosted-agent.md#platform-injected-environment-variables).
+
+Customers are responsible for configuring access controls and ensuring compliance with their organizational policies.
+
+## Privacy
+
+Tracing can capture personal data including:
+
+- User prompts and responses
+- Application-specific content
+
+### Best practices
+
+- Avoid logging secrets, credentials, or tokens.
+- Redact or minimize personal data before it is logged.
+- Apply access controls and retention policies to trace data.
+
+### Data protection controls
+
+- Personal data redaction: Redact personal data, such as email addresses and phone numbers.
+- Restrict access to trace data by carefully managing which users are granted the RBAC **Log Analytics Reader** role. When the underlying Log Analytics tables are [protected](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/protected-tables-configure), also manage who has the [Privileged Monitoring Data Reader](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/manage-access?tabs=portal#privileged-monitoring-data-reader) role, because it grants read access to protected tables.
+- Configurable policies: Control what data is captured and visible.
+
+These controls help you manage risk and comply with privacy requirements.
+
+### Customer responsibilities
+
+When you enable tracing, you're responsible for:
+
+- Informing end users about data collection, including the types of data being collected, the purpose, who has visibility, their options, and other information needed for them to make reasonable choices (where applicable).
+- Ensuring compliance with privacy, legal, and regulatory requirements.
+- Configuring appropriate access controls and data retention policies.
+
+## Summary
+
+Foundry Tracing is a powerful observability feature that enables debugging, monitoring, and optimization of AI agents. It is:
+
+- Off by default.
+- Explicitly enabled by connecting telemetry resources.
+- Designed with customer control over data collection and handling.
+
+## Related content
+
+- [Agent tracing overview](01-trace-agent-concept.md)
+- [Set up tracing](02-trace-agent-setup.md)
+- [Configure tracing for AI agent frameworks](06-trace-agent-framework.md)

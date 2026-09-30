@@ -1,0 +1,285 @@
+# Isolate hosted agent sessions per user
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Isolate hosted agent sessions per user |
+| **Document Location** | `docs/research-docs/azure-foundry/07-agents/07.3-hosted-agents/34-isolate-sessions-per-user.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Isolate hosted agent sessions per user". Keep each user's Microsoft Foundry hosted agent sessions, conversations, and stored data private, and extend isolation to your own application's users. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/isolate-sessions-per-user). Article date: 2026-07-21. Page updated: 2026-09-21. Retrieved: 2026-09-29. Navigation: Agents > Hosted agents > Run, test, and debug > Isolate sessions per user.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+A single hosted agent serves many users from one endpoint. This article shows you how Microsoft Foundry keeps each user's sessions, conversations, and stored data private, and how to extend that isolation to the users of your own application. By the end, you can invoke an agent and confirm that one caller can't see another caller's sessions, conversations, or stored data.
+
+## Prerequisites
+
+- A deployed hosted agent. To deploy one, see [Deploy a hosted agent](49-deploy-hosted-agent.md).
+- The Azure Developer CLI Foundry extensions, for the CLI steps. See [Install the Azure Developer CLI Foundry extensions](../../05-developer-tools-and-integrations/05.1-azure-developer-cli/02-install-cli-foundry-extensions.md).
+- An authenticated session. Run `azd auth login`, or sign in with the Microsoft Entra credential your SDK or REST client uses.
+- The Foundry User role on the project.
+
+> **Important**
+>
+> The Foundry RBAC roles were recently renamed. **Foundry User**, **Foundry Owner**, **Foundry Account Owner**, and **Foundry Project Manager** were previously named Azure AI User, Azure AI Owner, Azure AI Account Owner, and Azure AI Project Manager. You might still see the previous names in some places while the rename rolls out. The role IDs and core permissions are unchanged by the rename.
+
+## Understand per-user isolation
+
+The platform identifies each caller from their Microsoft Entra token and keeps their data private to that identity, even though every caller reaches the same agent through one shared endpoint. For each user, the following stay isolated:
+
+- **Conversations.** Each user's conversation history - the messages, tool calls, and responses they thread through the Responses protocol - is private to that user. One user can't read or list another user's conversations.
+- **Sessions.** Each caller gets their own session by default, so the sessions one user can list and manage don't include another user's sessions.
+- **Stored data.** Data your agent stores for a user is scoped to that user, so it isn't returned to a different user.
+
+Think of it as one agent serving many private workspaces. Each session also gets a private `$HOME` filesystem in its own sandbox, isolated by default because each user gets their own session. If you instead place several users in one session, that sandbox is shared - see [Multiplex multiple users in one hosted agent session](35-multiplex-session-users.md). For more about the session model, see [Hosted agents in Foundry Agent Service](01-hosted-agents.md#isolation-model).
+
+Typical scenarios include:
+
+- **Per-user chat.** Each signed-in customer gets their own conversation history, sessions, and stored data.
+- **Multi-tenant apps.** Each tenant's users are isolated from every other tenant's users.
+
+You get this isolation by default. The following sections show the default path, then how to extend it to users that you authenticate yourself.
+
+## Invoke an agent with automatic isolation
+
+Invoke the agent as the signed-in identity. The platform creates a session scoped to that identity and returns its `agent_session_id`.
+
+**[azd]**
+
+```bash
+azd ai agent invoke "Summarize the latest support tickets"
+```
+
+The session belongs to the identity from `azd auth login`. A different signed-in user that runs the same command gets a separate, private session.
+
+**[rest]**
+
+Set up the shared variables that the REST examples use:
+
+```bash
+BASE_URL="https://my-account.services.ai.azure.com/api/projects/my-project"
+API_VERSION="v1"
+RESOURCE="https://ai.azure.com"
+AGENT_NAME="my-agent"
+
+az rest --method POST \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/endpoint/protocols/openai/responses?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --body '{
+        "input": "Summarize the latest support tickets",
+        "stream": false
+    }'
+```
+
+The Microsoft Entra token on the request identifies the caller. The response payload includes the `agent_session_id` that the platform created and scoped to that identity.
+
+**[python]**
+
+```python
+openai_client = project.get_openai_client(agent_name="my-agent")
+
+response = openai_client.responses.create(
+    input="Summarize the latest support tickets",
+)
+session_id = response.model_extra.get("agent_session_id")
+print(f"Session: {session_id}")
+```
+
+The OpenAI client authenticates with the caller's Microsoft Entra credential, so the session is scoped to that identity.
+
+**[csharp]**
+
+Install the packages with `dotnet add package Azure.AI.Projects --prerelease`, `dotnet add package Azure.AI.Extensions.OpenAI`, and `dotnet add package Azure.Identity`.
+
+```csharp
+using System.ClientModel;
+using System.Text.Json;
+using Azure.AI.Extensions.OpenAI;
+using Azure.AI.Projects;
+using Azure.Identity;
+using OpenAI.Responses;
+
+#pragma warning disable AAIP001, OPENAI001
+
+AIProjectClient projectClient = new(new Uri(projectEndpoint), new DefaultAzureCredential());
+ProjectResponsesClient responsesClient = projectClient.ProjectOpenAIClient
+    .GetProjectResponsesClientForAgentEndpoint("my-agent");
+
+ClientResult<ResponseResult> result = responsesClient.CreateResponse(
+    "Summarize the latest support tickets");
+
+// The session identifier is returned on the raw response payload.
+using JsonDocument payload = JsonDocument.Parse(result.GetRawResponse().Content.ToString());
+string sessionId = payload.RootElement.GetProperty("agent_session_id").GetString()!;
+Console.WriteLine($"Session: {sessionId}");
+```
+
+The client authenticates with the caller's Microsoft Entra credential, so the session is scoped to that identity.
+
+**[javascript]**
+
+```typescript
+const openAIClient = project.getOpenAIClient({
+    azureConfig: { allowPreview: true, agentName: "my-agent" },
+});
+
+const response = await openAIClient.responses.create({
+    input: "Summarize the latest support tickets",
+});
+const sessionId = (response as any).agent_session_id;
+console.log(`Session: ${sessionId}`);
+```
+
+The OpenAI client authenticates with the caller's Microsoft Entra credential, so the session is scoped to that identity.
+
+## Isolate sessions for your own users
+
+If your application authenticates its own end users - for example, through Google, GitHub, or a custom identity provider - a trusted service can tell Foundry which end user a request belongs to, so the platform isolates sessions per end user instead of per calling service.
+
+The service sends the end user's stable identifier in the `x-ms-user-identity` header. The platform treats the value as an opaque string and scopes the session to it. The value must be 1–256 characters and contain only letters, digits, and the characters `. _ : - @`; other values are rejected.
+
+To pass `x-ms-user-identity`, the calling identity must hold the `Microsoft.CognitiveServices/accounts/AIServices/agents/endpoints/UserIdentityImpersonation/action` permission on the agent. This permission is **not** included in any built-in role. It was previously covered by the `Microsoft.CognitiveServices/*` data action, but that action no longer grants it. Grant it explicitly by creating a custom role that includes the data action and assigning that role to your middle-tier service's identity. A caller without it receives a `403`. For the custom role definition and assignment commands, see [Delegate the end-user identity](59-hosted-agent-permissions.md#delegate-the-end-user-identity).
+
+If a service holds this permission but doesn't send the header on a request, the platform scopes that session to the service's own identity instead of an end user. Your service can mix delegated and non-delegated calls, but only requests that include `x-ms-user-identity` are isolated per end user.
+
+> **Warning**
+>
+> Within delegation, the platform doesn't fence one delegated end user from another. It enforces a hard boundary only between delegated and non-delegated callers - it lets any of your delegated users into a session your app created. Give each user their own session ID; if you route two users to the same session, they can see each other's data. To deliberately share one session, see [Multiplex multiple users in one hosted agent session](35-multiplex-session-users.md).
+
+**[rest]**
+
+```bash
+az rest --method POST \
+    --url "${BASE_URL}/agents/${AGENT_NAME}/endpoint/protocols/openai/responses?api-version=${API_VERSION}" \
+    --resource "${RESOURCE}" \
+    --headers "x-ms-user-identity=<stable-end-user-id>" \
+    --body '{
+        "input": "Summarize my open tickets",
+        "stream": false
+    }'
+```
+
+Replace `<stable-end-user-id>` with the identifier your service assigns to the signed-in end user, such as a tenant-scoped user ID.
+
+**[python]**
+
+```python
+openai_client = project.get_openai_client(agent_name="my-agent")
+
+response = openai_client.responses.create(
+    input="Summarize my open tickets",
+    extra_headers={"x-ms-user-identity": "<stable-end-user-id>"},
+)
+```
+
+Replace `<stable-end-user-id>` with the identifier your service assigns to the signed-in end user. The session is scoped to that end user rather than to the calling service.
+
+**[csharp]**
+
+The .NET client sets the header for every request through a pipeline policy:
+
+```csharp
+using System.ClientModel.Primitives;
+
+// Sends the end-user identifier that the platform uses to scope the session.
+public sealed class UserIdentityPolicy(string userId) : PipelinePolicy
+{
+    public override void Process(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int index)
+    {
+        message.Request.Headers.Set("x-ms-user-identity", userId);
+        ProcessNext(message, pipeline, index);
+    }
+
+    public override ValueTask ProcessAsync(PipelineMessage message, IReadOnlyList<PipelinePolicy> pipeline, int index)
+    {
+        message.Request.Headers.Set("x-ms-user-identity", userId);
+        return ProcessNextAsync(message, pipeline, index);
+    }
+}
+```
+
+Create one client per end user, and then invoke the agent:
+
+```csharp
+var options = new AIProjectClientOptions();
+options.AddPolicy(new UserIdentityPolicy("<stable-end-user-id>"), PipelinePosition.PerCall);
+
+AIProjectClient projectClient = new(new Uri(projectEndpoint), new DefaultAzureCredential(), options);
+ProjectResponsesClient responsesClient = projectClient.ProjectOpenAIClient
+    .GetProjectResponsesClientForAgentEndpoint("my-agent");
+
+ClientResult<ResponseResult> result = responsesClient.CreateResponse("Summarize my open tickets");
+
+using JsonDocument payload = JsonDocument.Parse(result.GetRawResponse().Content.ToString());
+Console.WriteLine($"Session: {payload.RootElement.GetProperty("agent_session_id").GetString()}");
+```
+
+Replace `<stable-end-user-id>` with the identifier your service assigns to the signed-in end user. Each end-user identifier gets its own session, so two users invoking the same agent receive different session IDs.
+
+**[javascript]**
+
+```typescript
+const openAIClient = project.getOpenAIClient({
+    azureConfig: { allowPreview: true, agentName: "my-agent" },
+});
+
+const response = await openAIClient.responses.create(
+    { input: "Summarize my open tickets" },
+    { headers: { "x-ms-user-identity": "<stable-end-user-id>" } },
+);
+console.log(response.output_text);
+```
+
+Replace `<stable-end-user-id>` with the identifier your service assigns to the signed-in end user. The session is scoped to that end user rather than to the calling service.
+
+**[azd]**
+
+The Azure Developer CLI invokes the agent as your own signed-in identity, so it doesn't pass a delegated end-user identity. Use the REST or SDK path from your service to send `x-ms-user-identity`.
+
+## Secure the end-user identity
+
+When you use delegated isolation, your service is the trust boundary. Choose identifiers that are stable per user, unique, and hard to guess. Reuse the same value for the same user so their sessions resume correctly.
+
+> **Important**
+>
+> Derive the `x-ms-user-identity` value from an authenticated, server-side identity - never from a value the browser or client supplies directly. Otherwise, a caller can set the header to another user's identifier and read that user's data. Any service with the delegation permission can act on behalf of any end user, so grant it only to services you trust.
+
+## Verify isolation
+
+Confirm that two identities get two separate sessions:
+
+1. Invoke the agent as one identity and note the returned `agent_session_id`.
+2. Invoke the agent as a second identity - a different signed-in user, or a different `x-ms-user-identity` value - and note its `agent_session_id`.
+3. Confirm the two IDs differ, and that listing sessions as each identity returns only that identity's sessions.
+
+To see isolation end to end, deploy the [note-taking agent sample](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/bring-your-own/responses/notetaking-agent), which stores notes per session under `$HOME`: each identity's notes land in a separate session file that only that identity can list or download through the [Session Files API](53-manage-hosted-sessions.md#session-file-operations).
+
+## View sessions across users
+
+By default, each caller sees only their own sessions. An administrator or automation that holds the **Foundry User** role on the project can list and manage every session on the agent, regardless of which identity created it. To manage sessions, see [Manage hosted agent sessions](53-manage-hosted-sessions.md).
+
+## Isolation keys on container protocol 1.0.0 (unsupported)
+
+Agents configured with container protocol version 1.0.0 use the earlier isolation-key model, in which the caller supplies an isolation key to scope sessions instead of the platform deriving identity from the Microsoft Entra token. Protocol 1.0.0 is no longer supported, and the platform blocks requests to agents that still use it.
+
+Upgrade to protocol 2.0.0 to get the automatic per-user isolation described earlier in this article. Protocol 2.0.0 requires the AgentServer SDK that supports it - [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) 2.0.0b7 or later for Python, or [`Azure.AI.AgentServer.Core`](https://www.nuget.org/packages/Azure.AI.AgentServer.Core) 1.0.0-beta.26 or later for .NET. Earlier versions use protocol 1.0.0; update them as part of the upgrade.
+
+- To upgrade, see [Migrate hosted agents](58-migrate-hosted-agent-preview.md).
+
+## Troubleshoot isolation
+
+| Symptom | Likely cause | What to try |
+| --- | --- | --- |
+| `403` or `session_not_accessible` when accessing a session | The session belongs to a different identity. | Use the same identity that created the session, or hold the Foundry User role to see other identities' sessions. |
+| `403` on a request that sets `x-ms-user-identity` | The caller lacks the `UserIdentityImpersonation` permission, which is no longer granted by built-in roles. | Create a custom role that includes the `Microsoft.CognitiveServices/accounts/AIServices/agents/endpoints/UserIdentityImpersonation/action` data action and assign it to the calling service. |
+| Local runs don't isolate sessions | Local runs don't enforce isolation. | Test isolation against a deployed agent. Local mode (`--local`, `azd ai agent run`) targets a single user. |
+
+## Related content
+
+- [Manage hosted agent sessions](53-manage-hosted-sessions.md) to list, inspect, and delete sessions, including across users.
+- [Multiplex multiple users in one hosted agent session](35-multiplex-session-users.md) when several users intentionally share one session.
+- [Agent identity concepts in Microsoft Foundry](../07.1-concepts/02-agent-identity.md) to understand how agent and user identities work.
+- [Invoke a hosted agent with the Azure Developer CLI](26-invoke-hosted-agent.md) for every invoke variant and option.
+- [Note-taking agent sample](https://github.com/microsoft-foundry/foundry-samples/tree/main/samples/python/hosted-agents/bring-your-own/responses/notetaking-agent) for a runnable agent that stores user-owned data per session (Python and C#).

@@ -1,0 +1,236 @@
+# Build and register a Model Context Protocol (MCP) server
+
+| Field | Value |
+| --- | --- |
+| **Document Title** | Build and register a Model Context Protocol (MCP) server |
+| **Document Location** | `docs/research-docs/azure-foundry/08-toolboxes/08.1-add-tools-and-skills/04-build-your-own-mcp-server.md` |
+| **Document Description** | Reference copy of the Microsoft Learn article "Build and register a Model Context Protocol (MCP) server". Learn how to build a custom MCP server using Azure Functions, register it in your organizational tool catalog, and connect it to Foundry Agent Service. |
+| **Version** | 1.1 |
+| **Last Updated On** | 2026-09-30 |
+
+> **Source:** [Microsoft Learn](https://learn.microsoft.com/en-us/azure/foundry/mcp/build-your-own-mcp-server). Article date: 2026-09-21. Page updated: 2026-09-21. Retrieved: 2026-09-29. Navigation: Toolboxes > Add tools and skills > MCP > Build your own MCP server.
+>
+> **Reference copy.** Microsoft owns this content. It was converted to Markdown and is not rewritten to the repository writing style. Links to other Foundry articles point to the local copies where they exist. Check the source for the current version.
+
+The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) provides a standard interface for AI agents to interact with APIs and external services. When you need to integrate private or internal enterprise systems that don't have existing MCP server implementations, you can build your own custom server. This article shows you how to create a remote MCP server using Azure Functions, register it in a private organizational tool catalog using Azure API Center, and connect it to Foundry Agent Service.
+
+This approach enables you to securely integrate internal APIs and services into the Microsoft Foundry ecosystem, allowing agents to call your enterprise-specific tools through a standardized MCP interface.
+
+## Prerequisites
+
+- A Foundry project with Agent Service enabled. For setup instructions, see [Quickstart: Create a prompt agent](../../04-get-started/04.1-what-do-you-want-to-build/01-prompt-agent.md).
+- An Azure subscription and permissions to create resources. At minimum, you typically need the Contributor role on the target resource group.
+- [Python](https://www.python.org/downloads/) version 3.13 or higher installed on your local development machine.
+- [Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?pivots=programming-language-python#install-the-azure-functions-core-tools) version 4.8.0 or higher.
+- [Azure Developer CLI](https://aka.ms/azd) version 1.23.0 or higher, installed for deployment automation.
+- For local development and debugging:
+  - [Visual Studio Code](https://code.visualstudio.com/)
+  - [Azure Functions extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions) for Visual Studio Code
+- An [Azure API Center resource](https://learn.microsoft.com/en-us/azure/api-center/overview) (optional, required only for organizational tool catalog registration).
+
+> **Note**
+>
+> This article deploys a publicly accessible Azure Functions endpoint. Agent Service supports private MCP endpoints through Standard agent setup. To use a private MCP endpoint, host the MCP server on Azure Container Apps with internal-only ingress and a dedicated MCP subnet. For more information, see [Public and private MCP server endpoints](01-model-context-protocol.md#public-and-private-mcp-server-endpoints).
+
+## Understand the request flow
+
+Remote MCP servers can be either custom-built (as described in this article) or available through the Foundry tool catalog. The connection and governance experience in Foundry is similar for both, with differences in provider-specific authentication and scope.
+
+The high-level flow looks like this:
+
+1. You deploy an MCP server (this article uses Azure Functions) that exposes one or more MCP tools.
+2. You optionally register the server in Azure API Center so it shows up in an organizational tool catalog.
+3. In Foundry portal, you connect the MCP server to Agent Service.
+4. When an agent needs a tool, Agent Service calls your MCP server endpoint.
+5. Your MCP server validates the request, calls your internal API, and returns the tool result.
+
+## Build an MCP server by using Azure Functions
+
+Azure Functions is a serverless compute service that provides scale-to-zero capability, burst scaling, and enterprise features including identity-based access and virtual networking. The lightweight programming model makes it straightforward to build MCP servers so you can focus on implementing your business logic rather than infrastructure management.
+
+> **Note**
+>
+> The examples in this article use Azure Functions for convenience, but MCP is an open protocol that works with any HTTP server. You can host an MCP server using ASP.NET Core, Express.js, Flask, or any other web framework that can handle HTTP requests. The key requirement is that your server implements the [MCP specification](https://modelcontextprotocol.io/specification) endpoints. Azure Functions is one option that simplifies deployment and scaling.
+
+1. Open a terminal or command prompt and go to the folder where you want to create your project.
+2. Run the `azd init` command to initialize the project from [this sample MCP server template](https://github.com/Azure-Samples/remote-mcp-functions-python):
+
+   ```bash
+   azd init --template remote-mcp-functions-python -e mcpserver-python
+   ```
+3. Review the sample structure. The template includes several sample projects, each with its own README:
+   - An MCP tools sample that exposes callable functions.
+   - MCP resources and MCP prompts samples.
+   - Infrastructure and deployment scripts for Azure.
+
+   Start from the MCP tools sample, which demonstrates the core pattern for exposing your APIs as MCP tools.
+4. Customize the MCP server functions to expose your specific APIs and services. Modify the function code to implement the tools and capabilities your agents need.
+5. Test your MCP server locally by using the Azure Functions Core Tools:
+
+   ```bash
+   func start
+   ```
+6. Deploy your MCP server to Azure by using the Azure Developer CLI:
+
+   ```bash
+   azd up
+   ```
+
+   Follow the prompts to select your Azure subscription and resource group.
+7. After deployment finishes, save the following information for later steps:
+   - Remote MCP server endpoint: `https://{function_app_name}.azurewebsites.net/runtime/webhooks/mcp`
+   - Authentication information: For access key authentication, note the `mcp_extension` system key in the Azure portal.
+
+   If you prefer a CLI workflow to retrieve function access keys, see [Work with access keys in Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/function-keys-how-to?tabs=azure-cli#get-your-function-access-keys).
+8. (Optional) To use Microsoft Entra authentication instead of key-based access, enable Azure Functions Authentication on the Function App, set the allowed audience to the Application ID URI expected by the MCP endpoint, and verify the MCP webhook path (`/runtime/webhooks/mcp`). For detailed setup steps, see the tutorial [Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial?tabs=mcp-extension&pivots=programming-language-python).
+
+For additional implementation details including advanced authentication patterns and troubleshooting, refer to the tutorial [Host an MCP server on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-tutorial?tabs=mcp-extension&pivots=programming-language-python).
+
+## Secure your MCP server endpoint
+
+Before you share your MCP server with others, define and apply a security baseline:
+
+- Require authentication. Avoid anonymous access unless your scenario explicitly needs it.
+- Treat credentials as secrets. Don't hard-code keys in code or check them into source control. Store secrets in a secure store such as [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/overview).
+- Implement least privilege for downstream calls. If your MCP server calls internal APIs, scope permissions to only what the exposed tools need.
+- Log and monitor tool calls. Use Azure Functions logging to trace requests and troubleshoot failures.
+
+When you use Azure Functions to host your MCP server, the authentication options map to Foundry as follows:
+
+- **Function keys** (`x-functions-key`): Corresponds to key-based authentication in Foundry.
+- **Microsoft Entra**: Corresponds to Microsoft Entra authentication in Foundry. For Azure Functions MCP servers, use project managed identity.
+- **OAuth identity passthrough**: Corresponds to OAuth identity passthrough in Foundry. For Functions built-in authentication, configure custom OAuth with a Microsoft Entra app registration.
+- **Unauthenticated**: Supported for limited scenarios, but not recommended for production workloads.
+
+For Agent Service authentication patterns (for example, key-based authentication, Microsoft Entra identities, and OAuth identity passthrough), see [MCP server authentication](03-mcp-authentication.md).
+
+For governance and operational guidance when you run MCP tools, see [Foundry MCP Server best practices and security guidance](../../05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/02-security-best-practices.md).
+
+## Register your MCP server in the organizational tool catalog
+
+When you register your MCP server in Azure API Center, you create a private organizational tool catalog. This step is optional but recommended for sharing MCP servers across your organization with consistent governance and discoverability.
+
+To register your MCP server:
+
+1. Sign in to the [Azure portal](https://portal.azure.com/) and go to your Azure API Center resource.
+
+   > **Tip**
+   >
+   > The API Center name becomes your private tool catalog name in the registry filter. Choose an informative name that helps users identify your organization's tool catalog.
+2. In the left navigation pane, expand **Inventory** and select **Assets**.
+3. Select **Register an asset** and choose **MCP server**.
+4. Provide the required information about your MCP server.
+5. Configure environments and deployments following the tutorial: [Add environments and deployments for APIs in Azure API Center](https://learn.microsoft.com/en-us/azure/api-center/configure-environments-deployments).
+6. Configure authentication for your MCP server (optional):
+
+   In the left navigation pane of your API Center resource, select **Governance** > **Authorization**.
+
+   [![Screenshot showing the Azure API Center authorization configuration page with Governance menu expanded.](https://learn.microsoft.com/en-us/azure/foundry/media/build-your-own-mcp-server/azure-api-center-authorization-page.png)](https://learn.microsoft.com/en-us/azure/foundry/media/build-your-own-mcp-server/azure-api-center-authorization-page.png#lightbox)
+7. Select **Add configuration**.
+8. Choose the security scheme that matches your MCP server requirements:
+   - **API Key**: Developers provide the API key during tool configuration in Foundry
+   - **OAuth**: Configure OAuth 2.0 authentication parameters
+   - **HTTP**: Configure bearer token authorization
+9. Provide the required authentication details for your selected scheme.
+
+   > **Note**
+   >
+   > If you choose API Key authentication, the key you store in Azure Key Vault isn't automatically used in Foundry. Developers must provide the API key when configuring the MCP server connection.
+10. Configure access management (optional):
+
+    a. Go to your registered MCP server in API Center.
+
+    b. Select **Details** > **Versions** > **Manage Access (preview)**.
+
+    c. Configure which users or groups can access this MCP server through the organizational catalog.
+
+After registration, your MCP server appears in the Foundry tool catalog with the governance and authentication settings you configured.
+
+## Connect the MCP server to Agent Service
+
+You can connect your MCP server to Agent Service through the organizational tool catalog (if you registered it) or as a custom MCP tool.
+
+### Connect using the organizational tool catalog
+
+If you registered your MCP server in Azure API Center, users with appropriate access can discover and configure it:
+
+1. In [Foundry portal](https://ai.azure.com/), go to your project.
+2. Go to **Build** > **Tools** or open Agent Builder.
+3. Browse the organizational tool catalog to find your registered MCP server.
+4. Follow the configuration guidance displayed in the tool catalog to add the server to your agent.
+
+The same MCP server can be reused by multiple clients (such as Foundry Agent Service and developer tools like Visual Studio Code) provided authentication is configured appropriately.
+
+> **Tip**
+>
+> Foundry also surfaces catalog MCP servers. After you select a catalog MCP server, limit the enabled tools to the subset your agent needs. This approach enforces least privilege and governance as part of the Foundry configuration flow.
+
+### Connect by using a custom MCP tool
+
+If you don't register your MCP server in the organizational catalog, add it directly as a custom tool:
+
+1. In [Foundry portal](https://ai.azure.com/), go to your project.
+2. Go to **Build** > **Tools** or open Agent Builder.
+3. Select **Connect a tool**. On the **Custom** tab, select **MCP**.
+4. Enter your MCP server details:
+   - **Name**: Unique name for your remote MCP server
+   - **Remote MCP Server endpoint**: Enter your remote MCP server endpoint URL (for example, `https://{function_app_name}.azurewebsites.net/runtime/webhooks/mcp`)
+   - **Authentication**: Select the authentication method:
+     - **Key-based**: Provide the credential as `"x-functions-key": "{mcp_extension_system_key}"`.
+     - **Microsoft Entra ID**: Select **Project managed identity**. Provide the **Audience** (Application ID URI) configured on your Function App. Enable built-in authentication on the Function App, and allow the Foundry project's managed identity to access it.
+     - **OAuth identity passthrough**: Provide the **Client ID**, **Client Secret**, **Authorization URL**, **Token URL**, **Refresh URL** (if applicable), and **Scopes** for your OAuth provider. Use custom OAuth with a Microsoft Entra app registration, and add the redirect URL that Foundry provides to the app registration.
+5. Select **Connect** to register the custom MCP tool.
+
+For detailed configuration steps (including project connections and approval workflows), see [Connect to Model Context Protocol servers (preview)](01-model-context-protocol.md).
+
+After connecting your MCP server, agents in your Foundry project can call the tools and functions exposed by your custom server. Multiple clients, such as Foundry Agent Service and developer tools like Visual Studio Code, can reuse the same MCP server if you configure authentication appropriately.
+
+## Verify the MCP server works end to end
+
+After you deploy and connect the server, verify that the server is discoverable and that an agent can successfully invoke a tool.
+
+1. In Foundry portal, confirm the MCP server appears in your project tool list.
+2. Create an agent (or open an existing agent) and add the MCP server tool.
+3. Run a prompt that should require one of your MCP tools.
+4. If approval is enabled, review the tool name and arguments, then approve the call.
+5. Confirm the tool call succeeds.
+
+   If the tool call fails, open the Function App logs in Azure portal to confirm the MCP endpoint was invoked and to diagnose errors.
+
+> **Tip**
+>
+> You can perform quick validation from Foundry by issuing test chat prompts in the agent or tool configuration experience. This helps confirm that selected tools are discovered and callable before rolling out to broader users.
+
+## Troubleshooting
+
+Here are some common issues you might encounter when building and connecting your MCP server:
+
+- **MCP server connection fails**: Confirm the server URL is reachable from Agent Service and uses the MCP webhook path (`/runtime/webhooks/mcp`). Verify that the URL is publicly accessible. For a private MCP endpoint, use the Azure Container Apps private deployment path described in [Public and private MCP server endpoints](01-model-context-protocol.md#public-and-private-mcp-server-endpoints). Check the Function App logs in Azure portal for errors.
+- **Authentication errors (401/403)**: Verify you're using the correct key or token for the authentication method you selected. Rotate keys that might have been exposed, and update any saved credentials.
+- **Microsoft Entra authentication failures (401/403)**: Verify the audience (Application ID URI) in the Foundry tool configuration matches the allowed audience configured in your Function App's authentication settings. Confirm the Foundry project's managed identity is allowed to access the Function App. Check that the issuer URL is correct for your Microsoft Entra tenant.
+- **OAuth identity passthrough failures**: Verify the authorization URL, token URL, refresh URL, and scopes in the Foundry tool configuration match your OAuth app registration. Confirm the client ID and client secret are correct and not expired, and that the Foundry redirect URL is registered. Scope mismatches or incorrect endpoint URLs are common causes of token exchange failures.
+- **Tool discovery problems**: If you registered the server in Azure API Center, confirm the API is published and you have access to it. If you added a custom tool, confirm the endpoint URL is correct.
+- **Tool call succeeds but an internal API fails**: Review your MCP server logs to confirm what request was sent to the downstream API. Verify the MCP server identity or API credentials have the required permissions.
+
+## Clean up resources
+
+When you're done, delete the Azure resources that the template created to avoid ongoing charges.
+
+1. In your MCP server project folder, run:
+
+   ```bash
+   azd down --purge
+   ```
+2. If you registered the server in Azure API Center, remove the API entry if you no longer need it.
+
+## Related content
+
+- [MCP server authentication](03-mcp-authentication.md)
+- [Get started with Foundry MCP Server (preview) using Visual Studio Code](../../05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/01-get-started.md)
+- [Foundry MCP Server best practices and security guidance](../../05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/02-security-best-practices.md)
+- [Explore available tools and example prompts for Foundry MCP Server (preview)](../../05-developer-tools-and-integrations/05.6-foundry-mcp-server-preview/03-available-tools.md)
+- [Microsoft MCP server certification overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/mcp-certification).
+- [Add environments and deployments in Azure API Center](https://learn.microsoft.com/en-us/azure/api-center/configure-environments-deployments)
+- [Azure Functions Python developer guide](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python)
+- [Use Azure Functions MCP servers as tools in Microsoft Foundry](https://learn.microsoft.com/en-us/azure/azure-functions/functions-mcp-foundry-tools)
+- [Register MCP servers hosted in Azure Functions in Azure API Center](https://learn.microsoft.com/en-us/azure/azure-functions/register-mcp-server-api-center)
